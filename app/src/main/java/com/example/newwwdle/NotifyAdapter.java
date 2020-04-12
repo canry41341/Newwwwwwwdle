@@ -16,26 +16,19 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.MyViewHold
     String notify[]; //用來存通知本身的內容
     String date[]; //用來存所發通知的時間
     Context context;
-    int whichactiviy;
 
-    public NotifyAdapter(Context ct, String[] s1, String[] s2 , int activity) {
+    public NotifyAdapter(Context ct, String[] s1, String[] s2) {
         context = ct;
         notify = s1;
         date = s2;
-        whichactiviy = activity;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        if(whichactiviy == 87) {
             View view = inflater.inflate(R.layout.notify_list, parent, false);
             return new NotifyAdapter.MyViewHolder(view);
-        }else{
-            View view = inflater.inflate(R.layout.tnotify_list, parent, false);
-            return new NotifyAdapter.MyViewHolder(view);
-        }
 
     }
 
@@ -70,15 +63,10 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.MyViewHold
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            if(whichactiviy == 87) {
                 txt1 = itemView.findViewById(R.id.dateView);
                 txt2 = itemView.findViewById(R.id.textView2);
                 notifyLayout = itemView.findViewById(R.id.notifyLayout);
-            }else{
-                txt1 = itemView.findViewById(R.id.dateView2);
-                txt2 = itemView.findViewById(R.id.textView3);
-                notifyLayout = itemView.findViewById(R.id.notifyLayout2);
-            }
+
         }
     }
 }

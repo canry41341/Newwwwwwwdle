@@ -124,7 +124,7 @@ public class Teacher_class extends AppCompatActivity {
     }
 
     private void showNotify() {
-        NotifyAdapter TnotifyAdapter = new NotifyAdapter(this, ss1, ss2,1);
+        NotifyAdapter TnotifyAdapter = new NotifyAdapter(this, ss1, ss2);
         myTRecyclerView.setAdapter(TnotifyAdapter);
         myTRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

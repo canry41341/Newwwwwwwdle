@@ -88,7 +88,7 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     private void showNotify() {
-        NotifyAdapter notifyAdapter = new NotifyAdapter(this, s1, s2,87);
+        NotifyAdapter notifyAdapter = new NotifyAdapter(this, s1, s2);
         myRecyclerView.setAdapter(notifyAdapter);
         myRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
