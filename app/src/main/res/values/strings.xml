@@ -18,9 +18,27 @@
     </string-array>
 
     <string-array name="time">
+        <item>Mon 7~9</item>
         <item>Tue 7~9</item>
-        <item>Tue 7~9</item>
-        <item>Tue 7~9</item>
-        <item>Tue 7~9</item>
+        <item>Wed 7~9</item>
+        <item>Thu 7~9</item>
+    </string-array>
+
+    <string-array name="date">
+        <item>April 12th</item>
+        <item>April 13th</item>
+        <item>April 14th</item>
+        <item>April 15th</item>
+        <item>April 16th</item>
+        <item>April 17th</item>
+    </string-array>
+
+    <string-array name="state">
+        <item>Yes</item>
+        <item>Yes</item>
+        <item>No</item>
+        <item>No</item>
+        <item>Yes</item>
+        <item>Yes</item>
     </string-array>
 </resources>

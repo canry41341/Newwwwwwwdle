@@ -33,37 +33,50 @@
 
     <Button
         android:id="@+id/attendence_btn1"
-        android:background="@drawable/button"
         android:layout_width="102dp"
         android:layout_height="98dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="272dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="372dp"
+        android:background="@drawable/button"
         android:text="點名"
         app:layout_constraintStart_toStartOf="@+id/imageView3"
         app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
     <Button
         android:id="@+id/notification_btn1"
-        android:background="@drawable/button"
         android:layout_width="102dp"
         android:layout_height="98dp"
-        android:layout_marginTop="272dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:background="@drawable/button"
         android:text="通知"
-        app:layout_constraintEnd_toEndOf="@+id/imageView3"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintBottom_toBottomOf="@+id/status_btn1"
+        app:layout_constraintStart_toEndOf="@+id/status_btn1"
+        app:layout_constraintTop_toTopOf="@+id/status_btn1" />
 
     <Button
         android:id="@+id/status_btn1"
-        android:background="@drawable/button"
         android:layout_width="102dp"
         android:layout_height="98dp"
-        android:layout_marginTop="272dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:background="@drawable/button"
         android:text="狀態"
-        app:layout_constraintEnd_toStartOf="@+id/notification_btn1"
+        app:layout_constraintBottom_toBottomOf="@+id/attendence_btn1"
         app:layout_constraintStart_toEndOf="@+id/attendence_btn1"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toTopOf="@+id/attendence_btn1"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/teacher_noty"
+        android:layout_width="404dp"
+        android:layout_height="249dp"
+        android:layout_marginEnd="7dp"
+        android:layout_marginRight="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/className1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

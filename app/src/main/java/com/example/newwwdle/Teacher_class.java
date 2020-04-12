@@ -2,6 +2,8 @@ package com.example.newwwdle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +25,9 @@ public class Teacher_class extends AppCompatActivity {
     TextView className;
     String data1, data2;
     boolean start;
+    String ss1[], ss2[];
+
+    RecyclerView myTRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,8 @@ public class Teacher_class extends AppCompatActivity {
         setContentView(R.layout.activity_teacher_class);
         start = false;
         final Drawable d = getResources().getDrawable(R.drawable.button);
+        ss1 = getResources().getStringArray(R.array.class_Name);
+        ss2 = getResources().getStringArray(R.array.time);
 
         className = findViewById(R.id.className1);
         atttend_btn = findViewById(R.id.attendence_btn1);
@@ -92,7 +99,8 @@ public class Teacher_class extends AppCompatActivity {
         noti_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                showNotify();
+                Toast.makeText(Teacher_class.this, "click success!" , Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -113,5 +121,11 @@ public class Teacher_class extends AppCompatActivity {
     private void setData() {
 
         className.setText(data1);
+    }
+
+    private void showNotify() {
+        NotifyAdapter TnotifyAdapter = new NotifyAdapter(this, ss1, ss2,1);
+        myTRecyclerView.setAdapter(TnotifyAdapter);
+        myTRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 }

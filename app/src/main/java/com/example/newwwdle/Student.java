@@ -17,6 +17,8 @@ import java.util.ArrayList;
 
 public class Student extends AppCompatActivity {
 
+    //this class 用來呈現課程選單
+    //這個class用的adapter是MyAdapter
     private String id;
     String s1[], s2[];
     RecyclerView recyclerView;
@@ -31,8 +33,6 @@ public class Student extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         id = bundle.getString("name");
-
-        //setInit();
 
         recyclerView = findViewById(R.id.recyclerView);
 

@@ -14,7 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
-    String data1[], data2[];
+    String data1[]; //class name
+    String data2[]; //class time
     Context context;
 
     public MyAdapter(Context ct, String s1[], String s2[]) {
