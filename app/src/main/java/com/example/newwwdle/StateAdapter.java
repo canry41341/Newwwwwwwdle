@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class StateAdapter extends RecyclerView.Adapter<StateAdapter.MyViewHolder> {
 
+    //顯示點名狀態的adapter
     String time[]; //用來存時間
     String state[]; //用來存狀態
     Context context;
@@ -54,9 +55,9 @@ public class StateAdapter extends RecyclerView.Adapter<StateAdapter.MyViewHolder
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            txt1 = itemView.findViewById(R.id.dateView);
-            txt2 = itemView.findViewById(R.id.stateView);
-            stateLayout = itemView.findViewById(R.id.StateLayout);
+            txt1 = itemView.findViewById(R.id.dateView); //點名時間
+            txt2 = itemView.findViewById(R.id.stateView); //點名的狀態
+            stateLayout = itemView.findViewById(R.id.StateLayout); //狀態欄的layout名稱
         }
     }
 }
