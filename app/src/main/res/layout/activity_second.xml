@@ -4,34 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient"
     tools:context=".SecondActivity">
 
     <TextView
         android:id="@+id/className"
-        android:layout_width="339dp"
-        android:layout_height="61dp"
+        android:layout_width="324dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:text="TextView"
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/notifyView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
-    <TextView
-        android:id="@+id/timeTxt"
-        android:layout_width="251dp"
-        android:layout_height="45dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="@+id/className"
-        app:layout_constraintStart_toStartOf="@+id/className"
-        app:layout_constraintTop_toBottomOf="@+id/className" />
-
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="374dp"
         android:layout_height="206dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/className"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,26 +35,25 @@
 
     <Button
         android:id="@+id/attendence_btn"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginTop="364dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/button"
         android:text="點名"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/imageView2"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/notifyView"
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/notification_btn"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
         android:background="@drawable/button"
         android:text="通知"
         android:textSize="20sp"
@@ -70,10 +64,10 @@
 
     <Button
         android:id="@+id/state_btn"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
         android:background="@drawable/button"
         android:text="狀態"
         android:textSize="20sp"
@@ -84,8 +78,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notifyView"
         android:layout_width="404dp"
-        android:layout_height="249dp"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toTopOf="@+id/attendence_btn"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timeTxt" />
+        app:layout_constraintTop_toBottomOf="@+id/className" />
 </androidx.constraintlayout.widget.ConstraintLayout>

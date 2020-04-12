@@ -4,53 +4,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient"
     tools:context=".Teacher_class">
 
     <TextView
         android:id="@+id/className1"
         android:layout_width="324dp"
-        android:layout_height="79dp"
-        android:layout_marginTop="268dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:text="TextView"
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/teacher_noty"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="388dp"
-        android:layout_height="217dp"
-        android:layout_marginTop="28dp"
+        android:layout_width="374dp"
+        android:layout_height="206dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/className1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.478"
+        app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_launcher" />
 
     <Button
         android:id="@+id/attendence_btn1"
-        android:layout_width="102dp"
-        android:layout_height="98dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="372dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/button"
         android:text="點名"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/imageView3"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/teacher_noty" />
 
     <Button
         android:id="@+id/notification_btn1"
-        android:layout_width="102dp"
-        android:layout_height="98dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
         android:background="@drawable/button"
         android:text="通知"
         app:layout_constraintBottom_toBottomOf="@+id/status_btn1"
@@ -59,10 +62,10 @@
 
     <Button
         android:id="@+id/status_btn1"
-        android:layout_width="102dp"
-        android:layout_height="98dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
         android:background="@drawable/button"
         android:text="狀態"
         app:layout_constraintBottom_toBottomOf="@+id/attendence_btn1"
@@ -73,11 +76,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/teacher_noty"
         android:layout_width="404dp"
-        android:layout_height="249dp"
+        android:layout_height="200dp"
         android:layout_marginEnd="7dp"
         android:layout_marginRight="7dp"
+        android:layout_marginBottom="17dp"
+        app:layout_constraintBottom_toTopOf="@+id/attendence_btn1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/className1" />
 

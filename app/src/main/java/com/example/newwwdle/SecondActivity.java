@@ -14,7 +14,7 @@ import android.widget.Toast;
 public class SecondActivity extends AppCompatActivity {
 
     //點選完課程後進入到此class
-    TextView className, time;
+    TextView className;
 
     String data1, data2; //data1用來存去你點哪個課程名稱
                         //data2用來存你所點課程的上課時間
@@ -31,7 +31,6 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_second);
 
         className = findViewById(R.id.className);
-        time = findViewById(R.id.timeTxt);
 
         myRecyclerView = findViewById(R.id.notifyView);
 
@@ -91,7 +90,6 @@ public class SecondActivity extends AppCompatActivity {
 
     private void setData() {
         className.setText(data1);
-        time.setText(data2);
     }
 
     private void showNotify() {

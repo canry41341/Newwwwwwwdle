@@ -19,8 +19,6 @@
         <activity android:name=".StudentState"></activity>
         <activity android:name=".ShowNotify" />
         <activity android:name=".Information" />
-        <activity android:name=".Main2Activity" />
-        <activity android:name=".Attendance" />
         <activity
             android:name=".SecondActivity"
             android:label="Details"

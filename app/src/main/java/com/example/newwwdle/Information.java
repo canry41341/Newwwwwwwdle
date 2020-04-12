@@ -52,7 +52,7 @@ public class Information extends AppCompatActivity {
         dff.setTimeZone(TimeZone.getTimeZone("Asia/Taipei"));
         DATE = dff.format(new Date());
         if(DATE != null){
-            DATE_view.setText("DATE :" + DATE.substring(5,10));
+            DATE_view.setText("DATE : " + DATE.substring(5,10));
         }
     }
 }

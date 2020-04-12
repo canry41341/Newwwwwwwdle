@@ -50,7 +50,7 @@ public class teacher extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         id = bundle.getString("name");
 
-        student.setText("\n"+id);
+        student.setText("學生姓名"+"\n"+id);
 
             // 準備資料，塞50個項目到ArrayList裡
         for (int i = 0; i < data.length; i++) {
