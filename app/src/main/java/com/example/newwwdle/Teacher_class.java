@@ -84,7 +84,7 @@ public class Teacher_class extends AppCompatActivity {
             }
         });
 
-        noti_btn = findViewById(R.id.status_btn1);
+        noti_btn = findViewById(R.id.status_btn1);// 狀態按鈕
         noti_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
