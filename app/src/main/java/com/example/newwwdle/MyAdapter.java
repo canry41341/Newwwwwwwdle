@@ -39,6 +39,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.myText1.setText(data1[position]);
         holder.myText2.setText(data2[position]);
 
+        //進入你點選的項目
         holder.mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,13 +59,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public class MyViewHolder  extends RecyclerView.ViewHolder{
 
         TextView myText1, myText2;
-        ConstraintLayout mainLayout;
+        ConstraintLayout mainLayout; //get id of class_list.xml
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            myText1 = itemView.findViewById(R.id.myText1);
-            myText2 = itemView.findViewById(R.id.myText2);
+            myText1 = itemView.findViewById(R.id.myText1);  //get class name
+            myText2 = itemView.findViewById(R.id.myText2);  //get class time
             mainLayout = itemView.findViewById(R.id.mainLayout);
         }
     }

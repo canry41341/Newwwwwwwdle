@@ -25,6 +25,7 @@ public class StudentState extends AppCompatActivity {
         s1 = getResources().getStringArray(R.array.date);
         s2 = getResources().getStringArray(R.array.state);
 
+        //設定adapter
         StateAdapter stateAdapter = new StateAdapter(this, s1, s2);
         myRecyclerView.setAdapter(stateAdapter);
         myRecyclerView.setLayoutManager(new LinearLayoutManager(this));

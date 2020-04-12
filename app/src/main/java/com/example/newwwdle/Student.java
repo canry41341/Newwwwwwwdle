@@ -20,42 +20,31 @@ public class Student extends AppCompatActivity {
     //this class 用來呈現課程選單
     //這個class用的adapter是MyAdapter
     private String id;
-    String s1[], s2[];
-    RecyclerView recyclerView;
 
-    private ArrayList<String> class_list = new ArrayList<>();
+    //s1[], s2[]可以用來存取從database抓下來的資料
+    String s1[], s2[];
+
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
 
+        //bundle可以在不同activity間傳遞參數
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         id = bundle.getString("name");
 
         recyclerView = findViewById(R.id.recyclerView);
 
+        //這裡是看你要從哪去抓 s1[]跟s2[]的資料來源
         s1 = getResources().getStringArray(R.array.class_Name);
         s2 = getResources().getStringArray(R.array.time);
 
+        //設定adapter
         MyAdapter myAdapter = new MyAdapter(this, s1,s2);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-
-    /*private void setInit() {
-        ListView classView = findViewById(R.id.listView);
-        String [] class_Name = {"軟體工程", "體育課"};
-        String [] teacher_name = {"chen", "lee"};
-        String [] date = {"331", "404"};
-
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, class_Name);
-        classView.setAdapter(arrayAdapter);
-
-
-    }*/
-
-
-
 }
