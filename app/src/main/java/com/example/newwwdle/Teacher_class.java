@@ -2,13 +2,19 @@ package com.example.newwwdle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,13 +27,23 @@ import android.widget.Toast;
 
 public class Teacher_class extends AppCompatActivity {
 
-    private Button atttend_btn , info_btn , noti_btn;
+    private Button atttend_btn, info_btn, noti_btn;
     TextView className;
     String data1, data2;
     boolean start;
     String ss1[], ss2[];
 
     RecyclerView myTRecyclerView;
+
+    // GPS settings
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    // GPS parameter setting
+    final LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+    final String locationProvider = LocationManager.GPS_PROVIDER;   // Or use LocationManager.NETWORK_PROVIDER
+    // Teacher's Longitude & Latitude
+    double teacher_longitude;
+    double teacher_latitude;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,41 +60,43 @@ public class Teacher_class extends AppCompatActivity {
         atttend_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) { //老師想要點名所以她按了這個按鈕
-                    if(!start) {
-                        atttend_btn.setText("結束點名");
-                        atttend_btn.setBackgroundColor(Color.RED);
-                        final AlertDialog.Builder d = new AlertDialog.Builder(Teacher_class.this);
-                        LayoutInflater inflater = Teacher_class.this.getLayoutInflater();
-                        View dialogView = inflater.inflate(R.layout.dialog, null);
-                        d.setTitle("設定點名時間");
-                        d.setView(dialogView);
-                        final NumberPicker numberPicker = (NumberPicker) dialogView.findViewById(R.id.dialog_number_picker);
-                        numberPicker.setMaxValue(30);
-                        numberPicker.setMinValue(10);
-                        numberPicker.setWrapSelectorWheel(false);
-                        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                            @Override
-                            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                                //Log.d(TAG, "onValueChange: ");
-                                Toast.makeText(Teacher_class.this, String.valueOf(numberPicker.getValue()), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        d.setPositiveButton("開始點名", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Log.d(TAG, "onClick: " + numberPicker.getValue());
-                                Toast.makeText(Teacher_class.this, "點名開始", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        AlertDialog alertDialog = d.create();
-                        alertDialog.show();
-                        start = true;
-                    }else{
-                        atttend_btn.setText("點名");
-                        atttend_btn.setBackgroundDrawable(d);
-                        Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
-                        start = false;
-                    }
+                if (!start) {
+                    atttend_btn.setText("結束點名");
+                    atttend_btn.setBackgroundColor(Color.RED);
+                    final AlertDialog.Builder d = new AlertDialog.Builder(Teacher_class.this);
+                    LayoutInflater inflater = Teacher_class.this.getLayoutInflater();
+                    View dialogView = inflater.inflate(R.layout.dialog, null);
+                    d.setTitle("設定點名時間");
+                    d.setView(dialogView);
+                    final NumberPicker numberPicker = (NumberPicker) dialogView.findViewById(R.id.dialog_number_picker);
+                    numberPicker.setMaxValue(30);
+                    numberPicker.setMinValue(10);
+                    numberPicker.setWrapSelectorWheel(false);
+                    numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                        @Override
+                        public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                            //Log.d(TAG, "onValueChange: ");
+                            Toast.makeText(Teacher_class.this, String.valueOf(numberPicker.getValue()), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    d.setPositiveButton("開始點名", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Log.d(TAG, "onClick: " + numberPicker.getValue());
+                            // get Teacher's Location
+                            get_teacher_GPS();
+                            Toast.makeText(Teacher_class.this, "點名開始", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    AlertDialog alertDialog = d.create();
+                    alertDialog.show();
+                    start = true;
+                } else {
+                    atttend_btn.setText("點名");
+                    atttend_btn.setBackgroundDrawable(d);
+                    Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
+                    start = false;
+                }
 
             }
         });
@@ -89,7 +107,8 @@ public class Teacher_class extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
-                intent.setClass(Teacher_class.this, Information.class);;
+                intent.setClass(Teacher_class.this, Information.class);
+                ;
                 startActivity(intent);
 
             }
@@ -99,7 +118,7 @@ public class Teacher_class extends AppCompatActivity {
         noti_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(Teacher_class.this, "click success!" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(Teacher_class.this, "click success!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -108,11 +127,11 @@ public class Teacher_class extends AppCompatActivity {
     }
 
     private void getData() {
-        if(getIntent().hasExtra("data1") && getIntent().hasExtra("data2")) {
+        if (getIntent().hasExtra("data1") && getIntent().hasExtra("data2")) {
 
             data1 = getIntent().getStringExtra("data1");
             data2 = getIntent().getStringExtra("data2");
-        }else {
+        } else {
             Toast.makeText(this, "No data!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -121,5 +140,43 @@ public class Teacher_class extends AppCompatActivity {
 
         className.setText(data1);
     }
+
+    // function to get teacher's GPS
+    private void get_teacher_GPS() {
+        // check if Activity has ACCESS_FINE_LOCATOIN permission
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(Teacher_class.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
+            return;
+        } else {
+            // update location
+            mLocationManager.requestLocationUpdates(locationProvider, 1000, 10, locationListener);
+            // get the last known location
+            Location lastKnownLocation = mLocationManager.getLastKnownLocation(locationProvider);
+            if (lastKnownLocation != null) {
+                // update Teacher's Longitude & Latitude
+                teacher_longitude = lastKnownLocation.getLongitude();
+                teacher_latitude = lastKnownLocation.getLatitude();
+                Toast.makeText(Teacher_class.this, "經度:" + lastKnownLocation.getLongitude() + "\n緯度:" + lastKnownLocation.getLatitude(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(Teacher_class.this, "獲取不到位置資訊哦！", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // Define a listener that responds to location updates
+    LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+    };
 
 }
