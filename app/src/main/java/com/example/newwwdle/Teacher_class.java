@@ -99,7 +99,6 @@ public class Teacher_class extends AppCompatActivity {
         noti_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showNotify();
                 Toast.makeText(Teacher_class.this, "click success!" , Toast.LENGTH_SHORT).show();
             }
         });
@@ -123,9 +122,4 @@ public class Teacher_class extends AppCompatActivity {
         className.setText(data1);
     }
 
-    private void showNotify() {
-        NotifyAdapter TnotifyAdapter = new NotifyAdapter(this, ss1, ss2);
-        myTRecyclerView.setAdapter(TnotifyAdapter);
-        myTRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
 }

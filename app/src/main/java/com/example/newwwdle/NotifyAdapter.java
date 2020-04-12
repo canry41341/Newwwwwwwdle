@@ -28,13 +28,8 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.MyViewHold
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-<<<<<<< HEAD
             View view = inflater.inflate(R.layout.notify_list, parent, false);
             return new NotifyAdapter.MyViewHolder(view);
-=======
-        View view = inflater.inflate(R.layout.notify_list, parent, false);
-        return new NotifyAdapter.MyViewHolder(view);
->>>>>>> 98d9b22c62559fa42d7cadfff34e37f6147dc9c7
 
     }
 
@@ -69,16 +64,9 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.MyViewHold
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-<<<<<<< HEAD
-                txt1 = itemView.findViewById(R.id.dateView);
-                txt2 = itemView.findViewById(R.id.textView2);
-                notifyLayout = itemView.findViewById(R.id.notifyLayout);
-=======
-
             txt1 = itemView.findViewById(R.id.dateView); //顯示通知的時間
             txt2 = itemView.findViewById(R.id.textView2); // 顯示通知的內容
             notifyLayout = itemView.findViewById(R.id.notifyLayout);
->>>>>>> 98d9b22c62559fa42d7cadfff34e37f6147dc9c7
 
         }
     }
