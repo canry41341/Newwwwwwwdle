@@ -62,9 +62,9 @@ public class TnotifyAdapter extends RecyclerView.Adapter<TnotifyAdapter.MyViewHo
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            myText1 = itemView.findViewById(R.id.my_Text1);  //get class name
-            myText2 = itemView.findViewById(R.id.my_Text2);  //get class time
-            teacherLayout = itemView.findViewById(R.id.teacher_notifyLayout);
+            myText1 = itemView.findViewById(R.id.dateViewT);  //get class name
+            myText2 = itemView.findViewById(R.id.textView2T);  //get class time
+            teacherLayout = itemView.findViewById(R.id.notifyLayout_teacher);
         }
     }
 }

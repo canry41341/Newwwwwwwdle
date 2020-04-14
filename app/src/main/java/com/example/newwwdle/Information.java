@@ -17,7 +17,6 @@ public class Information extends AppCompatActivity {
 
     Button cancel , post;
     EditText title , message;
-
     //DATE
     TextView DATE_view;
     String DATE;
@@ -43,13 +42,8 @@ public class Information extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //發布訊息
-                isPost = 1;
-                Intent intent = new Intent();
-                intent.setClass(Information.this, Teacher_class.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("flag", isPost);
-                intent.putExtras(bundle);
-                startActivity(intent);
+
+                Information.this.finish();
             }
         });
         /**********************************

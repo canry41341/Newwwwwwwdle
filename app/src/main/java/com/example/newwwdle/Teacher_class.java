@@ -65,6 +65,8 @@ public class Teacher_class extends AppCompatActivity {
         ss1 = getResources().getStringArray(R.array.class_Name);
         ss2 = getResources().getStringArray(R.array.time);
 
+        myTRecyclerView = findViewById(R.id.teacher_noty);
+
         className = findViewById(R.id.className1);
         atttend_btn = findViewById(R.id.attendence_btn1);
 
@@ -156,11 +158,8 @@ public class Teacher_class extends AppCompatActivity {
 
         getData();
         setData();
-        getNotifyData();
+        showNotify();
 
-        if(flag == 1) {
-            showNotify();
-        }
     }
 
     private void getData() {
@@ -178,14 +177,8 @@ public class Teacher_class extends AppCompatActivity {
         className.setText(data1);
     }
 
-    private void getNotifyData() {
-        Bundle bundle = this.getIntent().getExtras();
-        flag = bundle.getInt("flag");
-        Toast.makeText(Teacher_class.this, "Get Flag Success!!", Toast.LENGTH_SHORT).show();
-    }
-
     private void showNotify() {
-        NotifyAdapter notifyAdapter = new NotifyAdapter(this, ss1, ss2);
+        TnotifyAdapter notifyAdapter = new TnotifyAdapter(Teacher_class.this, ss1, ss2);
         myTRecyclerView.setAdapter(notifyAdapter);
         myTRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
