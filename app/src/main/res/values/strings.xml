@@ -33,12 +33,21 @@
         <item>April 17th</item>
     </string-array>
 
+    <string-array name="student">
+        <item>賴柏瑜</item>
+        <item>王檡翔</item>
+        <item>邱百纓</item>
+        <item>陳軒翊</item>
+        <item>黃聖宇</item>
+        <item>彭鈱禎</item>
+    </string-array>
+
     <string-array name="state">
-        <item>Yes</item>
-        <item>Yes</item>
-        <item>No</item>
-        <item>No</item>
-        <item>Yes</item>
-        <item>Yes</item>
+        <item>已簽到</item>
+        <item>已簽到</item>
+        <item>未簽到</item>
+        <item>未簽到</item>
+        <item>已簽到</item>
+        <item>已簽到</item>
     </string-array>
 </resources>

@@ -125,7 +125,7 @@ public class Teacher_class extends AppCompatActivity {
                     alertDialog.show();
                     start = true;
                 } else {
-                    atttend_btn.setText("點名");
+                    atttend_btn.setText("開啟點名");
                     atttend_btn.setBackgroundDrawable(d);
                     Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
                     start = false;
@@ -151,7 +151,7 @@ public class Teacher_class extends AppCompatActivity {
         noti_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Teacher_class.this, StudentState.class));
+                startActivity(new Intent(Teacher_class.this, TeacherState.class));
                 Toast.makeText(Teacher_class.this, "click success!", Toast.LENGTH_SHORT).show();
             }
         });
