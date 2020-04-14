@@ -2,6 +2,7 @@ package com.example.newwwdle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,7 @@ public class Information extends AppCompatActivity {
     //DATE
     TextView DATE_view;
     String DATE;
+    int isPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,13 @@ public class Information extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //發布訊息
+                isPost = 1;
+                Intent intent = new Intent();
+                intent.setClass(Information.this, Teacher_class.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("flag", isPost);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
         /**********************************
