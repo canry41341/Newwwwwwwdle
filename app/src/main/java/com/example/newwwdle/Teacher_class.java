@@ -30,7 +30,7 @@ public class Teacher_class extends AppCompatActivity {
     private Button atttend_btn, info_btn, noti_btn;
     TextView className;
     String data1, data2;
-    boolean start;
+    boolean start , enable;
     String ss1[], ss2[];
 
     int flag = 0;
@@ -61,6 +61,7 @@ public class Teacher_class extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_class);
         start = false;
+        enable = false;
         final Drawable d = getResources().getDrawable(R.drawable.button);
         ss1 = getResources().getStringArray(R.array.class_Name);
         ss2 = getResources().getStringArray(R.array.time);
@@ -69,7 +70,9 @@ public class Teacher_class extends AppCompatActivity {
 
         className = findViewById(R.id.className1);
         atttend_btn = findViewById(R.id.attendence_btn1);
-
+        info_btn = findViewById(R.id.notification_btn1);
+        noti_btn = findViewById(R.id.status_btn1);//
+        noti_btn.setEnabled(false);
         // GPS parameter setting
         final LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         final String locationProvider = LocationManager.GPS_PROVIDER;   // Or use LocationManager.NETWORK_PROVIDER
@@ -77,6 +80,8 @@ public class Teacher_class extends AppCompatActivity {
         atttend_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) { //老師想要點名所以她按了這個按鈕
+                enable = true;
+                noti_btn.setEnabled(true);
                 if (!start) {
                     atttend_btn.setText("結束點名");
                     atttend_btn.setBackgroundColor(Color.RED);
@@ -136,7 +141,7 @@ public class Teacher_class extends AppCompatActivity {
 
 
         //發布通知
-        info_btn = findViewById(R.id.notification_btn1);
+
         info_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,7 +152,7 @@ public class Teacher_class extends AppCompatActivity {
             }
         });
 
-        noti_btn = findViewById(R.id.status_btn1);// 狀態按鈕
+
         noti_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,6 +160,7 @@ public class Teacher_class extends AppCompatActivity {
                 Toast.makeText(Teacher_class.this, "click success!", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         getData();
         setData();
