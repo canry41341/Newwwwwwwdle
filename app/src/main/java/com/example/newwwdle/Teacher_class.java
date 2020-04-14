@@ -32,6 +32,10 @@ public class Teacher_class extends AppCompatActivity {
     String data1, data2;
     boolean start;
     String ss1[], ss2[];
+
+    int flag = 0;
+    RecyclerView myTRecyclerView;
+
     double teacher_long;    // teacher's longitude (pass to server)
     double teacher_lat;     // teacher's latitude (pass to server)
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;   // for GPS permission checking
@@ -51,7 +55,6 @@ public class Teacher_class extends AppCompatActivity {
         }
     };
 
-    RecyclerView myTRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +133,7 @@ public class Teacher_class extends AppCompatActivity {
         });
 
 
+        //發布通知
         info_btn = findViewById(R.id.notification_btn1);
         info_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,12 +149,18 @@ public class Teacher_class extends AppCompatActivity {
         noti_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startActivity(new Intent(Teacher_class.this, StudentState.class));
                 Toast.makeText(Teacher_class.this, "click success!", Toast.LENGTH_SHORT).show();
             }
         });
 
         getData();
         setData();
+        getNotifyData();
+
+        if(flag == 1) {
+            showNotify();
+        }
     }
 
     private void getData() {
@@ -166,5 +176,17 @@ public class Teacher_class extends AppCompatActivity {
     private void setData() {
 
         className.setText(data1);
+    }
+
+    private void getNotifyData() {
+        Bundle bundle = this.getIntent().getExtras();
+        flag = bundle.getInt("flag");
+        Toast.makeText(Teacher_class.this, "Get Flag Success!!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void showNotify() {
+        NotifyAdapter notifyAdapter = new NotifyAdapter(this, ss1, ss2);
+        myTRecyclerView.setAdapter(notifyAdapter);
+        myTRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 }

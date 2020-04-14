@@ -15,6 +15,7 @@ public class TnotifyAdapter extends RecyclerView.Adapter<TnotifyAdapter.MyViewHo
 
     private String data1[], data2[];
     private Context context;
+    int isPost = 1;
 
     public TnotifyAdapter(Context ct, String s1[], String s2[]) {
         data1 = s1;
@@ -26,9 +27,9 @@ public class TnotifyAdapter extends RecyclerView.Adapter<TnotifyAdapter.MyViewHo
     @Override
     public TnotifyAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.teacher_notify_list, parent, false);
+        View view = inflater.inflate(R.layout.teacher_notify_layout, parent, false);
 
-        return new TnotifyAdapter.MyViewHolder(view );
+        return new TnotifyAdapter.MyViewHolder(view);
     }
 
     @Override
@@ -61,8 +62,8 @@ public class TnotifyAdapter extends RecyclerView.Adapter<TnotifyAdapter.MyViewHo
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            myText1 = itemView.findViewById(R.id.myText1);  //get class name
-            myText2 = itemView.findViewById(R.id.myText2);  //get class time
+            myText1 = itemView.findViewById(R.id.my_Text1);  //get class name
+            myText2 = itemView.findViewById(R.id.my_Text2);  //get class time
             teacherLayout = itemView.findViewById(R.id.teacher_notifyLayout);
         }
     }
