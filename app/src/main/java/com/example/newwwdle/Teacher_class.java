@@ -32,18 +32,26 @@ public class Teacher_class extends AppCompatActivity {
     String data1, data2;
     boolean start;
     String ss1[], ss2[];
+    double teacher_long;    // teacher's longitude (pass to server)
+    double teacher_lat;     // teacher's latitude (pass to server)
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;   // for GPS permission checking
+
+    // Define a listener that responds to location updates
+    LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+    };
 
     RecyclerView myTRecyclerView;
-
-    // GPS settings
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    // GPS parameter setting
-    final LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-    final String locationProvider = LocationManager.GPS_PROVIDER;   // Or use LocationManager.NETWORK_PROVIDER
-    // Teacher's Longitude & Latitude
-    double teacher_longitude;
-    double teacher_latitude;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +64,10 @@ public class Teacher_class extends AppCompatActivity {
 
         className = findViewById(R.id.className1);
         atttend_btn = findViewById(R.id.attendence_btn1);
+
+        // GPS parameter setting
+        final LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        final String locationProvider = LocationManager.GPS_PROVIDER;   // Or use LocationManager.NETWORK_PROVIDER
 
         atttend_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,9 +95,25 @@ public class Teacher_class extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Log.d(TAG, "onClick: " + numberPicker.getValue());
-                            // get Teacher's Location
-                            get_teacher_GPS();
-                            Toast.makeText(Teacher_class.this, "點名開始", Toast.LENGTH_SHORT).show();
+                            // Get teacher's GPS location
+                            // check if Activity has ACCESS_FINE_LOCATION permission
+                            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(Teacher_class.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
+                            } else {
+                                assert mLocationManager != null;
+                                // ask for location updates
+                                mLocationManager.requestLocationUpdates(locationProvider, 1000, 10, locationListener);
+                                // get the last known location
+                                Location lastKnownLocation = mLocationManager.getLastKnownLocation(locationProvider);
+                                if (lastKnownLocation != null) {
+                                    teacher_long = lastKnownLocation.getLongitude();
+                                    teacher_lat = lastKnownLocation.getLatitude();
+                                    Toast.makeText(Teacher_class.this, "經度:" + teacher_long + "\n緯度:" + teacher_lat, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Teacher_class.this, "點名開始", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(Teacher_class.this, "獲取不到位置資訊哦！", Toast.LENGTH_SHORT).show();
+                                }
+                            }
                         }
                     });
                     AlertDialog alertDialog = d.create();
@@ -108,7 +136,6 @@ public class Teacher_class extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent();
                 intent.setClass(Teacher_class.this, Information.class);
-                ;
                 startActivity(intent);
 
             }
@@ -140,43 +167,4 @@ public class Teacher_class extends AppCompatActivity {
 
         className.setText(data1);
     }
-
-    // function to get teacher's GPS
-    private void get_teacher_GPS() {
-        // check if Activity has ACCESS_FINE_LOCATOIN permission
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(Teacher_class.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
-            return;
-        } else {
-            // update location
-            mLocationManager.requestLocationUpdates(locationProvider, 1000, 10, locationListener);
-            // get the last known location
-            Location lastKnownLocation = mLocationManager.getLastKnownLocation(locationProvider);
-            if (lastKnownLocation != null) {
-                // update Teacher's Longitude & Latitude
-                teacher_longitude = lastKnownLocation.getLongitude();
-                teacher_latitude = lastKnownLocation.getLatitude();
-                Toast.makeText(Teacher_class.this, "經度:" + lastKnownLocation.getLongitude() + "\n緯度:" + lastKnownLocation.getLatitude(), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(Teacher_class.this, "獲取不到位置資訊哦！", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    // Define a listener that responds to location updates
-    LocationListener locationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
-        public void onProviderEnabled(String provider) {
-        }
-
-        public void onProviderDisabled(String provider) {
-        }
-    };
-
 }
