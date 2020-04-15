@@ -3,6 +3,7 @@ package com.example.newwwdle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -66,6 +67,7 @@ public class Teacher_class extends AppCompatActivity {
         ss2 = getResources().getStringArray(R.array.time);
 
         myTRecyclerView = findViewById(R.id.teacher_noty);
+        myTRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         className = findViewById(R.id.className1);
         atttend_btn = findViewById(R.id.attendence_btn1);

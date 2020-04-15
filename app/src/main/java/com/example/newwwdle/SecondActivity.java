@@ -2,6 +2,7 @@ package com.example.newwwdle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,6 +59,7 @@ public class SecondActivity extends AppCompatActivity {
         className = findViewById(R.id.className);
 
         myRecyclerView = findViewById(R.id.notifyView);
+        myRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         //後端自己決定要從哪抓s1[]跟s2[]來源
         s1 = getResources().getStringArray(R.array.class_Name);

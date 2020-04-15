@@ -69,7 +69,7 @@
         android:layout_marginStart="15dp"
         android:layout_marginLeft="15dp"
         android:background="@drawable/button"
-        android:text="點名紀錄"
+        android:text="點名\n紀錄"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/attendence_btn"
         app:layout_constraintStart_toEndOf="@+id/attendence_btn"
@@ -77,8 +77,12 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notifyView"
-        android:layout_width="404dp"
+        android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         app:layout_constraintBottom_toTopOf="@+id/attendence_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.428"

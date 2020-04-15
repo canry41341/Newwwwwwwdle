@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="@drawable/gradient"
+
     >
 
 
@@ -28,6 +29,8 @@
         android:layout_height="50dp"
         android:layout_marginTop="60dp"
         android:hint="學號"
+        android:maxLines="1"
+        android:singleLine="true"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="0.354"
@@ -36,6 +39,8 @@
 
     <EditText
         android:id="@+id/edit_id"
+        android:maxLines="1"
+        android:singleLine="true"
         android:layout_width="190dp"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"

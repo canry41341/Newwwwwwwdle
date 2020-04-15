@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        android:windowSoftInputMode="stateHidden|adjustResize"
         <activity android:name=".TeacherState"></activity>
         <activity android:name=".StudentState" />
         <activity android:name=".ShowNotify" />
