@@ -33,7 +33,6 @@ public class Teacher_class extends AppCompatActivity {
     boolean start , enable;
     String ss1[], ss2[];
 
-    int flag = 0;
     RecyclerView myTRecyclerView;
 
     double teacher_long;    // teacher's longitude (pass to server)
