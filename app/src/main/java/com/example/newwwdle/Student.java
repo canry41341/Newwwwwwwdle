@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -80,7 +81,11 @@ public class Student extends AppCompatActivity {
                 approve.setPositiveButton("確定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //Log.d(TAG, "onClick: " + numberPicker.getValue());
+                        //Log.d(TAG, "onClick: " +
+                        // Set login flag to false
+                        SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+                        pref.edit().putBoolean("login_flag", false).commit();
+                        // Go back to Login Window (MainActivity)
                         Intent intent = new Intent();
                         intent.setClass(Student.this, MainActivity.class);;
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

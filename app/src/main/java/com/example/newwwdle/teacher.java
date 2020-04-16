@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -94,6 +95,10 @@ public class teacher extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Log.d(TAG, "onClick: " + numberPicker.getValue());
+                            // Set login flag to false
+                            SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+                            pref.edit().putBoolean("login_flag", false).commit();
+                            // Go back to Login Window (MainActivity)
                             Intent intent = new Intent();
                             intent.setClass(teacher.this, MainActivity.class);;
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
