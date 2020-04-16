@@ -19,6 +19,7 @@
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
+            android:textColor="#37474f"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="日期" />
@@ -66,6 +67,7 @@
         <Button
             android:id="@+id/cacel_post"
             android:layout_width="wrap_content"
+            android:backgroundTint="#fff9c4"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="取消" />
@@ -73,6 +75,7 @@
         <Button
             android:id="@+id/post_buton"
             android:layout_width="wrap_content"
+            android:backgroundTint="#fff9c4"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="發佈" />
@@ -84,6 +87,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="41dp"
         android:text="建立新的文章"
+        android:textColor="#37474f"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/info_Title"
         app:layout_constraintEnd_toEndOf="parent"

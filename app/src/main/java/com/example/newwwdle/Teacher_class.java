@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -85,7 +86,7 @@ public class Teacher_class extends AppCompatActivity {
                 noti_btn.setEnabled(true);
                 if (!start) {
                     atttend_btn.setText("結束點名");
-                    atttend_btn.setBackgroundColor(Color.RED);
+                    atttend_btn.setBackgroundColor(Color.parseColor("#ffca28"));
                     final AlertDialog.Builder d = new AlertDialog.Builder(Teacher_class.this);
                     LayoutInflater inflater = Teacher_class.this.getLayoutInflater();
                     View dialogView = inflater.inflate(R.layout.dialog, null);
