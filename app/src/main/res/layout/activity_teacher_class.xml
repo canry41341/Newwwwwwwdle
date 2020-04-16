@@ -25,15 +25,16 @@
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="374dp"
-        android:layout_height="206dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="215dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintBottom_toTopOf="@+id/className1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
+        android:scaleType="fitXY"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/icon" />
+        app:srcCompat="@drawable/background" />
 
     <Button
         android:id="@+id/attendence_btn1"
@@ -90,5 +91,22 @@
         app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/className1" />
+
+    <TextClock
+        android:id="@+id/textClock"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:format12Hour="kk:mm"
+        android:gravity="center_horizontal"
+        android:textColor="#607d8b"
+        android:textSize="120sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+        app:layout_constraintEnd_toEndOf="@+id/imageView3"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/imageView3"
+        app:layout_constraintTop_toTopOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="0.408" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

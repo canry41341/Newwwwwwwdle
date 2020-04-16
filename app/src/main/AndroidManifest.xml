@@ -4,13 +4,14 @@
 
     <application
         android:allowBackup="true"
+        android:windowSoftInputMode="stateHidden|adjustResize"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:roundIcon="@drawable/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        android:windowSoftInputMode="stateHidden|adjustResize"
-        <activity android:name=".TeacherState"></activity>
+
+        <activity android:name=".TeacherState" />
         <activity android:name=".StudentState" />
         <activity android:name=".ShowNotify" />
         <activity android:name=".Information" />
@@ -31,6 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
     <uses-feature android:name="android.interface.camera" />
     <uses-feature android:name="android.hardware.location.gps" />

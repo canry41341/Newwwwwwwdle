@@ -75,6 +75,8 @@ public class Teacher_class extends AppCompatActivity {
         info_btn = findViewById(R.id.notification_btn1);
         noti_btn = findViewById(R.id.status_btn1);//
         noti_btn.setEnabled(false);
+
+
         // GPS parameter setting
         final LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         final String locationProvider = LocationManager.GPS_PROVIDER;   // Or use LocationManager.NETWORK_PROVIDER
