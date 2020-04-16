@@ -14,7 +14,7 @@
 
         <TextView
             android:id="@+id/classname2"
-            android:layout_width="match_parent"
+            android:layout_width="151dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:text="TextView"
@@ -23,8 +23,9 @@
 
         <TextView
             android:id="@+id/classtimes"
-            android:layout_width="match_parent"
+            android:layout_width="254dp"
             android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:text="TextView"
             android:textColor="#37474f"
