@@ -42,6 +42,7 @@ public class Teacher_class extends AppCompatActivity {
     boolean start , enable;
     CountDownTimer cdt;
     TextClock mycheckclock;
+    public Drawable dd;
     String ss1[], ss2[];
 
     RecyclerView myTRecyclerView;
@@ -74,7 +75,7 @@ public class Teacher_class extends AppCompatActivity {
         enable = false;
         mycheckclock = findViewById(R.id.textClock);
         mycheckclock.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/digital-7mt.ttf"));
-        final Drawable d = getResources().getDrawable(R.drawable.button);
+        dd = getResources().getDrawable(R.drawable.button);
         ss1 = getResources().getStringArray(R.array.class_Name);
         ss2 = getResources().getStringArray(R.array.time);
 
@@ -150,7 +151,11 @@ public class Teacher_class extends AppCompatActivity {
                                         }
                                         @Override
                                         public void onFinish() {
-                                            Toast.makeText(Teacher_class.this, "點名ru,6gj4" , Toast.LENGTH_SHORT).show();
+                                            //database 點名停止
+                                            atttend_btn.setText("開啟點名");
+                                            atttend_btn.setBackgroundDrawable(dd);
+                                            Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
+                                            start = false;
                                         }
                                     };
                                     cdt.start();
@@ -165,10 +170,11 @@ public class Teacher_class extends AppCompatActivity {
                     AlertDialog alertDialog = d.create();
                     alertDialog.show();
                     start = true;
-                } else {
+                } else {//中斷點名
                     cdt.cancel();
+                    //database 點名停止
                     atttend_btn.setText("開啟點名");
-                    atttend_btn.setBackgroundDrawable(d);
+                    atttend_btn.setBackgroundDrawable(dd);
                     Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
                     start = false;
                 }
@@ -186,7 +192,6 @@ public class Teacher_class extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.setClass(Teacher_class.this, Information.class);
                 startActivity(intent);
-
             }
         });
 
