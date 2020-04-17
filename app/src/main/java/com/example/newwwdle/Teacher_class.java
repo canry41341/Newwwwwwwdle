@@ -19,6 +19,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,6 +40,7 @@ public class Teacher_class extends AppCompatActivity {
     TextView className;
     String data1, data2;
     boolean start , enable;
+    CountDownTimer cdt;
     TextClock mycheckclock;
     String ss1[], ss2[];
 
@@ -116,13 +118,14 @@ public class Teacher_class extends AppCompatActivity {
                     /*numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
                         @Override
                         public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+
                             //Log.d(TAG, "onValueChange: ");
                             Toast.makeText(Teacher_class.this, String.valueOf(numberPicker.getValue()), Toast.LENGTH_SHORT).show();
                         }
                     });*/
                     d.setPositiveButton("開始點名", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+                        public void onClick(DialogInterface dialogInterface, final int i) {
                             //Log.d(TAG, "onClick: " + numberPicker.getValue());
                             // Get teacher's GPS location
                             // check if Activity has ACCESS_FINE_LOCATION permission
@@ -139,6 +142,20 @@ public class Teacher_class extends AppCompatActivity {
                                     teacher_lat = lastKnownLocation.getLatitude();
                                     Toast.makeText(Teacher_class.this, "經度:" + teacher_long + "\n緯度:" + teacher_lat, Toast.LENGTH_SHORT).show();
                                     Toast.makeText(Teacher_class.this, "點名開始", Toast.LENGTH_SHORT).show();
+                                    /*************************TIMER**************************/
+                                    cdt = new CountDownTimer(numberPicker.getValue()*6000, 1000) {
+                                        @Override
+                                        public void onTick(long millisUntilFinished) {
+                                            Toast.makeText(Teacher_class.this, Long.toString(millisUntilFinished/1000)+"秒", Toast.LENGTH_SHORT).show();
+                                        }
+                                        @Override
+                                        public void onFinish() {
+                                            Toast.makeText(Teacher_class.this, "點名ru,6gj4" , Toast.LENGTH_SHORT).show();
+                                        }
+                                    };
+                                    cdt.start();
+                                    //databse 點名開始;
+                                    /****************************TIMER***********************/
                                 } else {
                                     Toast.makeText(Teacher_class.this, "獲取不到位置資訊哦！", Toast.LENGTH_SHORT).show();
                                 }
@@ -149,6 +166,7 @@ public class Teacher_class extends AppCompatActivity {
                     alertDialog.show();
                     start = true;
                 } else {
+                    cdt.cancel();
                     atttend_btn.setText("開啟點名");
                     atttend_btn.setBackgroundDrawable(d);
                     Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
@@ -157,6 +175,7 @@ public class Teacher_class extends AppCompatActivity {
 
             }
         });
+
 
 
         //發布通知
@@ -207,4 +226,5 @@ public class Teacher_class extends AppCompatActivity {
         myTRecyclerView.setAdapter(notifyAdapter);
         myTRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
+
 }
