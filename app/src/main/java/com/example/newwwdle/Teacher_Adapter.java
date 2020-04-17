@@ -52,7 +52,7 @@ public class Teacher_Adapter extends RecyclerView.Adapter<Teacher_Adapter.ViewHo
             // 設置txtItem要顯示的內容
             holder.txtItem.setText(mData.get(position));
             holder.classtime.setText(class_time[position]);
-
+/*******************************data1=課程，data2=時間********************************/
             holder.teacher_layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

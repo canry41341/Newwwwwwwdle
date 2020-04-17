@@ -40,7 +40,7 @@ public class teacher extends AppCompatActivity {
     TextView student;
     Button out;
 
-
+/******************************data是課程名稱，time就是時間+教室*******************/
     public String[] data = {"軟體工程", "醫學與健康"};
     public String[] time = {"\n(二) 7-9 資訊系館4202","\n(五) 3-4 繁城講堂"};
 
@@ -68,8 +68,8 @@ public class teacher extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         id = bundle.getString("name");
 
-
-        student.setText("學生姓名"+"\n"+id);
+/***************************抓老師資料再把"老師姓名改掉"  ********************************/
+        student.setText("老師姓名"+"\n"+id);
 
             // 準備資料，塞50個項目到ArrayList裡
         for (int i = 0; i < data.length; i++) {

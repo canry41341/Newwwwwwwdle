@@ -1,6 +1,7 @@
 package com.example.newwwdle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,12 +23,14 @@ public class TeacherState extends AppCompatActivity {
         myTRecyclerView = findViewById(R.id.stateRecyclerView2);
 
         //決定s1跟s2的來源
+        /*************************抓資料**************************************/
         s1 = getResources().getStringArray(R.array.student);
         s2 = getResources().getStringArray(R.array.state);
-
+        /************************************************************************/
         //設定adapter
         Teacher_State_Adapter stateAdapter = new Teacher_State_Adapter(this, s1, s2);
         myTRecyclerView.setAdapter(stateAdapter);
         myTRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        myTRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 }

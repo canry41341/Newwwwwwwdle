@@ -38,7 +38,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         holder.myText1.setText(data1[position]);
         holder.myText2.setText(data2[position]);
-
+/**************************data1 就是課程名稱，以此類推********************/
         //進入你點選的項目
         holder.mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override

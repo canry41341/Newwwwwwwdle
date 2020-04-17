@@ -70,9 +70,10 @@ public class Student extends AppCompatActivity {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         //這裡是看你要從哪去抓 s1[]跟s2[]的資料來源
+        /******************課表、教室、時間(把時間跟教室放在s2)**************/
         s1 = getResources().getStringArray(R.array.class_Name);
         s2 = getResources().getStringArray(R.array.time);
-
+        /*****************************************************************/
         //set log out
         logout_btn = findViewById(R.id.logout_btn);
         logout_btn.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +106,7 @@ public class Student extends AppCompatActivity {
             }
         });
 
-        //設定adapter
+        //設定adapter(課表選單)
         MyAdapter myAdapter = new MyAdapter(this, s1,s2);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

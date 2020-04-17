@@ -49,13 +49,13 @@ public class Information extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //發布訊息
-
+                /***********************傳到databse*********************/
+                title.getText();
+                message.getText();
+                /********************************************************/
                 Information.this.finish();
             }
         });
-        /**********************************
-         * 把訊息跟tiltle裝進~~~~
-         */
 
         DATE_view = (TextView)findViewById(R.id.date);
         SimpleDateFormat dff = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

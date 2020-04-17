@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -21,9 +20,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextClock;
@@ -34,14 +31,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Teacher_class extends AppCompatActivity {
+public class Teacher_class extends AppCompatActivity  {
 
     private Button atttend_btn, info_btn, noti_btn;
     TextView className;
     String data1, data2;
+    AlertDialog alertDialog , alertDialog_noty;
     boolean start , enable;
     CountDownTimer cdt;
     TextClock mycheckclock;
+    Button attend_now_btn , attend_all_btn;
     public Drawable dd;
     String ss1[], ss2[];
 
@@ -73,11 +72,15 @@ public class Teacher_class extends AppCompatActivity {
         setContentView(R.layout.activity_teacher_class);
         start = false;
         enable = false;
+
         mycheckclock = findViewById(R.id.textClock);
         mycheckclock.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/digital-7mt.ttf"));
         dd = getResources().getDrawable(R.drawable.button);
+
+        /*************************抓課程名稱跟時間**************************************/
         ss1 = getResources().getStringArray(R.array.class_Name);
         ss2 = getResources().getStringArray(R.array.time);
+        /*********************************************************************************/
 
         myTRecyclerView = findViewById(R.id.teacher_noty);
         myTRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -86,13 +89,12 @@ public class Teacher_class extends AppCompatActivity {
         atttend_btn = findViewById(R.id.attendence_btn1);
         info_btn = findViewById(R.id.notification_btn1);
 
-        String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+        final String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
 
         //Toast.makeText(Teacher_class.this, currentTime, Toast.LENGTH_SHORT).show();
 
 
         noti_btn = findViewById(R.id.status_btn1);//
-        noti_btn.setEnabled(false);
 
 
         // GPS parameter setting
@@ -103,30 +105,23 @@ public class Teacher_class extends AppCompatActivity {
             @Override
             public void onClick(View view) { //老師想要點名所以她按了這個按鈕
                 enable = true;
-                noti_btn.setEnabled(true);
                 if (!start) {
-                    atttend_btn.setText("結束點名");
-                    atttend_btn.setBackgroundColor(Color.parseColor("#ffca28"));
                     final AlertDialog.Builder d = new AlertDialog.Builder(Teacher_class.this);
                     LayoutInflater inflater = Teacher_class.this.getLayoutInflater();
                     View dialogView = inflater.inflate(R.layout.dialog, null);
                     d.setTitle("設定點名時間");
                     d.setView(dialogView);
+
                     final NumberPicker numberPicker = (NumberPicker) dialogView.findViewById(R.id.dialog_number_picker);
                     numberPicker.setMaxValue(30);
                     numberPicker.setMinValue(10);
                     numberPicker.setWrapSelectorWheel(false);
-                    /*numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                        @Override
-                        public void onValueChange(NumberPicker numberPicker, int i, int i1) {
 
-                            //Log.d(TAG, "onValueChange: ");
-                            Toast.makeText(Teacher_class.this, String.valueOf(numberPicker.getValue()), Toast.LENGTH_SHORT).show();
-                        }
-                    });*/
                     d.setPositiveButton("開始點名", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, final int i) {
+                            atttend_btn.setText("結束點名");
+                            atttend_btn.setBackgroundColor(Color.parseColor("#ffca28"));
                             //Log.d(TAG, "onClick: " + numberPicker.getValue());
                             // Get teacher's GPS location
                             // check if Activity has ACCESS_FINE_LOCATION permission
@@ -167,10 +162,22 @@ public class Teacher_class extends AppCompatActivity {
                             }
                         }
                     });
-                    AlertDialog alertDialog = d.create();
+
+                    d.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            atttend_btn.setText("開啟點名");
+                            atttend_btn.setBackgroundDrawable(dd);
+                            Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
+                            start = false;
+                        }
+                    });
+                    alertDialog = d.create();
                     alertDialog.show();
+                    alertDialog.setCanceledOnTouchOutside(false);
                     start = true;
-                } else {//中斷點名
+
+                } else{//中斷點名
                     cdt.cancel();
                     //database 點名停止
                     atttend_btn.setText("開啟點名");
@@ -178,7 +185,6 @@ public class Teacher_class extends AppCompatActivity {
                     Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
                     start = false;
                 }
-
             }
         });
 
@@ -199,8 +205,40 @@ public class Teacher_class extends AppCompatActivity {
         noti_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Teacher_class.this, TeacherState.class));
-                Toast.makeText(Teacher_class.this, "click success!", Toast.LENGTH_SHORT).show();
+                final AlertDialog.Builder attend_chooser = new AlertDialog.Builder(Teacher_class.this, R.style.CustomDialog);
+                LayoutInflater inflater = Teacher_class.this.getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.noti_dialog, null);
+                attend_chooser.setView(dialogView);
+                alertDialog_noty = attend_chooser.create();
+
+                attend_all_btn = dialogView.findViewById(R.id.attend_all_btn);
+                attend_now_btn = dialogView.findViewById(R.id.attend_curr_btn);
+                /************************沒有點名的話***********/
+                //if(點名 = 0){
+                //attend_now_btn.setEnabled(false);
+                //Toast.makeText(Teacher_class.this, "尚未開啟點名", Toast.LENGTH_SHORT).show();
+                //}
+                /******************************************/
+                attend_all_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(Teacher_class.this, "all click success!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                attend_now_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(Teacher_class.this, TeacherState.class));
+                        Toast.makeText(Teacher_class.this, "now click success!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+                alertDialog_noty.show();
+
+
+
             }
         });
 
