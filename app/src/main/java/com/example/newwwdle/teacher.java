@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -66,6 +67,7 @@ public class teacher extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         id = bundle.getString("name");
+
 
         student.setText("學生姓名"+"\n"+id);
 

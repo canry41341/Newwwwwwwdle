@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,6 +31,12 @@ public class Information extends AppCompatActivity {
         post = findViewById(R.id.post_buton);
         title = findViewById(R.id.info_Title);
         message = findViewById(R.id.info_text);
+
+        //關閉上方status bar
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        );
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override

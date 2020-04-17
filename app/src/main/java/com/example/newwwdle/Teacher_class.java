@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -24,8 +25,13 @@ import android.view.View;
 import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Teacher_class extends AppCompatActivity {
 
@@ -33,6 +39,7 @@ public class Teacher_class extends AppCompatActivity {
     TextView className;
     String data1, data2;
     boolean start , enable;
+    TextClock mycheckclock;
     String ss1[], ss2[];
 
     RecyclerView myTRecyclerView;
@@ -63,6 +70,8 @@ public class Teacher_class extends AppCompatActivity {
         setContentView(R.layout.activity_teacher_class);
         start = false;
         enable = false;
+        mycheckclock = findViewById(R.id.textClock);
+        mycheckclock.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/digital-7mt.ttf"));
         final Drawable d = getResources().getDrawable(R.drawable.button);
         ss1 = getResources().getStringArray(R.array.class_Name);
         ss2 = getResources().getStringArray(R.array.time);
@@ -73,6 +82,12 @@ public class Teacher_class extends AppCompatActivity {
         className = findViewById(R.id.className1);
         atttend_btn = findViewById(R.id.attendence_btn1);
         info_btn = findViewById(R.id.notification_btn1);
+
+        String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+
+        //Toast.makeText(Teacher_class.this, currentTime, Toast.LENGTH_SHORT).show();
+
+
         noti_btn = findViewById(R.id.status_btn1);//
         noti_btn.setEnabled(false);
 
@@ -98,13 +113,13 @@ public class Teacher_class extends AppCompatActivity {
                     numberPicker.setMaxValue(30);
                     numberPicker.setMinValue(10);
                     numberPicker.setWrapSelectorWheel(false);
-                    numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                    /*numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
                         @Override
                         public void onValueChange(NumberPicker numberPicker, int i, int i1) {
                             //Log.d(TAG, "onValueChange: ");
                             Toast.makeText(Teacher_class.this, String.valueOf(numberPicker.getValue()), Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    });*/
                     d.setPositiveButton("開始點名", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {

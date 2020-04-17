@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.WindowManager;
 
 public class StudentState extends AppCompatActivity {
 
@@ -18,6 +19,7 @@ public class StudentState extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_state);
+
 
         myRecyclerView = findViewById(R.id.stateRecyclerView);
 

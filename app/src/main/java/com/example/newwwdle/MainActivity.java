@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         name = findViewById(R.id.edit_name); //username(student ID)
         password = findViewById(R.id.edit_id);//password
         login_btn = findViewById(R.id.login_btn);
+
+
 
         // check if user is already log in
         final SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
