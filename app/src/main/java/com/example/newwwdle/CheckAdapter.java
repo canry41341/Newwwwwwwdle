@@ -2,11 +2,13 @@ package com.example.newwwdle;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,8 +44,11 @@ public class CheckAdapter extends RecyclerView.Adapter<CheckAdapter.MyViewHolder
         holder.checkLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, CheckActivity.class);
-                intent.putExtra("date1", date[position]);
+                Intent intent = new Intent();
+                intent.setClass(context, TeacherState.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("date1",date[position]);
+                intent.putExtras(bundle);
                 context.startActivity(intent);
             }
         });

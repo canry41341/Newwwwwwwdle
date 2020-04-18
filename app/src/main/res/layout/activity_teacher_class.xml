@@ -27,12 +27,11 @@
         android:id="@+id/imageView3"
         android:layout_width="match_parent"
         android:layout_height="215dp"
-        android:layout_marginTop="5dp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/className1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
-        android:scaleType="fitXY"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/background" />
 
@@ -98,7 +97,6 @@
         android:gravity="center_horizontal"
         android:textColor="#FFF"
         android:textSize="120sp"
-        android:textStyle="italic"
         android:format12Hour="HH:mm"
         app:layout_constraintBottom_toBottomOf="@+id/imageView3"
         app:layout_constraintEnd_toEndOf="@+id/imageView3"
