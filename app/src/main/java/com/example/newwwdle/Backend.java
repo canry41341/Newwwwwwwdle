@@ -15,9 +15,9 @@ import java.net.Socket;
 
 public class Backend {
     private Thread thread;                //執行緒
-    private Socket clientSocket;        //客戶端的socket
-    private BufferedWriter bw;            //取得網路輸出串流
-    private BufferedReader br;            //取得網路輸入串流
+    protected Socket clientSocket;        //客戶端的socket
+    protected BufferedWriter bw;            //取得網路輸出串流
+    protected BufferedReader br;            //取得網路輸入串流
     private String tmp;                    //做為接收時的緩存
     private String send_msg = "";
     // Member Data
@@ -45,6 +45,7 @@ public class Backend {
             try{
                 // IP為Server端
                 InetAddress serverIp = InetAddress.getByName("192.168.201.24");
+
                 int serverPort = 8888;
                 clientSocket = new Socket(serverIp, serverPort);
                 //取得網路輸出串流
@@ -158,20 +159,12 @@ public class Backend {
             }
         }
     };
-    /*
+/*
     @Override
     protected void onDestroy() {            //當銷毀該app時
         super.onDestroy();
         try {
-            json_write=new JSONObject();
-            json_write.put("action","離線");    //傳送離線動作給伺服器
-            Log.i("text","onDestroy()="+json_write+"\n");
-            //寫入後送出
-            bw.write(json_write+"\n");
-            bw.flush();
             //關閉輸出入串流後,關閉Socket
-            //最近在小作品有發現close()這3個時,導致while (clientSocket.isConnected())這個迴圈內的區域錯誤
-            //會跳出java.net.SocketException:Socket is closed錯誤,讓catch內的處理再重複執行,如有同樣問題的可以將下面這3行註解掉
             bw.close();
             br.close();
             clientSocket.close();
@@ -182,7 +175,7 @@ public class Backend {
         }
     }
 
-     */
+*/
 
     public String Communication(int key, String input1){
         // add : [IMEI, start/stop, ID , CID, announce, GPS]
@@ -215,7 +208,7 @@ public class Backend {
                 lock();
                 initial();
                 Log.d("OUTPUTLA",result);
-                return "NothingToDo";
+                return result;
 
             case 11: // key = 11, input: CID and get teacher's GPS
                 sendMessage("catch,-1,-1,-1,"+input1+",4",key);
@@ -258,7 +251,7 @@ public class Backend {
                 lock();
                 initial();
                 Log.d("OUTPUTLA",result);
-                return "NothingToDo";
+                return result;
         }
         return "";
     }
@@ -271,7 +264,7 @@ public class Backend {
             lock();
             initial();
             Log.d("OUTPUTLA",result);
-            return "NothingToDo";
+            return result;
         }
         return "";
     }
@@ -284,7 +277,7 @@ public class Backend {
             lock();
             initial();
             Log.d("OUTPUTLA",result);
-            return "NothingToDo";
+            return result;
         }
         return "";
     }
