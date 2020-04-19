@@ -35,4 +35,7 @@ result = backend.Communication(9,"課程名稱","標題","公告")
 
 10. 老師開啟點名功能(Input:key,CID,StartSign,GPS1,GPS2 Output:NothingToDo) --> 回傳值同5
 result = backend.Communication(10,"課程名稱","點名/未點名狀態","GPS1","GPS2") --> 回傳值同5
-(備註:)
+(備註:StartSign傳0為關閉、傳1為開啟)
+
+11. 跟Database要老師點名的GPS位置(Input:key,CID Output:StartSign,GPS1,GPS2) 
+result = backend.Communication(11,"課程名稱")

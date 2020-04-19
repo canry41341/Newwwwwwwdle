@@ -8,12 +8,13 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import db
 
-host = "192.168.0.10"
+host = "192.168.43.9"
 port = 8888
 loop_out = False
 
 def press_event(x):
     global loop_out
+    
     enter = keyboard.KeyboardEvent('down', 28, 'enter')
     if x.event_type == 'down' and x.name == enter.name:
         loop_out = True
@@ -103,14 +104,17 @@ def parse_data(conn,data):
             if(able):
                 print(True)
                 print("give info")
-                name,type_id,cls_name,cls_time = give_info(SID)
+                name,type_id,cls_name,cls_time,cls_pos = give_info(SID)
                 print("name: ",name)
                 print("cls_name: ",cls_name)
                 print("cls_time: ",cls_time)
+                print("cls_pos: ",cls_pos)
                 msg = name+";"+type_id+";"
                 for cs in cls_name:
                     msg += (cs+";")
                 for cs in cls_time:
+                    msg += (cs+";")
+                for cs in cls_pos:
                     msg += (cs+";")
                 print(msg)
                 conn.sendall((msg+"\n").encode())
@@ -166,7 +170,7 @@ def parse_data(conn,data):
                 msg += ";"
             msg += "\n"
             conn.sendall(msg.encode())               
-        elif (CID != "-1" and SID == "-1"):
+        elif (CID != "-1" and SID == "-1" and key == "3"):
             print("get announce")
             announces = get_database("/Courses/"+str(CID)+"/Announces/")
             print("announces: ",announces)
@@ -179,6 +183,22 @@ def parse_data(conn,data):
                 i += 1
             msg += "\n"
             conn.sendall(msg.encode())
+        elif(CID != "-1" and SID == "-1" and key == "4"):
+            print("get sign and GPS")
+            sign = get_database("/Courses/"+str(CID)+"/CourseData/Sign/")
+            gps_0 = get_database("/Courses/"+str(CID)+"/CourseData/GPS/0/")
+            gps_1 = get_database("/Courses/"+str(CID)+"/CourseData/GPS/1/")
+            if(sign == None):
+                print("No Sign\n")
+                conn.sendall("No Sign\n".encode())
+            elif(gps_0 == None or gps_1 == None):
+                print("No GPS\n")
+                conn.sendall("No GPS\n".encode())
+            else:
+                msg = ""
+                msg = msg + str(sign) + "," + str(gps_0) + "," + str(gps_1) + "\n"
+                print(msg)
+                conn.sendall(msg.encode())
         else:
             print("Error format~~~~")
             return -1
@@ -283,11 +303,13 @@ def give_info(SID):
         return -1
     id_class_name = []
     id_class_time = []
+    id_class_pos = []
     for std_cls in id_class.keys():
         id_class_name.append(get_database("/Courses/"+std_cls+"/CourseData/Name"))
         id_class_time.append(get_database("/Courses/"+std_cls+"/CourseData/Time"))
+        id_class_pos.append(get_database("/Courses/"+std_cls+"/CourseData/Position"))
     
-    return name,type_id,id_class_name,id_class_time
+    return name,type_id,id_class_name,id_class_time,id_class_pos
 
 def get_personal_sign(SID,CID):
     if(get_database("Accounts/"+str(SID)+"/") == None):
