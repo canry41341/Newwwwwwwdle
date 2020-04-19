@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     String result = backend.Communication(1,name.getText().toString(),password.getText().toString());//result是取得的整個字串
                     String results[] = result.split(";");//切開
 
-                    int len = (results.length-2)/3;
+                    int len = (results.length-2)/2;
                     course = new String[len];
                     course_time = new String[len];
                     for(int i = 2;i < len+2;i++){//課程名稱
