@@ -41,10 +41,12 @@ public class SecondActivity extends AppCompatActivity {
     TextClock mClock;
     public Drawable dd;
 
+
     private Button atten_btn, notice_btn, state_btn; //分別是 "點名鈕"  "通知鈕"  "顯示點名狀態的按鈕"
     double teacher_long = 999;    // teacher's longitude (get from server, default 999)經度
     double teacher_lat = 999;     // teacher's latitude (get from server, default 999)緯度
     boolean signin_permission = false;   // student sign in permission (get from server)開啟點名
+
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;   // for GPS permission checking
 
     // Define a listener that responds to location updates
@@ -127,18 +129,9 @@ public class SecondActivity extends AppCompatActivity {
             }
         });
 
-        //check通知
-        notice_btn = findViewById(R.id.notification_btn);
-        notice_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //按通知鈕後才會顯示通知
-                String result = backend.Communication(2,"CID1");
-                showNotify(result);
-                Toast.makeText(SecondActivity.this,result,Toast.LENGTH_LONG).show();
-                //Toast.makeText(SecondActivity.this, "click success!", Toast.LENGTH_SHORT).show();
-            }
-        });
+
+
+
 
         //check點名狀態
         state_btn = findViewById(R.id.state_btn);
@@ -151,7 +144,8 @@ public class SecondActivity extends AppCompatActivity {
             }
         });
 
-
+        String result = backend.Communication(2,"CID1");
+        showNotify(result);//show notification recyclerview
         getData(); //接收你從上個activity傳來的參數
         setData(); //顯示你從上個activity傳來的參數
     }

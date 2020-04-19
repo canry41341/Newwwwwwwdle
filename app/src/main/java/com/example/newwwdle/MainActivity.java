@@ -48,26 +48,47 @@ public class MainActivity extends AppCompatActivity {
         final SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
         boolean login_flag = pref.getBoolean("login_flag", false);
         if(login_flag){
-            String ID = pref.getString("ID", "Unknown");
-            String type = pref.getString("type", "Unknown");
+            String ID = pref.getString("ID", "Unknown");        // ID (Account)
+            String PW = pref.getString("password", "Unknown");  // Password
             Intent intent = new Intent();
             Bundle bundle = new Bundle();
-            if(ID.equals("Unknown") | type.equals("Unknown")){
+            if(ID.equals("Unknown") | PW.equals("Unknown")){
                 pref.edit().putBoolean("login_flag", false).commit();   // Login error, set login_flag back to false
             }
             // Already log in as student, jump to student window
-            else if (type.equals("student")){
-                intent.setClass(MainActivity.this, Student.class);
-                bundle.putString("name", ID);    //send ID to next activity
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-            // Already log in as teacher, jump to teacher window
-            else if (type.equals("teacher")){
-                intent.setClass(MainActivity.this, teacher.class);
-                bundle.putString("name", ID);   //send ID to next activity
-                intent.putExtras(bundle);
-                startActivity(intent);
+            else {
+                String result = backend.Communication(1,ID, PW);//result是取得的整個字串
+                String results[] = result.split(";");//切開
+
+                int len = (results.length-2)/2;
+                course = new String[len];
+                course_time = new String[len];
+                for(int i = 2;i < len+2;i++){//課程名稱
+                    course[i-2] = results[i];
+                    Log.d("MSG","hello"+course[i-2]);
+                }
+                for(int j = len+2;j < (len*2)+2;j++){//課程時間
+                    course_time[j-len-2] = results[j];
+                    Log.d("MSG","hello"+course_time[j-len-2]);
+                }
+                String IDtype = results[1];
+                if (IDtype.equals("student")) {
+                    intent.setClass(MainActivity.this, Student.class);
+                    bundle.putString("name", ID);    //send ID to next activity
+                    bundle.putStringArray("s1", course);
+                    bundle.putStringArray("s2", course_time);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+                // Already log in as teacher, jump to teacher window
+                else if (IDtype.equals("teacher")) {
+                    intent.setClass(MainActivity.this, teacher.class);
+                    bundle.putString("name", ID);   //send ID to next activity
+                    bundle.putStringArray("s1", course);
+                    bundle.putStringArray("s2", course_time);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
             }
         }
 
@@ -82,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                     Bundle bundle = new Bundle();
 
                     getDeviceImei();
-                    String IMEI = mDeviceIMEI;//IMEI碼取得
+                    String IMEI = mDeviceIMEI;    //IMEI碼取得
                     String result = backend.Communication(1,name.getText().toString(), password.getText().toString());//result是取得的整個字串
                     String results[] = result.split(";");//切開
 
@@ -102,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     }*/
                     String IDtype = results[1];
                     switch (IDtype) {
-                        case "teacher":
+                        case "student":
                             intent.setClass(MainActivity.this, Student.class);
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
                             bundle.putStringArray("s1",course);
@@ -112,9 +133,9 @@ public class MainActivity extends AppCompatActivity {
                             // Save ID and type, turn login_flag to true
                             pref.edit().putBoolean("login_flag", true)
                                     .putString("ID", name.getText().toString())
-                                    .putString("type", "student").commit();
+                                    .putString("password", password.getText().toString()).commit();
                             break;
-                        case "student":
+                        case "teacher":
                             intent.setClass(MainActivity.this, teacher.class);
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
                             bundle.putStringArray("s1",course);
@@ -124,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                             // Save ID and type, turn login_flag to true
                             pref.edit().putBoolean("login_flag", true)
                                     .putString("ID", name.getText().toString())
-                                    .putString("type", "teacher").commit();
+                                    .putString("password", password.getText().toString()).commit();
                             break;
                     }
                 }
