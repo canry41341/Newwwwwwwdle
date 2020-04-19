@@ -158,8 +158,8 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         });
                                 String login_permission = backend.Communication(4, Token[0]);
-                                Log.d("LoginPermission", login_permission);
-                                if (login_permission.equals("login failed")) {
+                                //Log.d("LoginPermission", login_permission);
+                                if (login_permission.equals("False")) {
                                     Toast.makeText(MainActivity.this, "請過一段時間後再登嘗試登入哦！", Toast.LENGTH_SHORT).show();
                                     break;  // 黑名單ing
                                 }
