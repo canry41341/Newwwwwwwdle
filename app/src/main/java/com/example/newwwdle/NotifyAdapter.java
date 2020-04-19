@@ -16,12 +16,14 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.MyViewHold
     //顯示通知欄的adapter
     String notify[]; //用來存通知本身的內容
     String date[]; //用來存所發通知的時間
+    String MSG[];
     Context context;
 
-    public NotifyAdapter(Context ct, String[] s1, String[] s2) {
+    public NotifyAdapter(Context ct, String[] title/**/, String[] time, String[] msg) {
         context = ct;
-        notify = s1;
-        date = s2;
+        notify = title;// title
+        date = time; // time
+        MSG = msg;
     }
 
     @NonNull
@@ -36,16 +38,17 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
 
-        holder.txt1.setText(notify[position]);
-        holder.txt2.setText(date[position]);
+        holder.txt1.setText(notify[position]); // title
+        holder.txt2.setText(date[position]); // time
 
         //看你是點選哪則通知
         holder.notifyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, ShowNotify.class);
-                intent.putExtra("data1", notify[position]);
-                intent.putExtra("data2", date[position]);
+                intent.putExtra("title", notify[position]);
+                intent.putExtra("time", date[position]);
+                intent.putExtra("msg", MSG[position]);
                 context.startActivity(intent);
             }
         });

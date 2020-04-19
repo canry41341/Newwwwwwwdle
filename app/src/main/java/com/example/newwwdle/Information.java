@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,8 +27,9 @@ public class Information extends AppCompatActivity {
     //DATE
     TextView DATE_view;
     InputMethodManager imm ;
-    String DATE;
+    String DATE,TITLE,MSG;
     int isPost;
+    Backend backend = new Backend();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +53,10 @@ public class Information extends AppCompatActivity {
             public void onClick(View v) {
                 //發布訊息
                 /***********************傳到databse*********************/
-                title.getText();
-                message.getText();
+                TITLE = title.getText().toString();
+                MSG = message.getText().toString();
+                String result = backend.Communication(9,"CID1",TITLE,MSG);
+                Toast.makeText(Information.this,TITLE + "/" + MSG,Toast.LENGTH_LONG).show();
                 /********************************************************/
                 Information.this.finish();
             }

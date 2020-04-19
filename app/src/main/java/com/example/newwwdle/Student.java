@@ -108,7 +108,7 @@ public class Student extends AppCompatActivity {
 
                                         // Log and toast
                                         String msg = getString(R.string.msg_token_fmt, token);
-                                        Log.d("Token", msg);
+                                        Log.d("TokenLogout", msg);
                                         Token[0] = msg;
                                         // Toast.makeText(MainActivity.this, "TOKEN = "+msg, Toast.LENGTH_SHORT).show();
                                     }

@@ -17,12 +17,24 @@ import org.w3c.dom.Text;
 
 public class CheckAdapter extends RecyclerView.Adapter<CheckAdapter.MyViewHolder> {
 
+    String [][] data;
     String [] date; //用來存放要點選的日期
+    String [] student;
+    String [] check;
     Context context;
 
-    public CheckAdapter(Context ct, String []s1) {
+    public CheckAdapter(Context ct, String []s1, String[][] s2) {
         context = ct;
+        data = s2;
         date = s1;
+
+        student = new String[s2[0].length-1];
+        for(int i = 0; i < student.length; i++){
+            System.out.println("aaa: " + s2[0][i+1]);
+            student[i] = s2[0][i+1];
+        }
+
+
     }
 
 
@@ -48,6 +60,14 @@ public class CheckAdapter extends RecyclerView.Adapter<CheckAdapter.MyViewHolder
                 intent.setClass(context, TeacherState.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("date1",date[position]);
+                bundle.putStringArray("student",student);
+                check = new String[student.length];
+                for(int i = 0; i < student.length; i++){
+
+                    check[i] = data[position+1][i+1];
+                }
+                bundle.putStringArray("check",check);
+                bundle.putInt("position",position);
                 intent.putExtras(bundle);
                 context.startActivity(intent);
             }

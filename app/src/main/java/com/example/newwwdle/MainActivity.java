@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +20,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,24 +33,23 @@ import com.google.firebase.iid.InstanceIdResult;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText name, password;
-    private Button login_btn;
-    InputMethodManager imm ;
-    Backend backend = new Backend();
     private static final boolean DBG = Boolean.parseBoolean(null);
     private static final String TAG = "";
     public static String mDeviceIMEI = "0";
-    TelephonyManager mTelephonyManager = null;
     public String course[];
     public String course_time[];
     public String course_place[];
-
+    InputMethodManager imm;
+    Backend backend = new Backend();
+    TelephonyManager mTelephonyManager = null;
+    private ProgressDialog progressDialog;
+    private EditText name, password;
+    private Button login_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
 
         name = findViewById(R.id.edit_name); //username(student ID)
@@ -58,29 +59,29 @@ public class MainActivity extends AppCompatActivity {
         // check if user is already log in
         final SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
         boolean login_flag = pref.getBoolean("login_flag", false);
-        if(login_flag){
+        if (login_flag) {
             String ID = pref.getString("ID", "Unknown");        // ID (Account)
             String PW = pref.getString("password", "Unknown");  // Password
             Intent intent = new Intent();
             Bundle bundle = new Bundle();
-            if(ID.equals("Unknown") | PW.equals("Unknown")){
+            if (ID.equals("Unknown") | PW.equals("Unknown")) {
                 pref.edit().putBoolean("login_flag", false).commit();   // Login error, set login_flag back to false
             }
             // Already log in as student, jump to student window
             else {
-                String result = backend.Communication(1,ID, PW);//result是取得的整個字串
+                String result = backend.Communication(1, ID, PW);//result是取得的整個字串
                 String results[] = result.split(";");//切開
 
-                int len = (results.length-2)/2;
+                int len = (results.length - 2) / 2;
                 course = new String[len];
                 course_time = new String[len];
-                for(int i = 2;i < len+2;i++){//課程名稱
-                    course[i-2] = results[i];
-                    Log.d("MSG","hello"+course[i-2]);
+                for (int i = 2; i < len + 2; i++) {//課程名稱
+                    course[i - 2] = results[i];
+                    Log.d("MSG", "hello" + course[i - 2]);
                 }
-                for(int j = len+2;j < (len*2)+2;j++){//課程時間
-                    course_time[j-len-2] = results[j];
-                    Log.d("MSG","hello"+course_time[j-len-2]);
+                for (int j = len + 2; j < (len * 2) + 2; j++) {//課程時間
+                    course_time[j - len - 2] = results[j];
+                    Log.d("MSG", "hello" + course_time[j - len - 2]);
                 }
                 String IDtype = results[1];
                 if (IDtype.equals("student")) {
@@ -106,17 +107,16 @@ public class MainActivity extends AppCompatActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(name.getText().toString().equals("") | password.getText().toString().equals("")){
+                if (name.getText().toString().equals("") | password.getText().toString().equals("")) {
                     Toast.makeText(MainActivity.this, "請輸入帳號密碼", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     Intent intent = new Intent();
                     Bundle bundle = new Bundle();
 
-                    getDeviceImei();
+                    //getDeviceImei();
                     //String IMEI = mDeviceIMEI;    //IMEI碼取得
-                    String result = backend.Communication(1,name.getText().toString(), password.getText().toString());//result是取得的整個字串
-                    if(result.contains(";")) {
+                    String result = backend.Communication(1, name.getText().toString(), password.getText().toString());//result是取得的整個字串
+                    if (result.contains(";")) {
                         String results[] = result.split(";");//切開
 
                         int len = (results.length - 2) / 2;
@@ -152,14 +152,27 @@ public class MainActivity extends AppCompatActivity {
 
                                                 // Log and toast
                                                 String msg = getString(R.string.msg_token_fmt, token);
-                                                Log.d("Token", msg);
+                                                Log.d("TokenLogin", msg);
                                                 Token[0] = msg;
                                                 // Toast.makeText(MainActivity.this, "TOKEN = "+msg, Toast.LENGTH_SHORT).show();
                                             }
                                         });
-                                if(backend.Communication(4, Token[0]).equals("False")){
+                                String login_permission = backend.Communication(4, Token[0]);
+                                Log.d("LoginPermission", login_permission);
+                                if (login_permission.equals("login failed")) {
+                                    Toast.makeText(MainActivity.this, "請過一段時間後再登嘗試登入哦！", Toast.LENGTH_SHORT).show();
                                     break;  // 黑名單ing
                                 }
+                                /*
+                                //initialize progress dialog
+                                progressDialog = new ProgressDialog(MainActivity.this);
+                                //show Dialog
+                                progressDialog.show();
+                                //set content view
+                                progressDialog.setContentView(R.layout.progress_layout);
+                                //set transparent background
+                                progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);*/
+
                                 intent.setClass(MainActivity.this, Student.class);
                                 bundle.putString("name", name.getText().toString());//send student ID to next activity
                                 bundle.putStringArray("s1", course);
@@ -206,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.dispatchKeyEvent(event);
     }
+
     private boolean isShouldHideInput(View v, MotionEvent event) {
         if (v != null && (v instanceof EditText)) {
             int[] leftTop = {0, 0};
@@ -224,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -242,12 +257,13 @@ public class MainActivity extends AppCompatActivity {
         }
         return onTouchEvent(ev);
     }
+
     private void getDeviceImei() {
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         try {
-            if( Build.VERSION.SDK_INT >= 26 ) {
+            if (Build.VERSION.SDK_INT >= 26) {
                 mDeviceIMEI = mTelephonyManager.getImei();
-            }else {
+            } else {
                 mDeviceIMEI = mTelephonyManager.getDeviceId();
             }
         } catch (SecurityException e) {
@@ -256,6 +272,27 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "SecurityException e");
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {            //當銷毀該app時
+        super.onDestroy();
+        try {
+            backend.bw.flush();
+            backend.bw.close();
+            backend.br.close();
+            backend.clientSocket.close();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            Log.e("text", "onDestroy()=" + e.toString());
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //Dismiss Progress Dialog
+        progressDialog.dismiss();
     }
 
 }
