@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -27,14 +28,16 @@ public class SecondActivity extends AppCompatActivity {
     String data1, data2; //data1用來存去你點哪個課程名稱
     //data2用來存你所點課程的上課時間
 
-    String s1[], s2[]; //s1[]顯示課程名稱  s2[]顯示上課時間
+    String s1[], s2[], s3[]; //s1[]顯示課程名稱  s2[]顯示上課時間
 
     RecyclerView myRecyclerView;
 
+    Backend backend = new Backend();
+
     private Button atten_btn, notice_btn, state_btn; //分別是 "點名鈕"  "通知鈕"  "顯示點名狀態的按鈕"
-    double teacher_long = 999;    // teacher's longitude (get from server, default 999)
-    double teacher_lat = 999;     // teacher's latitude (get from server, default 999)
-    boolean signin_permission = false;   // student sign in permission (get from server)
+    double teacher_long = 999;    // teacher's longitude (get from server, default 999)經度
+    double teacher_lat = 999;     // teacher's latitude (get from server, default 999)緯度
+    boolean signin_permission = false;   // student sign in permission (get from server)開啟點名
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;   // for GPS permission checking
 
     // Define a listener that responds to location updates
@@ -52,6 +55,9 @@ public class SecondActivity extends AppCompatActivity {
         }
     };
 
+    //test
+    TextView test;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,8 +70,8 @@ public class SecondActivity extends AppCompatActivity {
         myRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         //後端自己決定要從哪抓s1[]跟s2[]來源
-        s1 = getResources().getStringArray(R.array.class_Name);
-        s2 = getResources().getStringArray(R.array.time);
+        //s1 = getResources().getStringArray(R.array.class_Name);
+        //  s2 = getResources().getStringArray(R.array.time);
 
         // GPS parameter setting
         final LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -108,8 +114,10 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //按通知鈕後才會顯示通知
-                showNotify();
-                Toast.makeText(SecondActivity.this, "click success!", Toast.LENGTH_SHORT).show();
+                String result = backend.Communication(2,"CID1");
+                showNotify(result);
+                Toast.makeText(SecondActivity.this,result,Toast.LENGTH_LONG).show();
+                //Toast.makeText(SecondActivity.this, "click success!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -119,6 +127,7 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //進到下一個activity來檢視點名情況
+
                 startActivity(new Intent(SecondActivity.this, StudentState.class));
             }
         });
@@ -142,9 +151,23 @@ public class SecondActivity extends AppCompatActivity {
         className.setText(data1);
     }
 
-    private void showNotify() {
+    private void showNotify(String result) {
+        //split string
+
+        String[] tokens = result.split(";");
+        s1 = new String[tokens.length]; //title
+        s2 = new String[tokens.length]; //time
+        s3 = new String[tokens.length]; //msg
+        for(int i=0; i < tokens.length; i++){
+            String[] announces_split = tokens[i].split("/");
+            s1[i] = announces_split[3];
+            String[] temp = announces_split[2].substring(5).split("m");
+            s2[i] = "日期 : " + temp[0] + "-" + temp[1].substring(0,temp[1].length()-1);
+            s3[i] = announces_split[1];
+        }
+
         //設定adapter
-        NotifyAdapter notifyAdapter = new NotifyAdapter(this, s1, s2);
+        NotifyAdapter notifyAdapter = new NotifyAdapter(this, s1, s2, s3);
         myRecyclerView.setAdapter(notifyAdapter);
         myRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

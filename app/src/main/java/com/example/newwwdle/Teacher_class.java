@@ -65,6 +65,9 @@ public class Teacher_class extends AppCompatActivity  {
         }
     };
 
+    //
+    Backend backend = new Backend();
+    //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,14 +150,19 @@ public class Teacher_class extends AppCompatActivity  {
                                         @Override
                                         public void onFinish() {
                                             //database 點名停止
+                                            String result = backend.Communication(10,"CID1",0,teacher_long,teacher_lat);
+                                            Toast.makeText(Teacher_class.this, result, Toast.LENGTH_SHORT).show();
                                             atttend_btn.setText("開啟點名");
                                             atttend_btn.setBackgroundDrawable(dd);
-                                            Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
                                             start = false;
                                         }
                                     };
                                     cdt.start();
                                     //databse 點名開始;
+                                    //
+                                    String result = backend.Communication(10,"CID1",1,teacher_long,teacher_lat);
+                                    Toast.makeText(Teacher_class.this, result, Toast.LENGTH_SHORT).show();
                                     /****************************TIMER***********************/
                                 } else {
                                     Toast.makeText(Teacher_class.this, "獲取不到位置資訊哦！", Toast.LENGTH_SHORT).show();
@@ -178,6 +186,8 @@ public class Teacher_class extends AppCompatActivity  {
                     start = true;
 
                 } else{//中斷點名
+                    String result = backend.Communication(10,"CID1",0,teacher_long,teacher_lat);
+                    Toast.makeText(Teacher_class.this, result, Toast.LENGTH_SHORT).show();
                     cdt.cancel();
                     //database 點名停止
                     atttend_btn.setText("開啟點名");
