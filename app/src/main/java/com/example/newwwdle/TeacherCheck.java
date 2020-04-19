@@ -22,6 +22,6 @@ public class TeacherCheck extends AppCompatActivity {
 
         CheckAdapter checkAdapter = new CheckAdapter(this, date);
         mRecyclerview.setAdapter(checkAdapter);
-        mRecyclerview.setLayoutManager(new GridLayoutManager(this, 3));
+        mRecyclerview.setLayoutManager(new GridLayoutManager(this, 2));
     }
 }
