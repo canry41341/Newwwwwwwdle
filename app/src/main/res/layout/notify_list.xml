@@ -10,14 +10,15 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
+        android:background="#e0f7fa"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:background="#e0f2f1"
-            android:layout_height="70dp">
+            android:layout_height="60dp"
+            android:background="#e0f2f1">
 
             <TextView
                 android:id="@+id/dateView"
@@ -38,11 +39,11 @@
                 android:id="@+id/textView2"
                 android:layout_width="100dp"
                 android:layout_height="15dp"
-                android:textColor="#37474f"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="40dp"
                 android:text="time"
+                android:textColor="#37474f"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

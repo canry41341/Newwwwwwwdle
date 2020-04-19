@@ -230,7 +230,12 @@ public class Teacher_class extends AppCompatActivity  {
                 attend_now_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(Teacher_class.this, TeacherState.class));
+                        Intent intt = new Intent();
+                        intt.setClass(Teacher_class.this, TeacherState.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("date1","沒有");
+                        intt.putExtras(bundle);
+                        startActivity(intt);
                         Toast.makeText(Teacher_class.this, "now click success!", Toast.LENGTH_SHORT).show();
                     }
                 });
