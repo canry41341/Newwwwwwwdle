@@ -13,14 +13,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class TnotifyAdapter extends RecyclerView.Adapter<TnotifyAdapter.MyViewHolder> {
 
-    private String data1[], data2[];
+    String notify[]; //用來存通知本身的內容
+    String date[]; //用來存所發通知的時間
+    String MSG[];
     private Context context;
     int isPost = 1;
 
-    public TnotifyAdapter(Context ct, String s1[], String s2[]) {
-        data1 = s1;
-        data2 = s2;
+    public TnotifyAdapter(Context ct, String title[], String time[], String msg[]) {
         context = ct;
+        notify = title;// title
+        date = time; // time
+        MSG = msg;
     }
 
     @NonNull
@@ -35,16 +38,17 @@ public class TnotifyAdapter extends RecyclerView.Adapter<TnotifyAdapter.MyViewHo
     @Override
     public void onBindViewHolder(@NonNull TnotifyAdapter.MyViewHolder holder,final int position) {
 
-        holder.myText1.setText(data1[position]);
-        holder.myText2.setText(data2[position]);
+        holder.myText1.setText(notify[position]);
+        holder.myText2.setText(date[position]);
 
         //進入你點選的項目
         holder.teacherLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, ShowNotify.class);
-                intent.putExtra("data1", data1[position]);
-                intent.putExtra("data2", data2[position]);
+                intent.putExtra("title", notify[position]);
+                intent.putExtra("time", date[position]);
+                intent.putExtra("msg", MSG[position]);
                 context.startActivity(intent);
             }
         });
@@ -52,7 +56,7 @@ public class TnotifyAdapter extends RecyclerView.Adapter<TnotifyAdapter.MyViewHo
 
     @Override
     public int getItemCount() {
-        return data1.length;
+        return notify.length;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{

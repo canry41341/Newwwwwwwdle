@@ -46,8 +46,9 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.MyViewHold
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, ShowNotify.class);
-                intent.putExtra("data1", notify[position]);
-                intent.putExtra("data2", date[position]);
+                intent.putExtra("title", notify[position]);
+                intent.putExtra("time", date[position]);
+                intent.putExtra("msg", MSG[position]);
                 context.startActivity(intent);
             }
         });

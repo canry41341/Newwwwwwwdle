@@ -101,6 +101,13 @@ public class SecondActivity extends AppCompatActivity {
                 } else {
                     mLocationManager.requestLocationUpdates(locationProvider, 1000, 10, locationListener);
                     Location lastKnownLocation = mLocationManager.getLastKnownLocation(locationProvider);
+                    String result = backend.Communication(11,"CID1");
+                    String[] tokens = result.split(",");
+                    signin_permission = Boolean.parseBoolean(tokens[0].toLowerCase());
+                    teacher_lat = Double.parseDouble(tokens[1]);
+                    teacher_long = Double.parseDouble(tokens[2]);
+
+                    //Toast.makeText(SecondActivity.this,String.valueOf(signin_permission) + "/" + String.valueOf(teacher_lat) + "/" + String.valueOf(teacher_long),Toast.LENGTH_LONG).show();
                     if (signin_permission) {
                         if (lastKnownLocation != null) {
                             float[] distance = new float[1];
@@ -173,8 +180,10 @@ public class SecondActivity extends AppCompatActivity {
         for(int i=0; i < tokens.length; i++){
             String[] announces_split = tokens[i].split("/");
             s1[i] = announces_split[3];
-            String[] temp = announces_split[2].substring(5).split("m");
-            s2[i] = "日期 : " + temp[0] + "-" + temp[1].substring(0,temp[1].length()-1);
+            String temp = announces_split[2].substring(5);
+            System.out.println(temp);
+            String[] month = temp.split("m");
+            s2[i] = month[0] + "-" + month[1].substring(0,month[1].length()-1);
             s3[i] = announces_split[1];
         }
 

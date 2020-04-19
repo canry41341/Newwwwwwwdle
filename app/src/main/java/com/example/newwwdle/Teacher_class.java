@@ -43,7 +43,7 @@ public class Teacher_class extends AppCompatActivity  {
     int minutes , seconds;
     Button attend_now_btn , attend_all_btn;
     public Drawable dd;
-    String ss1[], ss2[];
+    String ss1[], ss2[], ss3[];
 
     RecyclerView myTRecyclerView;
 
@@ -88,8 +88,20 @@ public class Teacher_class extends AppCompatActivity  {
         count_down_time.setTextColor(Color.RED);
 
         /*************************抓課程名稱跟時間**************************************/
-        ss1 = getResources().getStringArray(R.array.class_Name);
-        ss2 = getResources().getStringArray(R.array.time);
+        String result = backend.Communication(2,"CID1");
+        String[] tokens = result.split(";");
+        ss1 = new String[tokens.length]; //title
+        ss2 = new String[tokens.length]; //time
+        ss3 = new String[tokens.length]; //msg
+        for(int i=0; i < tokens.length; i++){
+            String[] announces_split = tokens[i].split("/");
+            ss1[i] = announces_split[3];
+            String temp = announces_split[2].substring(5);
+            //System.out.println(temp);
+            String[] month = temp.split("m");
+            ss2[i] = month[0] + "-" + month[1].substring(0,month[1].length()-1);
+            ss3[i] = announces_split[1];
+        }
         /*********************************************************************************/
 
         myTRecyclerView = findViewById(R.id.teacher_noty);
@@ -162,7 +174,7 @@ public class Teacher_class extends AppCompatActivity  {
                                         public void onFinish() {
                                             //database 點名停止
                                             String result = backend.Communication(10,"CID1",0,teacher_long,teacher_lat);
-                                            Toast.makeText(Teacher_class.this, result, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(Teacher_class.this,"cancel", Toast.LENGTH_SHORT).show();
                                             mycheckclock.setVisibility(View.VISIBLE);
                                             count_down_time.setVisibility(View.INVISIBLE);
                                             atttend_btn.setText("開啟點名");
@@ -173,9 +185,8 @@ public class Teacher_class extends AppCompatActivity  {
                                     };
                                     cdt.start();
                                     //databse 點名開始;
-                                    //
                                     String result = backend.Communication(10,"CID1",1,teacher_long,teacher_lat);
-                                    Toast.makeText(Teacher_class.this, result, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Teacher_class.this, "start sign", Toast.LENGTH_SHORT).show();
                                     count_down_time.setVisibility(View.VISIBLE);
                                     mycheckclock.setVisibility(View.INVISIBLE);
                                     /****************************TIMER***********************/
@@ -202,7 +213,7 @@ public class Teacher_class extends AppCompatActivity  {
 
                 } else{//中斷點名
                     String result = backend.Communication(10,"CID1",0,teacher_long,teacher_lat);
-                    Toast.makeText(Teacher_class.this, result, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Teacher_class.this, "cancel", Toast.LENGTH_SHORT).show();
                     cdt.cancel();
                     count_down_time.setVisibility(View.INVISIBLE);
                     mycheckclock.setVisibility(View.VISIBLE);
@@ -298,7 +309,7 @@ public class Teacher_class extends AppCompatActivity  {
     }
 
     private void showNotify() {
-        TnotifyAdapter notifyAdapter = new TnotifyAdapter(Teacher_class.this, ss1, ss2);
+        TnotifyAdapter notifyAdapter = new TnotifyAdapter(Teacher_class.this, ss1, ss2, ss3);
         myTRecyclerView.setAdapter(notifyAdapter);
         myTRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

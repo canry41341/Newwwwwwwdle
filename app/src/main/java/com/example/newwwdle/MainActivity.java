@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     }*/
                     String IDtype = results[1];
                     switch (IDtype) {
-                        case "student":
+                        case "teacher":
                             intent.setClass(MainActivity.this, Student.class);
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
                             bundle.putStringArray("s1",course);
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                                     .putString("ID", name.getText().toString())
                                     .putString("type", "student").commit();
                             break;
-                        case "teacher":
+                        case "student":
                             intent.setClass(MainActivity.this, teacher.class);
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
                             bundle.putStringArray("s1",course);
