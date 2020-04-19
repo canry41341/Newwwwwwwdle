@@ -8,7 +8,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import db
 
-host = "192.168.43.9"
+host = "192.168.0.10"
 port = 8888
 loop_out = False
 
