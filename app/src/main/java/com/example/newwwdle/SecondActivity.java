@@ -39,7 +39,7 @@ public class SecondActivity extends AppCompatActivity {
     TextClock mClock;
     public Drawable dd;
 
-    private Button atten_btn, notice_btn, state_btn; //分別是 "點名鈕"  "通知鈕"  "顯示點名狀態的按鈕"
+    private Button atten_btn, state_btn; //分別是 "點名鈕" "顯示點名狀態的按鈕"
     double teacher_long = 999;    // teacher's longitude (get from server, default 999)
     double teacher_lat = 999;     // teacher's latitude (get from server, default 999)
     boolean signin_permission = false;   // student sign in permission (get from server)
@@ -115,17 +115,6 @@ public class SecondActivity extends AppCompatActivity {
             }
         });
 
-        //check通知
-        notice_btn = findViewById(R.id.notification_btn);
-        notice_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //按通知鈕後才會顯示通知
-                showNotify();
-                Toast.makeText(SecondActivity.this, "click success!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         //check點名狀態
         state_btn = findViewById(R.id.state_btn);
         state_btn.setOnClickListener(new View.OnClickListener() {
@@ -137,6 +126,7 @@ public class SecondActivity extends AppCompatActivity {
         });
 
 
+        showNotify(); //show notification recyclerview
         getData(); //接收你從上個activity傳來的參數
         setData(); //顯示你從上個activity傳來的參數
     }
