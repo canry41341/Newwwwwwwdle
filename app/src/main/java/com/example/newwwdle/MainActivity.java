@@ -1,7 +1,9 @@
 package com.example.newwwdle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +21,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApiNotAvailableException;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
+
 public class MainActivity extends AppCompatActivity {
 
     private EditText name, password;
@@ -33,16 +43,17 @@ public class MainActivity extends AppCompatActivity {
     public String course_time[];
     public String course_place[];
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         name = findViewById(R.id.edit_name); //username(student ID)
         password = findViewById(R.id.edit_id);//password
         login_btn = findViewById(R.id.login_btn);
-
-
 
         // check if user is already log in
         final SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
@@ -103,50 +114,79 @@ public class MainActivity extends AppCompatActivity {
                     Bundle bundle = new Bundle();
 
                     getDeviceImei();
-                    String IMEI = mDeviceIMEI;    //IMEI碼取得
+                    //String IMEI = mDeviceIMEI;    //IMEI碼取得
                     String result = backend.Communication(1,name.getText().toString(), password.getText().toString());//result是取得的整個字串
-                    String results[] = result.split(";");//切開
+                    if(result.contains(";")) {
+                        String results[] = result.split(";");//切開
 
-                    int len = (results.length-2)/2;
-                    course = new String[len];
-                    course_time = new String[len];
-                    for(int i = 2;i < len+2;i++){//課程名稱
-                        course[i-2] = results[i];
-                        Log.d("MSG","hello"+course[i-2]);
-                    }
-                    for(int j = len+2;j < (len*2)+2;j++){//課程時間
-                        course_time[j-len-2] = results[j];
-                        Log.d("MSG","hello"+course_time[j-len-2]);
-                    }
+                        int len = (results.length - 2) / 2;
+                        course = new String[len];
+                        course_time = new String[len];
+                        for (int i = 2; i < len + 2; i++) {//課程名稱
+                            course[i - 2] = results[i];
+                            Log.d("MSG", "hello" + course[i - 2]);
+                        }
+                        for (int j = len + 2; j < (len * 2) + 2; j++) {//課程時間
+                            course_time[j - len - 2] = results[j];
+                            Log.d("MSG", "hello" + course_time[j - len - 2]);
+                        }
                     /*for(int k = (len*2)+2;k < results.length;k++){//課程地點
                         course_place[k-len*2-2] = results[k];
                     }*/
-                    String IDtype = results[1];
-                    switch (IDtype) {
-                        case "student":
-                            intent.setClass(MainActivity.this, Student.class);
-                            bundle.putString("name", name.getText().toString());//send student ID to next activity
-                            bundle.putStringArray("s1",course);
-                            bundle.putStringArray("s2",course_time);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                            // Save ID and type, turn login_flag to true
-                            pref.edit().putBoolean("login_flag", true)
-                                    .putString("ID", name.getText().toString())
-                                    .putString("password", password.getText().toString()).commit();
-                            break;
-                        case "teacher":
-                            intent.setClass(MainActivity.this, teacher.class);
-                            bundle.putString("name", name.getText().toString());//send student ID to next activity
-                            bundle.putStringArray("s1",course);
-                            bundle.putStringArray("s2",course_time);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                            // Save ID and type, turn login_flag to true
-                            pref.edit().putBoolean("login_flag", true)
-                                    .putString("ID", name.getText().toString())
-                                    .putString("password", password.getText().toString()).commit();
-                            break;
+                        String IDtype = results[1];
+                        switch (IDtype) {
+                            case "student":
+                                // Get token
+                                final String[] Token = new String[1];
+                                FirebaseInstanceId.getInstance().getInstanceId()
+                                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                if (!task.isSuccessful()) {
+                                                    Log.w(TAG, "getInstanceId failed", task.getException());
+                                                    return;
+                                                }
+
+                                                // Get new Instance ID token
+                                                String token = task.getResult().getToken();
+
+                                                // Log and toast
+                                                String msg = getString(R.string.msg_token_fmt, token);
+                                                Log.d("Token", msg);
+                                                Token[0] = msg;
+                                                // Toast.makeText(MainActivity.this, "TOKEN = "+msg, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                if(backend.Communication(4, Token[0]).equals("False")){
+                                    break;  // 黑名單ing
+                                }
+                                intent.setClass(MainActivity.this, Student.class);
+                                bundle.putString("name", name.getText().toString());//send student ID to next activity
+                                bundle.putStringArray("s1", course);
+                                bundle.putStringArray("s2", course_time);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+                                // Save ID and type, turn login_flag to true
+                                pref.edit().putBoolean("login_flag", true)
+                                        .putString("ID", name.getText().toString())
+                                        .putString("password", password.getText().toString()).commit();
+                                break;
+                            case "teacher":
+                                intent.setClass(MainActivity.this, teacher.class);
+                                bundle.putString("name", name.getText().toString());//send student ID to next activity
+                                bundle.putStringArray("s1", course);
+                                bundle.putStringArray("s2", course_time);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+                                // Save ID and type, turn login_flag to true
+                                pref.edit().putBoolean("login_flag", true)
+                                        .putString("ID", name.getText().toString())
+                                        .putString("password", password.getText().toString()).commit();
+                                break;
+                        }
+                    }
+                    else{
+                        Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
                     }
                 }
             }

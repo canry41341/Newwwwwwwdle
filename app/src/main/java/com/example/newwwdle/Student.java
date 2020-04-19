@@ -1,5 +1,6 @@
 package com.example.newwwdle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -22,6 +23,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
 
@@ -86,6 +92,31 @@ public class Student extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //Log.d(TAG, "onClick: " +
+                        // Get token
+                        final String[] Token = new String[1];
+                        FirebaseInstanceId.getInstance().getInstanceId()
+                                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                        if (!task.isSuccessful()) {
+                                            //Log.w(TAG, "getInstanceId failed", task.getException());
+                                            return;
+                                        }
+
+                                        // Get new Instance ID token
+                                        String token = task.getResult().getToken();
+
+                                        // Log and toast
+                                        String msg = getString(R.string.msg_token_fmt, token);
+                                        Log.d("Token", msg);
+                                        Token[0] = msg;
+                                        // Toast.makeText(MainActivity.this, "TOKEN = "+msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                        // 加入黑名單
+                        Backend backend = new Backend();
+                        backend.Communication(5, Token[0]);
+
                         // Set login flag to false
                         SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
                         pref.edit().putBoolean("login_flag", false).commit();
