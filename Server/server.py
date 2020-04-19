@@ -296,7 +296,7 @@ def add_announce(CID,Title,Announce):
         token = get_database("Accounts/"+str(std)+"/AccountData/Devicetoken/")
         if(token != None or token != -1):
             register_ids.append(token)
-    push_server.notify_multiple_devices(registration_ids=register_ids,message_title=Title,message_body=Announce)
+    push_server.notify_multiple_devices(registration_ids=register_ids,message_title=CID+","+Title,message_body=Announce)
   
     return True
 

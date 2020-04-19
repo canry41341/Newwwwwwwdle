@@ -30,7 +30,10 @@ public class MyFirebaseService extends FirebaseMessagingService {
         if(remoteMessage != null){
             Log.i("MyFirebaseService", "title"+remoteMessage.getNotification().getTitle());
             Log.i("MyFirebaseService", "body"+remoteMessage.getNotification().getBody());
-            SendNotification("1", remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+            String s = remoteMessage.getNotification().getTitle();
+            String CID = s.split(",")[0];
+            String title = s.split(",")[1];
+            SendNotification(CID, title, remoteMessage.getNotification().getBody());
         }
         // close DB
         dbHelper.close();
