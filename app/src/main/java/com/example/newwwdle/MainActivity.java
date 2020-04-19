@@ -100,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
                     /*for(int k = (len*2)+2;k < results.length;k++){//課程地點
                         course_place[k-len*2-2] = results[k];
                     }*/
-
-                    switch (password.getText().toString()) {
-                        case "s":
+                    String IDtype = results[1];
+                    switch (IDtype) {
+                        case "student":
                             intent.setClass(MainActivity.this, Student.class);
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
                             bundle.putStringArray("s1",course);
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                                     .putString("ID", name.getText().toString())
                                     .putString("type", "student").commit();
                             break;
-                        case "t":
+                        case "teacher":
                             intent.setClass(MainActivity.this, teacher.class);
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
                             bundle.putStringArray("s1",course);
