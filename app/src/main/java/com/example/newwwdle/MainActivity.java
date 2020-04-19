@@ -217,5 +217,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    @Override
+    protected void onDestroy() {            //當銷毀該app時
+        super.onDestroy();
+        try {
+            backend.bw.flush();
+            backend.bw.close();
+            backend.br.close();
+            backend.clientSocket.close();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            Log.e("text","onDestroy()="+e.toString());
+        }
+    }
 
 }
