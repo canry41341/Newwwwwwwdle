@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -35,7 +36,8 @@ public class Teacher_class extends AppCompatActivity  {
 
     private Button atttend_btn, info_btn, noti_btn;
     TextView className , count_down_time;
-    String data1, data2;
+
+    String data1, data2, data3;
     AlertDialog alertDialog , alertDialog_noty;
     boolean start , enable;
     CountDownTimer cdt;
@@ -44,6 +46,8 @@ public class Teacher_class extends AppCompatActivity  {
     Button attend_now_btn , attend_all_btn;
     public Drawable dd;
     String ss1[], ss2[], ss3[];
+    String[] date;
+    String[][] student;
 
     RecyclerView myTRecyclerView;
 
@@ -74,6 +78,14 @@ public class Teacher_class extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_class);
+
+
+
+        className = findViewById(R.id.className1);
+        getData();
+        setData();
+
+
         start = false;
         enable = false;
         minutes = 0;
@@ -87,8 +99,9 @@ public class Teacher_class extends AppCompatActivity  {
         count_down_time.setVisibility(View.INVISIBLE);
         count_down_time.setTextColor(Color.RED);
 
-        /*************************抓課程名稱跟時間**************************************/
-        String result = backend.Communication(2,"CID1");
+        /*************************抓公告**************************************/
+        String result = backend.Communication(2,data3);
+        System.out.println("aaa: " + result);
         String[] tokens = result.split(";");
         ss1 = new String[tokens.length]; //title
         ss2 = new String[tokens.length]; //time
@@ -102,12 +115,13 @@ public class Teacher_class extends AppCompatActivity  {
             ss2[i] = month[0] + "-" + month[1].substring(0,month[1].length()-1);
             ss3[i] = announces_split[1];
         }
+
         /*********************************************************************************/
 
         myTRecyclerView = findViewById(R.id.teacher_noty);
         myTRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        className = findViewById(R.id.className1);
+
         atttend_btn = findViewById(R.id.attendence_btn1);
         info_btn = findViewById(R.id.notification_btn1);
 
@@ -142,8 +156,7 @@ public class Teacher_class extends AppCompatActivity  {
                     d.setPositiveButton("開始點名", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, final int i) {
-                            atttend_btn.setText("結束點名");
-                            atttend_btn.setBackgroundColor(Color.parseColor("#ffca28"));
+
                             //Log.d(TAG, "onClick: " + numberPicker.getValue());
                             // Get teacher's GPS location
                             // check if Activity has ACCESS_FINE_LOCATION permission
@@ -156,6 +169,9 @@ public class Teacher_class extends AppCompatActivity  {
                                 // get the last known location
                                 Location lastKnownLocation = mLocationManager.getLastKnownLocation(locationProvider);
                                 if (lastKnownLocation != null) {
+                                    atttend_btn.setText("結束點名");
+                                    atttend_btn.setBackgroundColor(Color.parseColor("#ffca28"));
+                                    start = true;
                                     teacher_long = lastKnownLocation.getLongitude();
                                     teacher_lat = lastKnownLocation.getLatitude();
                                     Toast.makeText(Teacher_class.this, "經度:" + teacher_long + "\n緯度:" + teacher_lat, Toast.LENGTH_SHORT).show();
@@ -173,7 +189,7 @@ public class Teacher_class extends AppCompatActivity  {
                                         @Override
                                         public void onFinish() {
                                             //database 點名停止
-                                            String result = backend.Communication(10,"CID1",0,teacher_long,teacher_lat);
+                                            String result = backend.Communication(10,data3,0,teacher_long,teacher_lat);
                                             Toast.makeText(Teacher_class.this,"cancel", Toast.LENGTH_SHORT).show();
                                             mycheckclock.setVisibility(View.VISIBLE);
                                             count_down_time.setVisibility(View.INVISIBLE);
@@ -185,7 +201,7 @@ public class Teacher_class extends AppCompatActivity  {
                                     };
                                     cdt.start();
                                     //databse 點名開始;
-                                    String result = backend.Communication(10,"CID1",1,teacher_long,teacher_lat);
+                                    String result = backend.Communication(10,data3,1,teacher_long,teacher_lat);
                                     Toast.makeText(Teacher_class.this, "start sign", Toast.LENGTH_SHORT).show();
                                     count_down_time.setVisibility(View.VISIBLE);
                                     mycheckclock.setVisibility(View.INVISIBLE);
@@ -209,10 +225,10 @@ public class Teacher_class extends AppCompatActivity  {
                     alertDialog = d.create();
                     alertDialog.show();
                     alertDialog.setCanceledOnTouchOutside(false);
-                    start = true;
+
 
                 } else{//中斷點名
-                    String result = backend.Communication(10,"CID1",0,teacher_long,teacher_lat);
+                    String result = backend.Communication(10,data3,0,teacher_long,teacher_lat);
                     Toast.makeText(Teacher_class.this, "cancel", Toast.LENGTH_SHORT).show();
                     cdt.cancel();
                     count_down_time.setVisibility(View.INVISIBLE);
@@ -223,6 +239,7 @@ public class Teacher_class extends AppCompatActivity  {
                     Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
                     start = false;
                 }
+
             }
         });
 
@@ -233,8 +250,16 @@ public class Teacher_class extends AppCompatActivity  {
         info_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
+                /*Intent intent = new Intent();
                 intent.setClass(Teacher_class.this, Information.class);
+                startActivity(intent);
+
+                 */
+                Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+                intent.setClass(Teacher_class.this, Information.class);
+                bundle.putString("CID", data3);//send student ID to next activity
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -260,7 +285,13 @@ public class Teacher_class extends AppCompatActivity  {
                 attend_all_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(Teacher_class.this, TeacherCheck.class));
+                        //startActivity(new Intent(Teacher_class.this, TeacherCheck.class));
+                        Intent intent = new Intent();
+                        Bundle bundle = new Bundle();
+                        intent.setClass(Teacher_class.this, TeacherCheck.class);
+                        bundle.putString("CID", data3);//send student ID to next activity
+                        intent.putExtras(bundle);
+                        startActivity(intent);
                         Toast.makeText(Teacher_class.this, "all click success!", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -268,10 +299,46 @@ public class Teacher_class extends AppCompatActivity  {
                 attend_now_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        //
+                        int temp = 0;
+                        int today = 0;
+                        String result = backend.Communication(3,data3);
+                        System.out.println("aaa: " + result);
+                        String[] tokens = result.split(";");
+                        for(int i = 0; i < tokens.length; i++){
+                            String[] ID_split = tokens[i].split(":");
+                            String[] day_split = ID_split[1].split(",");
+                            if(temp == 0){
+                                student = new String[day_split.length+1][tokens.length+1];
+                                date = new String[day_split.length];
+                                today = day_split.length;
+                                temp += 1;
+                            }
+                            student[0][i+1] = ID_split[0];
+                            for(int j = 0; j < day_split.length; j++){
+                                System.out.println(day_split[j]);
+                                String[] check_split = day_split[j].split("/");
+                                student[j+1][0] = check_split[0].substring(5);
+                                date[j] = check_split[0].substring(5);
+                                student[j+1][i+1] = check_split[1];
+                            }
+                        }
+                        String[] class_student = new String[tokens.length];
+                        String[] check = new String[tokens.length];
+                        for(int i = 0; i < tokens.length; i++){
+                            class_student[i] = student[0][i+1];
+                            check[i] = student[today][i+1];
+                            System.out.println("cid: " + class_student[i]);
+                            System.out.println("check: " + check[i]);
+                        }
+                        //System.out.println(date);
                         Intent intt = new Intent();
                         intt.setClass(Teacher_class.this, TeacherState.class);
                         Bundle bundle = new Bundle();
-                        bundle.putString("date1","沒有");
+                        bundle.putString("data1",student[today][0]);
+                        bundle.putStringArray("student",class_student);
+                        bundle.putStringArray("check",check);
+                        bundle.putString("CID",data3);
                         intt.putExtras(bundle);
                         startActivity(intt);
                         Toast.makeText(Teacher_class.this, "now click success!", Toast.LENGTH_SHORT).show();
@@ -287,8 +354,6 @@ public class Teacher_class extends AppCompatActivity  {
         });
 
 
-        getData();
-        setData();
         showNotify();
 
     }
@@ -298,6 +363,7 @@ public class Teacher_class extends AppCompatActivity  {
 
             data1 = getIntent().getStringExtra("data1");
             data2 = getIntent().getStringExtra("data2");
+            data3 = getIntent().getStringExtra("data3");
         } else {
             Toast.makeText(this, "No data!", Toast.LENGTH_SHORT).show();
         }

@@ -109,16 +109,106 @@ public class MainActivity extends AppCompatActivity {
                     String result = backend.Communication(1,name.getText().toString(), password.getText().toString());//result是取得的整個字串
                     String results[] = result.split(";");//切開
 
-                    int len = (results.length-2)/2;
-                    course = new String[len];
-                    course_time = new String[len];
-                    for(int i = 2;i < len+2;i++){//課程名稱
-                        course[i-2] = results[i];
-                        Log.d("MSG","hello"+course[i-2]);
+                    int len = (results.length-2)/4;//計算課程數
+                    String course[] = new String[len];
+                    String course_time[] = new String[len];
+                    String course_place[] = new String[len];
+                    String course_CID[] = new String[len];
+                    String course_time_d[];
+                    String course_time_h[] = new String[2];
+                    String course_time_hh[] = new String[2];
+                    for(int i = 2;i < len+2;i++) {//課程ID
+                        course_CID[i - 2] = results[i];
                     }
-                    for(int j = len+2;j < (len*2)+2;j++){//課程時間
-                        course_time[j-len-2] = results[j];
-                        Log.d("MSG","hello"+course_time[j-len-2]);
+                    for(int j = len+2;j < (len*2)+2;j++){//課程名稱
+                        course[j-len-2] = results[j];
+                    }
+                    for(int k = (len*2)+2;k < (len*3)+2;k++){//課程時間
+                        course_time[k-len*2-2] = results[k];
+                    }
+                    for(int l = (len*3)+2;l < results.length;l++){//課程地點
+                        course_place[l-len*3-2] = results[l];
+                    }
+                    for(int i = 0;i < len;i++) {
+                        course_time_d = course_time[i].split("d");//course_time_d[0] = 星期幾
+                        switch (course_time_d[0]) {
+                            case "1":
+                                course_time_d[0] = "一";
+                                break;
+                            case "2":
+                                course_time_d[0] = "二";
+                                break;
+                            case "3":
+                                course_time_d[0] = "三";
+                                break;
+                            case "4":
+                                course_time_d[0] = "四";
+                                break;
+                            case "5":
+                                course_time_d[0] = "五";
+                                break;
+                        }
+                        course_time_h[0] = course_time_d[1].substring(0, 1);
+                        course_time_h[1] = course_time_d[1].substring(2, 3);
+                        switch (course_time_h[0]) {
+                            case "1":
+                                course_time_hh[0] = "08:10";
+                                break;
+                            case "2":
+                                course_time_hh[0] = "09:10";
+                                break;
+                            case "3":
+                                course_time_hh[0] = "10:10";
+                                break;
+                            case "4":
+                                course_time_hh[0] = "11:10";
+                                break;
+                            case "5":
+                                course_time_hh[0] = "13:10";
+                                break;
+                            case "6":
+                                course_time_hh[0] = "14:10";
+                                break;
+                            case "7":
+                                course_time_hh[0] = "15:10";
+                                break;
+                            case "8":
+                                course_time_hh[0] = "16:10";
+                                break;
+                            case "9":
+                                course_time_hh[0] = "17:10";
+                                break;
+                        }
+                        switch (course_time_h[1]) {
+                            case "1":
+                                course_time_hh[1] = "09:00";
+                                break;
+                            case "2":
+                                course_time_hh[1] = "10:00";
+                                break;
+                            case "3":
+                                course_time_hh[1] = "11:00";
+                                break;
+                            case "4":
+                                course_time_hh[1] = "12:00";
+                                break;
+                            case "5":
+                                course_time_hh[1] = "14:00";
+                                break;
+                            case "6":
+                                course_time_hh[1] = "15:00";
+                                break;
+                            case "7":
+                                course_time_hh[1] = "16:00";
+                                break;
+                            case "8":
+                                course_time_hh[1] = "17:00";
+                                break;
+                            case "9":
+                                course_time_hh[1] = "18:00";
+                                break;
+                        }
+                        course_time[i] = "[" + course_time_d[0] + "]" + course_time_hh[0] + "~" + course_time_hh[1] + course_place[i];
                     }
                     /*for(int k = (len*2)+2;k < results.length;k++){//課程地點
                         course_place[k-len*2-2] = results[k];
@@ -139,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
                             bundle.putStringArray("s1",course);
                             bundle.putStringArray("s2",course_time);
+                            bundle.putStringArray("s3",course_CID);
                             intent.putExtras(bundle);
                             startActivity(intent);
                             // Save ID and type, turn login_flag to true
@@ -151,6 +242,10 @@ public class MainActivity extends AppCompatActivity {
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
                             bundle.putStringArray("s1",course);
                             bundle.putStringArray("s2",course_time);
+                            bundle.putStringArray("s3",course_CID);
+                            for(int i = 0; i < course_CID.length; i ++){
+                                System.out.println(course_CID);
+                            }
                             intent.putExtras(bundle);
                             startActivity(intent);
                             // Save ID and type, turn login_flag to true

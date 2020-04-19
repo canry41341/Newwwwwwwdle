@@ -24,6 +24,11 @@ public class TnotifyAdapter extends RecyclerView.Adapter<TnotifyAdapter.MyViewHo
         notify = title;// title
         date = time; // time
         MSG = msg;
+        for(int i=0; i < title.length; i++){
+            System.out.println("ss1: " + notify[i]);
+            System.out.println("ss2: " + date[i]);
+            System.out.println("ss3: " + MSG[i]);
+        }
     }
 
     @NonNull

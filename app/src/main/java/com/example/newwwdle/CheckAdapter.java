@@ -21,13 +21,14 @@ public class CheckAdapter extends RecyclerView.Adapter<CheckAdapter.MyViewHolder
     String [] date; //用來存放要點選的日期
     String [] student;
     String [] check;
+    String CID;
     Context context;
 
-    public CheckAdapter(Context ct, String []s1, String[][] s2) {
+    public CheckAdapter(Context ct, String []s1, String[][] s2, String class_id) {
         context = ct;
         data = s2;
         date = s1;
-
+        CID = class_id;
         student = new String[s2[0].length-1];
         for(int i = 0; i < student.length; i++){
             System.out.println("aaa: " + s2[0][i+1]);
@@ -67,7 +68,7 @@ public class CheckAdapter extends RecyclerView.Adapter<CheckAdapter.MyViewHolder
                     check[i] = data[position+1][i+1];
                 }
                 bundle.putStringArray("check",check);
-                bundle.putInt("position",position);
+                bundle.putString("CID",CID);
                 intent.putExtras(bundle);
                 context.startActivity(intent);
             }

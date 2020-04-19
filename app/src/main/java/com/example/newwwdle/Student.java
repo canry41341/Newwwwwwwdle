@@ -36,7 +36,7 @@ public class Student extends AppCompatActivity {
     private Button logout_btn; //press to log out
 
     //s1[], s2[]可以用來存取從database抓下來的資料
-    String s1[], s2[];
+    String s1[], s2[], s3[];
 
     RecyclerView recyclerView;
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -74,6 +74,7 @@ public class Student extends AppCompatActivity {
         /******************課表、教室、時間(把時間跟教室放在s2)**************/
         s1 = bundle.getStringArray("s1");//getResources().getStringArray(R.array.class_Name);
         s2 = bundle.getStringArray("s2");//getResources().getStringArray(R.array.time);
+        s3 = bundle.getStringArray("s3");//CID
         /*****************************************************************/
         //set log out
         logout_btn = findViewById(R.id.logout_btn);
@@ -108,7 +109,7 @@ public class Student extends AppCompatActivity {
         });
 
         //設定adapter(課表選單)
-        MyAdapter myAdapter = new MyAdapter(this, s1,s2);
+        MyAdapter myAdapter = new MyAdapter(this, s1,s2,s3);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

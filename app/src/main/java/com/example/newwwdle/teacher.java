@@ -43,6 +43,7 @@ public class teacher extends AppCompatActivity {
 /******************************data是課程名稱，time就是時間+教室*******************/
     public String[] data;
     public String[] time;
+    public String[] CID;
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -68,6 +69,7 @@ public class teacher extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         data = bundle.getStringArray("s1");
         time = bundle.getStringArray("s2");
+        CID = bundle.getStringArray("s3");
         id = bundle.getString("name");
 
 /***************************抓老師資料再把"老師姓名改掉"  ********************************/
@@ -86,7 +88,7 @@ public class teacher extends AppCompatActivity {
             recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
             // 將資料交給adapter
-            adapter = new Teacher_Adapter(this,mData,time);
+            adapter = new Teacher_Adapter(this,mData,time,CID);
             // 設置adapter給recycler_view
             recycler_view.setAdapter(adapter);
             out = findViewById(R.id.out_btn);

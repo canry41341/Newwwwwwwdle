@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -32,19 +34,23 @@ public class StudentState extends AppCompatActivity {
         toast.show();
     }
     Backend backend = new Backend();
-    String result;
+    String result,CID;
     //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_state);
-
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        CID =  bundle.getString("CID");
 
         myRecyclerView = findViewById(R.id.stateRecyclerView);
 
         //
-        result = backend.Communication(7,"ID1","CID1");
+        SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+        String ID = pref.getString("ID", "Unknown");
+        result = backend.Communication(7,ID,CID);
         //
 
 

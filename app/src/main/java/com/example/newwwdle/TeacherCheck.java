@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -13,10 +15,12 @@ public class TeacherCheck extends AppCompatActivity {
     Backend backend = new Backend();
 
 
+
     //把從server抓到到的日期放到這裡
     //private String [] date = {"Apr1","Apr2","Apr3","Apr4","Apr5","Apr6","Apr7","Apr8","Apr9","Apr10"};
     String[] date;
     String[][] student;
+    String CID;
 
     int temp = 0;
     @Override
@@ -24,8 +28,15 @@ public class TeacherCheck extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_check);
 
+
+        //CID
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        CID =  bundle.getString("CID");
         //
-        String result = backend.Communication(3,"CID1");
+
+        //
+        String result = backend.Communication(3,CID);
         System.out.println("aaa: " + result);
         String[] tokens = result.split(";");
         for(int i = 0; i < tokens.length; i++){
@@ -55,7 +66,7 @@ public class TeacherCheck extends AppCompatActivity {
 
         mRecyclerview = findViewById(R.id.grid_view);
 
-        CheckAdapter checkAdapter = new CheckAdapter(this, date, student);
+        CheckAdapter checkAdapter = new CheckAdapter(this, date, student, CID);
         mRecyclerview.setAdapter(checkAdapter);
         mRecyclerview.setLayoutManager(new GridLayoutManager(this, 2));
     }

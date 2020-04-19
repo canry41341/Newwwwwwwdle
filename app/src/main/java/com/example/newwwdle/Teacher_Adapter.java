@@ -17,10 +17,12 @@ public class Teacher_Adapter extends RecyclerView.Adapter<Teacher_Adapter.ViewHo
 
         private List<String> mData;
         private String[] class_time;
+        private String[] CID;
         Context teacher_context;
-        Teacher_Adapter(Context ct,List<String> data , String[] time) {
+        Teacher_Adapter(Context ct,List<String> data , String[] time, String[] class_id) {
             mData = data;
             class_time = time;
+            CID = class_id;
             teacher_context = ct;
         }
 
@@ -59,6 +61,7 @@ public class Teacher_Adapter extends RecyclerView.Adapter<Teacher_Adapter.ViewHo
                     Intent intent = new Intent(teacher_context,Teacher_class.class);
                     intent.putExtra("data1", mData.get(position));
                     intent.putExtra("data2", class_time[position]);
+                    intent.putExtra("data3", CID[position]);
                     teacher_context.startActivity(intent);
                 }
             });

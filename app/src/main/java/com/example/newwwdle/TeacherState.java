@@ -14,8 +14,8 @@ import android.widget.Toast;
 public class TeacherState extends AppCompatActivity {
     private String s1[]; //SID
     private String s2[]; //check
+    private String CID;
     String date;
-    int position;
     RecyclerView myTRecyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,6 @@ public class TeacherState extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         date =  bundle.getString("date1");
-        position = bundle.getInt("position");
         Toast.makeText(TeacherState.this, date, Toast.LENGTH_LONG).show();
 
 
@@ -36,9 +35,10 @@ public class TeacherState extends AppCompatActivity {
         //s2 = getResources().getStringArray(R.array.state);
         s1 = bundle.getStringArray("student");
         s2 = bundle.getStringArray("check");
+        CID = bundle.getString("CID");
         /************************************************************************/
         //設定adapter
-        Teacher_State_Adapter stateAdapter = new Teacher_State_Adapter(this, s1, s2);
+        Teacher_State_Adapter stateAdapter = new Teacher_State_Adapter(this, s1, s2, CID);
         myTRecyclerView.setAdapter(stateAdapter);
         myTRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         myTRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));

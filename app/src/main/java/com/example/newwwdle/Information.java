@@ -27,7 +27,7 @@ public class Information extends AppCompatActivity {
     //DATE
     TextView DATE_view;
     InputMethodManager imm ;
-    String DATE,TITLE,MSG;
+    String DATE,TITLE,MSG,CID;
     int isPost;
     Backend backend = new Backend();
 
@@ -41,6 +41,11 @@ public class Information extends AppCompatActivity {
         message = findViewById(R.id.info_text);
         message.setMovementMethod(ScrollingMovementMethod.getInstance());
 
+        //CID
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        CID =  bundle.getString("CID");
+        //
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,7 +60,7 @@ public class Information extends AppCompatActivity {
                 /***********************傳到databse*********************/
                 TITLE = title.getText().toString();
                 MSG = message.getText().toString();
-                String result = backend.Communication(9,"CID1",TITLE,MSG);
+                String result = backend.Communication(9,CID,TITLE,MSG);
                 Toast.makeText(Information.this,TITLE + "/" + MSG,Toast.LENGTH_LONG).show();
                 /********************************************************/
                 Information.this.finish();
