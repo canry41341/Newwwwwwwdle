@@ -2,6 +2,7 @@ package com.example.newwwdle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,10 +18,12 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ProgressDialog progressDialog;
     private EditText name, password;
     private Button login_btn;
     InputMethodManager imm ;
@@ -41,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
         name = findViewById(R.id.edit_name); //username(student ID)
         password = findViewById(R.id.edit_id);//password
         login_btn = findViewById(R.id.login_btn);
-
 
 
         // check if user is already log in
@@ -124,6 +126,15 @@ public class MainActivity extends AppCompatActivity {
                     String IDtype = results[1];
                     switch (IDtype) {
                         case "student":
+                            //initialize progress dialog
+                            progressDialog = new ProgressDialog(MainActivity.this);
+                            //show Dialog
+                            progressDialog.show();
+                            //set content view
+                            progressDialog.setContentView(R.layout.progress_layout);
+                            //set transparent background
+                            progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
                             intent.setClass(MainActivity.this, Student.class);
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
                             bundle.putStringArray("s1",course);
@@ -216,6 +227,12 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "SecurityException e");
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //Dismiss Progress Dialog
+        progressDialog.dismiss();
     }
 
 }
