@@ -41,8 +41,8 @@ public class teacher extends AppCompatActivity {
     Button out;
 
 /******************************data是課程名稱，time就是時間+教室*******************/
-    public String[] data = {"軟體工程", "醫學與健康"};
-    public String[] time = {"\n(二) 7-9 資訊系館4202","\n(五) 3-4 繁城講堂"};
+    public String[] data;
+    public String[] time;
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -66,6 +66,8 @@ public class teacher extends AppCompatActivity {
         student = (TextView) findViewById(R.id.student_name);
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
+        data = bundle.getStringArray("s1");
+        time = bundle.getStringArray("s2");
         id = bundle.getString("name");
 
 /***************************抓老師資料再把"老師姓名改掉"  ********************************/

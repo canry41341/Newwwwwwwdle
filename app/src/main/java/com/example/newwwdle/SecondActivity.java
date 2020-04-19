@@ -3,6 +3,7 @@ package com.example.newwwdle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,6 +11,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,6 +20,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +37,9 @@ public class SecondActivity extends AppCompatActivity {
     RecyclerView myRecyclerView;
 
     Backend backend = new Backend();
+    //assign clock
+    TextClock mClock;
+    public Drawable dd;
 
     private Button atten_btn, notice_btn, state_btn; //分別是 "點名鈕"  "通知鈕"  "顯示點名狀態的按鈕"
     double teacher_long = 999;    // teacher's longitude (get from server, default 999)經度
@@ -64,6 +71,11 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_second);
 
         className = findViewById(R.id.className);
+
+        //set clock
+        mClock = findViewById(R.id.clock);
+        mClock.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/digital-7mt.ttf"));
+        dd = getResources().getDrawable(R.drawable.button);
 
 
         myRecyclerView = findViewById(R.id.notifyView);

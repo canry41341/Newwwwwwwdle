@@ -15,6 +15,7 @@
         android:text="TextView"
         android:textSize="30sp"
         android:textStyle="bold"
+        android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/notifyView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.489"
@@ -23,30 +24,28 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="374dp"
-        android:layout_height="206dp"
+        android:layout_width="match_parent"
+        android:layout_height="215dp"
         android:layout_marginTop="20dp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/className"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/ic_launcher" />
+        app:srcCompat="@drawable/background" />
 
     <Button
         android:id="@+id/attendence_btn"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginLeft="60dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginBottom="60dp"
         android:background="@drawable/button"
         android:text="點名"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/imageView2"
-        app:layout_constraintTop_toBottomOf="@+id/notifyView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintStart_toStartOf="@+id/notifyView" />
 
     <Button
         android:id="@+id/notification_btn"
@@ -88,4 +87,18 @@
         app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/className" />
+
+    <TextClock
+        android:id="@+id/clock"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="#FFF"
+        android:textSize="120sp"
+        android:format12Hour="HH:mm"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toStartOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/imageView2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

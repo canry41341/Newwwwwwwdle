@@ -34,12 +34,13 @@ import java.util.Locale;
 public class Teacher_class extends AppCompatActivity  {
 
     private Button atttend_btn, info_btn, noti_btn;
-    TextView className;
+    TextView className , count_down_time;
     String data1, data2;
     AlertDialog alertDialog , alertDialog_noty;
     boolean start , enable;
     CountDownTimer cdt;
     TextClock mycheckclock;
+    int minutes , seconds;
     Button attend_now_btn , attend_all_btn;
     public Drawable dd;
     String ss1[], ss2[];
@@ -75,10 +76,16 @@ public class Teacher_class extends AppCompatActivity  {
         setContentView(R.layout.activity_teacher_class);
         start = false;
         enable = false;
+        minutes = 0;
+        seconds = 0;
 
         mycheckclock = findViewById(R.id.textClock);
         mycheckclock.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/digital-7mt.ttf"));
         dd = getResources().getDrawable(R.drawable.button);
+        count_down_time = findViewById(R.id.time_countdown);
+        count_down_time.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/digital-7mt.ttf"));
+        count_down_time.setVisibility(View.INVISIBLE);
+        count_down_time.setTextColor(Color.RED);
 
         /*************************抓課程名稱跟時間**************************************/
         ss1 = getResources().getStringArray(R.array.class_Name);
@@ -142,16 +149,22 @@ public class Teacher_class extends AppCompatActivity  {
                                     Toast.makeText(Teacher_class.this, "經度:" + teacher_long + "\n緯度:" + teacher_lat, Toast.LENGTH_SHORT).show();
                                     Toast.makeText(Teacher_class.this, "點名開始", Toast.LENGTH_SHORT).show();
                                     /*************************TIMER**************************/
-                                    cdt = new CountDownTimer(numberPicker.getValue()*6000, 1000) {
+                                    cdt = new CountDownTimer(numberPicker.getValue()*6000, 1000) { // 1Minute
                                         @Override
                                         public void onTick(long millisUntilFinished) {
-                                            Toast.makeText(Teacher_class.this, Long.toString(millisUntilFinished/1000)+"秒", Toast.LENGTH_SHORT).show();
+
+                                            minutes = (int) ((millisUntilFinished+1000)/1000/60);
+                                            seconds = (int) ((millisUntilFinished+1000)/1000%60);
+
+                                            count_down_time.setText(String.format("%02d", minutes)+":"+String.format("%02d", seconds));
                                         }
                                         @Override
                                         public void onFinish() {
                                             //database 點名停止
                                             String result = backend.Communication(10,"CID1",0,teacher_long,teacher_lat);
                                             Toast.makeText(Teacher_class.this, result, Toast.LENGTH_SHORT).show();
+                                            mycheckclock.setVisibility(View.VISIBLE);
+                                            count_down_time.setVisibility(View.INVISIBLE);
                                             atttend_btn.setText("開啟點名");
                                             atttend_btn.setBackgroundDrawable(dd);
                                             //Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
@@ -163,6 +176,8 @@ public class Teacher_class extends AppCompatActivity  {
                                     //
                                     String result = backend.Communication(10,"CID1",1,teacher_long,teacher_lat);
                                     Toast.makeText(Teacher_class.this, result, Toast.LENGTH_SHORT).show();
+                                    count_down_time.setVisibility(View.VISIBLE);
+                                    mycheckclock.setVisibility(View.INVISIBLE);
                                     /****************************TIMER***********************/
                                 } else {
                                     Toast.makeText(Teacher_class.this, "獲取不到位置資訊哦！", Toast.LENGTH_SHORT).show();
@@ -189,6 +204,8 @@ public class Teacher_class extends AppCompatActivity  {
                     String result = backend.Communication(10,"CID1",0,teacher_long,teacher_lat);
                     Toast.makeText(Teacher_class.this, result, Toast.LENGTH_SHORT).show();
                     cdt.cancel();
+                    count_down_time.setVisibility(View.INVISIBLE);
+                    mycheckclock.setVisibility(View.VISIBLE);
                     //database 點名停止
                     atttend_btn.setText("開啟點名");
                     atttend_btn.setBackgroundDrawable(dd);
@@ -232,6 +249,7 @@ public class Teacher_class extends AppCompatActivity  {
                 attend_all_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        startActivity(new Intent(Teacher_class.this, TeacherCheck.class));
                         Toast.makeText(Teacher_class.this, "all click success!", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -239,7 +257,12 @@ public class Teacher_class extends AppCompatActivity  {
                 attend_now_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(Teacher_class.this, TeacherState.class));
+                        Intent intt = new Intent();
+                        intt.setClass(Teacher_class.this, TeacherState.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("date1","沒有");
+                        intt.putExtras(bundle);
+                        startActivity(intt);
                         Toast.makeText(Teacher_class.this, "now click success!", Toast.LENGTH_SHORT).show();
                     }
                 });
