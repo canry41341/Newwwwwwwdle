@@ -50,43 +50,44 @@
         app:layout_constraintTop_toTopOf="@+id/imageView3"
         app:layout_constraintVertical_bias="0.408" />
 
-    <Button
-        android:id="@+id/attendence_btn1"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="17dp"
-        android:layout_marginBottom="30dp"
-        android:background="@drawable/button"
-        android:text="開啟點名"
+    <LinearLayout
+        android:id="@+id/hello"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/teacher_noty" />
+        app:layout_constraintTop_toBottomOf="@+id/teacher_noty"
+        app:layout_constraintVertical_bias="0.297">
 
-    <Button
-        android:id="@+id/notification_btn1"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
-        android:background="@drawable/button"
-        android:text="建立公告"
-        app:layout_constraintBottom_toBottomOf="@+id/status_btn1"
-        app:layout_constraintStart_toEndOf="@+id/status_btn1"
-        app:layout_constraintTop_toTopOf="@+id/status_btn1" />
+        <Button
+            android:id="@+id/attendence_btn1"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="17dp"
+            android:background="@drawable/button"
+            android:text="開啟點名" />
 
-    <Button
-        android:id="@+id/status_btn1"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
-        android:background="@drawable/button"
-        android:text="點名情況"
-        app:layout_constraintBottom_toBottomOf="@+id/attendence_btn1"
-        app:layout_constraintStart_toEndOf="@+id/attendence_btn1"
-        app:layout_constraintTop_toTopOf="@+id/attendence_btn1"
-        app:layout_constraintVertical_bias="1.0" />
+        <Button
+            android:id="@+id/notification_btn1"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="17dp"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/button"
+            android:text="建立公告" />
+
+        <Button
+            android:id="@+id/status_btn1"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="17dp"
+            android:background="@drawable/button"
+            android:text="點名情況" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/teacher_noty"
@@ -99,7 +100,7 @@
         android:layout_marginRight="24dp"
         android:layout_marginBottom="17dp"
         android:background="@drawable/notify_border"
-        app:layout_constraintBottom_toTopOf="@+id/attendence_btn1"
+        app:layout_constraintBottom_toTopOf="@+id/hello"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"

@@ -83,10 +83,10 @@ public class MainActivity extends AppCompatActivity {
 
                     getDeviceImei();
                     String IMEI = mDeviceIMEI;//IMEI碼取得
-                    String result = backend.Communication(1,name.getText().toString(),password.getText().toString());//result是取得的整個字串
+                    String result = backend.Communication(1,name.getText().toString(), password.getText().toString());//result是取得的整個字串
                     String results[] = result.split(";");//切開
 
-                    int len = (results.length-2)/3;
+                    int len = (results.length-2)/2;
                     course = new String[len];
                     course_time = new String[len];
                     for(int i = 2;i < len+2;i++){//課程名稱
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     }*/
                     String IDtype = results[1];
                     switch (IDtype) {
-                        case "student":
+                        case "teacher":
                             intent.setClass(MainActivity.this, Student.class);
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
                             bundle.putStringArray("s1",course);
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                                     .putString("ID", name.getText().toString())
                                     .putString("type", "student").commit();
                             break;
-                        case "teacher":
+                        case "student":
                             intent.setClass(MainActivity.this, teacher.class);
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
                             bundle.putStringArray("s1",course);

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,12 +37,7 @@ public class Information extends AppCompatActivity {
         post = findViewById(R.id.post_buton);
         title = findViewById(R.id.info_Title);
         message = findViewById(R.id.info_text);
-
-        //關閉上方status bar
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-        );
+        message.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
