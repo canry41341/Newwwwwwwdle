@@ -142,8 +142,7 @@ public class Teacher_class extends AppCompatActivity  {
                     d.setPositiveButton("開始點名", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, final int i) {
-                            atttend_btn.setText("結束點名");
-                            atttend_btn.setBackgroundColor(Color.parseColor("#ffca28"));
+
                             //Log.d(TAG, "onClick: " + numberPicker.getValue());
                             // Get teacher's GPS location
                             // check if Activity has ACCESS_FINE_LOCATION permission
@@ -156,6 +155,9 @@ public class Teacher_class extends AppCompatActivity  {
                                 // get the last known location
                                 Location lastKnownLocation = mLocationManager.getLastKnownLocation(locationProvider);
                                 if (lastKnownLocation != null) {
+                                    start = true;
+                                    atttend_btn.setText("結束點名");
+                                    atttend_btn.setBackgroundColor(Color.parseColor("#ffca28"));
                                     teacher_long = lastKnownLocation.getLongitude();
                                     teacher_lat = lastKnownLocation.getLatitude();
                                     Toast.makeText(Teacher_class.this, "經度:" + teacher_long + "\n緯度:" + teacher_lat, Toast.LENGTH_SHORT).show();
@@ -209,7 +211,7 @@ public class Teacher_class extends AppCompatActivity  {
                     alertDialog = d.create();
                     alertDialog.show();
                     alertDialog.setCanceledOnTouchOutside(false);
-                    start = true;
+
 
                 } else{//中斷點名
                     String result = backend.Communication(10,"CID1",0,teacher_long,teacher_lat);

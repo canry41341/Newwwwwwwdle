@@ -17,10 +17,12 @@ import com.google.firebase.messaging.RemoteMessage;
 public class MyFirebaseService extends FirebaseMessagingService {
 
     static  String token = "hello";
+    DBHelper dbHelper;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage){
         super.onMessageReceived(remoteMessage);
+        dbHelper = new DBHelper(this);
 
         if(remoteMessage != null){
             Log.i("MyFirebaseService", "title"+remoteMessage.getNotification().getTitle());

@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,13 +47,14 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private EditText name, password;
     private Button login_btn;
+    private DBHelper dbHelper;      // DB
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        dbHelper = new DBHelper(this);  // Initialize DB
         name = findViewById(R.id.edit_name); //username(student ID)
         password = findViewById(R.id.edit_id);//password
         login_btn = findViewById(R.id.login_btn);
@@ -133,6 +136,12 @@ public class MainActivity extends AppCompatActivity {
                     /*for(int k = (len*2)+2;k < results.length;k++){//課程地點
                         course_place[k-len*2-2] = results[k];
                     }*/
+
+                        // Add to DB
+                        for(int i=0;i<len;i++){
+
+                        }
+
                         String IDtype = results[1];
                         switch (IDtype) {
                             case "student":
@@ -159,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                                         });
                                 String login_permission = backend.Communication(4, Token[0]);
                                 //Log.d("LoginPermission", login_permission);
-                                if (login_permission.equals("False")) {
+                                if (login_permission.equals("login failed")) {
                                     Toast.makeText(MainActivity.this, "請過一段時間後再登嘗試登入哦！", Toast.LENGTH_SHORT).show();
                                     break;  // 黑名單ing
                                 }
@@ -274,6 +283,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Add data to DB
+    private void add(String CID, String Cname, String Ctime, String Cpos){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("_id", CID);
+        values.put("cname", Cname);
+        values.put("ctime", Ctime);
+        values.put("cpos", Cpos);
+        db.insert("MyClass", null, values);
+    }
+
     @Override
     protected void onDestroy() {            //當銷毀該app時
         super.onDestroy();
@@ -282,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
             backend.bw.close();
             backend.br.close();
             backend.clientSocket.close();
+            dbHelper.close();   // close DB
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -44,7 +44,7 @@ public class Backend {
             // TODO Auto-generated method stub
             try{
                 // IP為Server端
-                InetAddress serverIp = InetAddress.getByName("192.168.201.24");
+                InetAddress serverIp = InetAddress.getByName("192.168.201.7");
 
                 int serverPort = 8888;
                 clientSocket = new Socket(serverIp, serverPort);

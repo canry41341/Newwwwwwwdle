@@ -10,7 +10,7 @@ from firebase_admin import firestore
 from firebase_admin import db
 from pyfcm import FCMNotification
 
-host = "192.168.43.9"
+host = "192.168.201.7"
 port = 8888
 loop_out = False
 
@@ -99,7 +99,7 @@ def parse_data(conn,data):
                 print("True")
             else:
                 print("login failed") 
-                conn.sendall("login failed\n".encode()) 
+                conn.sendall("False\n".encode()) 
                 print("False")    
         elif (SID != "-1" and passwd != "-1"):
             print("Checking Account")
@@ -107,12 +107,15 @@ def parse_data(conn,data):
             if(able):
                 print(True)
                 print("give info")
-                name,type_id,cls_name,cls_time,cls_pos = give_info(SID)
+                name,type_id,cls_id,cls_name,cls_time,cls_pos = give_info(SID)
                 print("name: ",name)
                 print("cls_name: ",cls_name)
                 print("cls_time: ",cls_time)
                 print("cls_pos: ",cls_pos)
                 msg = name+";"+type_id+";"
+                for cs in cls_id:
+                    if(cs != None):
+                        msg += (cs+";")
                 for cs in cls_name:
                     if(cs != None):
                         msg += (cs+";")
@@ -325,7 +328,7 @@ def give_info(SID):
         id_class_time.append(get_database("/Courses/"+std_cls+"/CourseData/Time"))
         id_class_pos.append(get_database("/Courses/"+std_cls+"/CourseData/Position"))
     
-    return name,type_id,id_class_name,id_class_time,id_class_pos
+    return name,type_id,id_class,id_class_name,id_class_time,id_class_pos
 
 def get_personal_sign(SID,CID):
     if(get_database("Accounts/"+str(SID)+"/") == None):
