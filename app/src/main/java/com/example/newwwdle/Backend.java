@@ -1,4 +1,4 @@
-package com.example.testclient;
+package com.example.newwwdle;
 
 import android.app.Activity;
 import android.os.Bundle;
