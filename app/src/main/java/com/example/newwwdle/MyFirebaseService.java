@@ -6,8 +6,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.icu.text.RelativeDateTimeFormatter;
+import android.net.DhcpInfo;
 import android.os.Build;
 import android.util.Log;
 
@@ -29,6 +32,8 @@ public class MyFirebaseService extends FirebaseMessagingService {
             Log.i("MyFirebaseService", "body"+remoteMessage.getNotification().getBody());
             SendNotification("1", remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         }
+        // close DB
+        dbHelper.close();
     }
 
     @Override
@@ -42,8 +47,9 @@ public class MyFirebaseService extends FirebaseMessagingService {
     private void SendNotification(String CID, String msg_title, String msg_content){
 
         // get class_name and class_time from local DB
-        String class_name = "CID1";
-        String class_time = "[二] 15:00~17:00";
+        Cursor cursor = getCursor(CID);
+        String class_name = cursor.getString(1);
+        String class_time = cursor.getString(2);
 
         // Intent
         // open SecondActivity with parameters data1 and data2
@@ -86,5 +92,11 @@ public class MyFirebaseService extends FirebaseMessagingService {
         //Toast.makeText(this, "notify~~~" + Build.VERSION.SDK_INT, Toast.LENGTH_SHORT).show();
     }
 
-
+    // Get data from DB
+    private Cursor getCursor(String CID){
+        SQLiteDatabase db=dbHelper.getReadableDatabase();  //透過dbHelper取得讀取資料庫的SQLiteDatabase物件，可用在查詢
+        String[] columns={"_id", "cname", "ctime"};
+        Cursor cursor = db.query("MyClass",columns,"_id=?", new String[]{CID},null,null,null);  //查詢所有欄位的資料
+        return cursor;
+    }
 }

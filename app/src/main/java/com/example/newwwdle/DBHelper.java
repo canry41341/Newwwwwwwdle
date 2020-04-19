@@ -22,7 +22,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "_id TEXT NOT NULL, "
                 + "cname TEXT NOT NULL, "
                 + "ctime TEXT NOT NULL, "
-                + "cpos TEXT NOT NULL, "
                 + "PRIMARY KEY (_id)"
                 + ")";
         db.execSQL(SQL);

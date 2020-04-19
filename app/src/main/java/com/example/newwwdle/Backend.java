@@ -45,7 +45,6 @@ public class Backend {
             try{
                 // IP為Server端
                 InetAddress serverIp = InetAddress.getByName("192.168.201.7");
-
                 int serverPort = 8888;
                 clientSocket = new Socket(serverIp, serverPort);
                 //取得網路輸出串流
@@ -69,41 +68,35 @@ public class Backend {
                                 else{
                                     Log.d("OUTPUTLA","SUCCESS");
                                 }
-                                KEY = -1;
                                 result = tmp;
                                 write_flag = 0;
                                 break;
 
                             case 2:
                                 Log.d("OUTPUTLA","ANNOUNCE");
-                                KEY = -1;
                                 result = tmp;
                                 write_flag = 0;
                                 break;
 
                             case 3:
                                 Log.d("OUTPUTLA","ALL STATUS");
-                                KEY = -1;
                                 result = tmp;
                                 write_flag = 0;
                                 break;
 
                             case 4:
                                 Log.d("OUTPUTLA","IMEI CHECK");
-                                KEY = -1;
                                 result = tmp;
                                 write_flag = 0;
                                 break;
                             case 5:
                                 Log.d("OUTPUTLA", "IMEI ADD");
-                                KEY = -1;
                                 result = tmp;
                                 write_flag = 0;
                                 break;
 
                             case 6:
                                 Log.d("OUTPUTLA","ROLL CALL CHECK(TODAY)");
-                                KEY = -1;
                                 result = tmp;
                                 write_flag = 0;
                                 break;
@@ -111,40 +104,40 @@ public class Backend {
                             case 7:
                                 Log.d("OUTPUTLA","ROLL CALL CHECK(ALL)");
                                 Log.d("OUTPUTLA",tmp);
-                                KEY = -1;
                                 result = tmp;
                                 write_flag = 0;
                                 break;
 
                             case 8:
                                 Log.d("OUTPUTLA","ROLL CALL UPDATE");
-                                KEY = -1;
                                 result = tmp;
                                 write_flag = 0;
                                 break;
 
                             case 9:
                                 Log.d("OUTPUTLA","ADD ANNOUNCEMENT");
-                                KEY = -1;
                                 result = tmp;
                                 write_flag = 0;
                                 break;
 
                             case 10:
                                 Log.d("OUTPUTLA","ENABLE TO ROLL CALL");
-                                KEY = -1;
                                 result = tmp;
                                 write_flag = 0;
                                 break;
 
                             case 11:
                                 Log.d("OUTPUTLA","GET TEACHER GPS");
-                                KEY = -1;
+
                                 result = tmp;
                                 write_flag = 0;
                                 break;
                         }
-                        ret_flag = 1;
+                        if(KEY>=1 && KEY<=11){
+                            KEY = -1;
+                            ret_flag = 1;
+                        }
+
                     }
 
 
@@ -196,20 +189,6 @@ public class Backend {
                 Log.d("OUTPUTLA",result);
                 return result;
 
-            case 4: // key = 4, input: IMEI and return a result(Enable or Disable to login) : function(KEY=4,IMEI)
-                sendMessage("catch,"+input1+",-1,-1,-1,-1",key);
-                lock();
-                initial();
-                Log.d("OUTPUTLA",result);
-                return result;
-
-            case 5: // key = 5, input: IMEI and add this IMEI to database : function(KEY=5,IMEI)
-                sendMessage("add,"+input1+",-1,-1,-1,-1,-1",key);
-                lock();
-                initial();
-                Log.d("OUTPUTLA",result);
-                return result;
-
             case 11: // key = 11, input: CID and get teacher's GPS
                 sendMessage("catch,-1,-1,-1,"+input1+",4",key);
                 lock();
@@ -248,6 +227,20 @@ public class Backend {
 
             case 8: // key = 8, input: SID,CID and update roll call in database : function(KEY=8,SID,CID)
                 sendMessage("add,-1,-1,"+input1+","+input2+",-1,-1",key);
+                lock();
+                initial();
+                Log.d("OUTPUTLA",result);
+                return result;
+
+            case 4: // key = 4, input: SID, token : login by checking token and add token into account
+                sendMessage("catch,"+input2+","+input1+",-1,-1,-1",key);
+                lock();
+                initial();
+                Log.d("OUTPUTLA",result);
+                return result;
+
+            case 5: // key = 5, input: SID,token : logout and 1. remove token from account 2. add token into black
+                sendMessage("add,"+input2+",-1,"+input1+",-1,-1,-1",key);
                 lock();
                 initial();
                 Log.d("OUTPUTLA",result);

@@ -34,8 +34,9 @@ def get_database(str_reference):
     return db_ref.get()
 
 def remove_database(str_reference):
-    db_ref = db.reference(str_reference)
-    db_ref.delete()
+    if(get_database(str_reference) != None):
+        db_ref = db.reference(str_reference)
+        db_ref.delete()
     return 0
 
 def parse_data(conn,data):
@@ -48,9 +49,10 @@ def parse_data(conn,data):
         ID = data[3]
         CID = data[4]
         Announce = data[5]
-        if(IMEI != "-1"):
+        if(IMEI != "-1" and ID != "-1"):
             print("add " + str(IMEI) +" into black")
             add_black(IMEI)
+            write_database("/Accounts/"+str(ID)+"/AccountData/","Devicetoken",-1)
             conn.sendall("True\n".encode())
         elif(startSign != "-1"):
             if(startSign == "1" and len(data) == 8):
@@ -91,10 +93,11 @@ def parse_data(conn,data):
         passwd = data[3]
         CID = data[4]
         key = data[5]
-        if(IMEI != "-1"):
+        if(IMEI != "-1" and SID != "-1"):
             print("check if it can login")
             if(check_login(IMEI)):
                 print("successfully login")
+                write_database("/Accounts/"+str(SID)+"/AccountData/","Devicetoken",IMEI)
                 conn.sendall("True\n".encode())
                 print("True")
             else:
@@ -291,7 +294,7 @@ def add_announce(CID,Title,Announce):
     stds = get_database("Courses/"+str(CID)+"/Students")
     for std in stds:
         token = get_database("Accounts/"+str(std)+"/AccountData/Devicetoken/")
-        if(token != None):
+        if(token != None or token != -1):
             register_ids.append(token)
     push_server.notify_multiple_devices(registration_ids=register_ids,message_title=Title,message_body=Announce)
   
@@ -380,13 +383,6 @@ if __name__ == "__main__":
     print("Connecting to DataBase ~~~~")
     cred = credentials.Certificate("./key.json")
     firebase_admin.initialize_app(cred, {'databaseURL': 'https://nedle-2cf29.firebaseio.com/' })
-
-   # push_server = FCMNotification(api_key='AAAAkgMVFwk:APA91bGzftIDgzp7nz1MLSODtNjDLRjlBiXGZSOypeVeQVKDtOEaP09sJpsanDuBX09Mqv0s-afCN-PHjC0_fUOdhmZUBfKVV6YS6-Q1Uhcln42WMZ70264A0Jg_JGJm6pEGoW9Yld1y')
-   # registration_ids = ["dbs-y1gJQrukYV8lHo_GL3:APA91bGnFK7yyFZYItlh3olNPlK3OhuCD81U9Pps6zVibAiGxcLKC4arYY9nsR3jPyM7CR0XwvgHkItLfaMXY0lXg0w5anctRT4PReWxc96oMXdVebjvSEBE7DdPsL5YfjZNZzB1IaSF","fe8sVxEmRZqAl4WHczHoNB:APA91bFTos3VwrEuA2x6EKbaIVlhkoBBAPEcUJa9pXqFPsAp2bYhpP0RoWLBq9a6E_XqAWOBMwW9zNOnLjWkQlQnWn6DoAX9-cD7sdRAPnffGM760NNgTXC158WrxhcIBf2mdm_kMezC"]
-        
-   # message_title = "hahahahaha"
-   # message_body = "hahahahahahahahahahayeeee"
-   # result = push_server.notify_multiple_devices(registration_ids=registration_ids, message_title=message_title, message_body=message_body)
 
     print("Connecting to Socket")
     try:

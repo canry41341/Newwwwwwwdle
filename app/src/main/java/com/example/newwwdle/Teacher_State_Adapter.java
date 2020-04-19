@@ -16,12 +16,19 @@ import androidx.recyclerview.widget.RecyclerView;
 public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Adapter.MyViewHolder> {
     String time[]; //用來存時間
     String state[]; //用來存狀態
+    String CID;
     Context context;
+    Backend backend = new Backend();
 
-    public Teacher_State_Adapter(Context ct, String s1[], String s2[]) {
+    public Teacher_State_Adapter(Context ct, String s1[], String s2[], String class_id) {
         context = ct;
         time = s1;
         state = s2;
+        CID = class_id;
+        if(Teacher_class.note == 1){
+            Teacher_class.note = 0;
+            TeacherCheck.act.finish();
+        }
     }
 
     @NonNull
@@ -38,7 +45,7 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
         holder.txt1.setText(time[position]);
         holder.txt2.setText(state[position]);
         /***********************************************************/
-        if(state[position].compareTo("已簽到") == 0) {
+        if(state[position].compareTo("1") == 0) {
             holder.mcheckbox.setChecked(true);
         }else{
             holder.mcheckbox.setChecked(false);
@@ -46,9 +53,16 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
         holder.mcheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 /***************補簽到 我忘記要幹嘛了*********************/
                 /*********************holder.mcheckbox.isChecked()是拿補簽到的，記得把資料傳回database***************/
                 Log.d("MESSAGE",time[position]+"  "+holder.mcheckbox.isChecked());
+                if(holder.mcheckbox.isChecked()){
+                    String result = backend.Communication(8,time[position],CID);
+                }
+                else{
+                    String result = backend.Communication(8,time[position],CID);
+                }
             }
         });
 

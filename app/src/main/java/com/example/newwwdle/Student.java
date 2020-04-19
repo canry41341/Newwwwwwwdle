@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,33 +15,27 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
-import java.util.ArrayList;
-
 public class Student extends AppCompatActivity {
 
-    private TextView nameTxt; // show student name
+    private TextView nameTxt;   // show student name
+    private TextView idText;    // show student id
 
     //this class 用來呈現課程選單
     //這個class用的adapter是MyAdapter
-    private String id;
+    private String id, name;
 
     private Button logout_btn; //press to log out
 
     //s1[], s2[]可以用來存取從database抓下來的資料
-    String s1[], s2[];
+    String s1[], s2[], s3[];
 
     RecyclerView recyclerView;
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -66,12 +59,15 @@ public class Student extends AppCompatActivity {
 
 
         nameTxt = findViewById(R.id.nameView);
+        idText = findViewById(R.id.idView);
 
         //bundle可以在不同activity間傳遞參數
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        id =  bundle.getString("name");
-        nameTxt.setText(id);
+        id =  bundle.getString("id");
+        name = bundle.getString("name");
+        idText.setText(id);
+        nameTxt.setText(name);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -80,6 +76,7 @@ public class Student extends AppCompatActivity {
         /******************課表、教室、時間(把時間跟教室放在s2)**************/
         s1 = bundle.getStringArray("s1");//getResources().getStringArray(R.array.class_Name);
         s2 = bundle.getStringArray("s2");//getResources().getStringArray(R.array.time);
+        s3 = bundle.getStringArray("s3");//CID
         /*****************************************************************/
         //set log out
         logout_btn = findViewById(R.id.logout_btn);
@@ -115,10 +112,10 @@ public class Student extends AppCompatActivity {
                                 });
                         // 加入黑名單
                         Backend backend = new Backend();
-                        backend.Communication(5, Token[0]);
+                        SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+                        backend.Communication(5, pref.getString("ID", ""), Token[0]);
 
                         // Set login flag to false
-                        SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
                         pref.edit().putBoolean("login_flag", false).commit();
                         // Go back to Login Window (MainActivity)
                         Intent intent = new Intent();
@@ -139,7 +136,7 @@ public class Student extends AppCompatActivity {
         });
 
         //設定adapter(課表選單)
-        MyAdapter myAdapter = new MyAdapter(this, s1,s2);
+        MyAdapter myAdapter = new MyAdapter(this, s1,s2,s3);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

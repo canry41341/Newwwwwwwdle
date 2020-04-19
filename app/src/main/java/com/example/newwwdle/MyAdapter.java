@@ -16,13 +16,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     String data1[]; //class name
     String data2[]; //class time
+    String data3[]; //CID
     Context context;
 
-    public MyAdapter(Context ct, String s1[], String s2[]) {
+    public MyAdapter(Context ct, String s1[], String s2[], String s3[]) {
 
         context = ct;
         data1 = s1;
         data2 = s2;
+        data3 = s3;
     }
 
     @NonNull
@@ -46,6 +48,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 Intent intent = new Intent(context, SecondActivity.class);
                 intent.putExtra("data1", data1[position]);
                 intent.putExtra("data2", data2[position]);
+                intent.putExtra("data3", data3[position]);
                 context.startActivity(intent);
             }
         });

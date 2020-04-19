@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -29,7 +30,7 @@ public class SecondActivity extends AppCompatActivity {
     //點選完課程後進入到此class
     TextView className;
 
-    String data1, data2; //data1用來存去你點哪個課程名稱
+    String data1, data2, data3, ID; //data1用來存去你點哪個課程名稱
     //data2用來存你所點課程的上課時間
 
     String s1[], s2[], s3[]; //s1[]顯示課程名稱  s2[]顯示上課時間
@@ -42,7 +43,7 @@ public class SecondActivity extends AppCompatActivity {
     public Drawable dd;
 
 
-    private Button atten_btn, notice_btn, state_btn; //分別是 "點名鈕"  "通知鈕"  "顯示點名狀態的按鈕"
+    private Button atten_btn, state_btn; //分別是 "點名鈕"  "通知鈕"  "顯示點名狀態的按鈕"
     double teacher_long = 999;    // teacher's longitude (get from server, default 999)經度
     double teacher_lat = 999;     // teacher's latitude (get from server, default 999)緯度
     boolean signin_permission = false;   // student sign in permission (get from server)開啟點名
@@ -64,15 +65,19 @@ public class SecondActivity extends AppCompatActivity {
         }
     };
 
-    //test
-    TextView test;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
+        SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+        ID = pref.getString("ID", "Unknown");
+
+
         className = findViewById(R.id.className);
+        getData(); //接收你從上個activity傳來的參數
+        setData(); //顯示你從上個activity傳來的參數
 
         //set clock
         mClock = findViewById(R.id.clock);
@@ -103,7 +108,7 @@ public class SecondActivity extends AppCompatActivity {
                 } else {
                     mLocationManager.requestLocationUpdates(locationProvider, 1000, 10, locationListener);
                     Location lastKnownLocation = mLocationManager.getLastKnownLocation(locationProvider);
-                    String result = backend.Communication(11,"CID1");
+                    String result = backend.Communication(11,data3);
                     String[] tokens = result.split(",");
                     signin_permission = Boolean.parseBoolean(tokens[0].toLowerCase());
                     teacher_lat = Double.parseDouble(tokens[1]);
@@ -117,6 +122,7 @@ public class SecondActivity extends AppCompatActivity {
                             if (distance[0] > 50.0) {
                                 Toast.makeText(SecondActivity.this, "你不在點名範圍裡！ (距離點名範圍" + distance[0] + "公尺)", Toast.LENGTH_LONG).show();
                             } else {
+                                String sign = backend.Communication(8,ID,data3);
                                 Toast.makeText(SecondActivity.this, "已完成簽到", Toast.LENGTH_SHORT).show();
                             }
                         } else {
@@ -139,15 +145,18 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //進到下一個activity來檢視點名情況
-
-                startActivity(new Intent(SecondActivity.this, StudentState.class));
+                Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+                intent.setClass(SecondActivity.this, StudentState.class);
+                bundle.putString("CID", data3);//send student ID to next activity
+                intent.putExtras(bundle);
+                startActivity(intent);
+                //startActivity(new Intent(SecondActivity.this, StudentState.class));
             }
         });
 
-        String result = backend.Communication(2,"CID1");
+        String result = backend.Communication(2,data3);
         showNotify(result);//show notification recyclerview
-        getData(); //接收你從上個activity傳來的參數
-        setData(); //顯示你從上個activity傳來的參數
     }
 
     private void getData() {
@@ -155,6 +164,7 @@ public class SecondActivity extends AppCompatActivity {
 
             data1 = getIntent().getStringExtra("data1");
             data2 = getIntent().getStringExtra("data2");
+            data3 = getIntent().getStringExtra("data3");
         } else {
             Toast.makeText(this, "No data!", Toast.LENGTH_SHORT).show();
         }

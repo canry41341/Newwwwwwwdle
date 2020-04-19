@@ -9,7 +9,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.icu.text.IDNA;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private static final boolean DBG = Boolean.parseBoolean(null);
     private static final String TAG = "";
     public static String mDeviceIMEI = "0";
-    public String course[];
-    public String course_time[];
-    public String course_place[];
     InputMethodManager imm;
     Backend backend = new Backend();
     TelephonyManager mTelephonyManager = null;
@@ -48,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
     private EditText name, password;
     private Button login_btn;
     private DBHelper dbHelper;      // DB
+    String IDname;
+    String IDtype;
+    String course[];
+    String course_time[];
+    String course_CID[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,42 +69,44 @@ public class MainActivity extends AppCompatActivity {
         if (login_flag) {
             String ID = pref.getString("ID", "Unknown");        // ID (Account)
             String PW = pref.getString("password", "Unknown");  // Password
+            String type = pref.getString("IDtype", "Unknown");  // ID type
             Intent intent = new Intent();
             Bundle bundle = new Bundle();
-            if (ID.equals("Unknown") | PW.equals("Unknown")) {
+            if (ID.equals("Unknown") | PW.equals("Unknown") | type.equals("Unknown")) {
                 pref.edit().putBoolean("login_flag", false).commit();   // Login error, set login_flag back to false
             }
             // Already log in as student, jump to student window
             else {
-                String result = backend.Communication(1, ID, PW);//result是取得的整個字串
-                String results[] = result.split(";");//切開
+                int length = getCursor().getCount();
+                String mycourse_ID[] = new String[length];
+                String mycourse_name[] = new String[length];
+                String mycourse_time[] = new String[length];
+                Cursor cursor = getCursor();
+                for(int i=0;i<length;i++){
+                    mycourse_ID[i] = cursor.getString(0);
+                    mycourse_name[i] = cursor.getString(1);
+                    mycourse_time[i] = cursor.getString(2);
+                }
 
-                int len = (results.length - 2) / 2;
-                course = new String[len];
-                course_time = new String[len];
-                for (int i = 2; i < len + 2; i++) {//課程名稱
-                    course[i - 2] = results[i];
-                    Log.d("MSG", "hello" + course[i - 2]);
-                }
-                for (int j = len + 2; j < (len * 2) + 2; j++) {//課程時間
-                    course_time[j - len - 2] = results[j];
-                    Log.d("MSG", "hello" + course_time[j - len - 2]);
-                }
-                String IDtype = results[1];
-                if (IDtype.equals("student")) {
+
+                if (type.equals("student")) {
                     intent.setClass(MainActivity.this, Student.class);
-                    bundle.putString("name", ID);    //send ID to next activity
-                    bundle.putStringArray("s1", course);
-                    bundle.putStringArray("s2", course_time);
+                    bundle.putString("id", ID);//send student ID to next activity
+                    bundle.putString("name", pref.getString("name", "未知的使用者"));
+                    bundle.putStringArray("s1", mycourse_name);
+                    bundle.putStringArray("s2", mycourse_time);
+                    bundle.putStringArray("s3", mycourse_ID);
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
                 // Already log in as teacher, jump to teacher window
-                else if (IDtype.equals("teacher")) {
+                else if (type.equals("teacher")) {
                     intent.setClass(MainActivity.this, teacher.class);
-                    bundle.putString("name", ID);   //send ID to next activity
-                    bundle.putStringArray("s1", course);
-                    bundle.putStringArray("s2", course_time);
+                    bundle.putString("id", ID);//send student ID to next activity
+                    bundle.putString("name", pref.getString("name", "未知的使用者"));
+                    bundle.putStringArray("s1", mycourse_name);
+                    bundle.putStringArray("s2", mycourse_time);
+                    bundle.putStringArray("s3", mycourse_ID);
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
@@ -116,33 +122,18 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent();
                     Bundle bundle = new Bundle();
 
-                    //getDeviceImei();
-                    //String IMEI = mDeviceIMEI;    //IMEI碼取得
                     String result = backend.Communication(1, name.getText().toString(), password.getText().toString());//result是取得的整個字串
                     if (result.contains(";")) {
-                        String results[] = result.split(";");//切開
+                        backend_split(result);
 
-                        int len = (results.length - 2) / 2;
-                        course = new String[len];
-                        course_time = new String[len];
-                        for (int i = 2; i < len + 2; i++) {//課程名稱
-                            course[i - 2] = results[i];
-                            Log.d("MSG", "hello" + course[i - 2]);
-                        }
-                        for (int j = len + 2; j < (len * 2) + 2; j++) {//課程時間
-                            course_time[j - len - 2] = results[j];
-                            Log.d("MSG", "hello" + course_time[j - len - 2]);
-                        }
-                    /*for(int k = (len*2)+2;k < results.length;k++){//課程地點
-                        course_place[k-len*2-2] = results[k];
-                    }*/
-
-                        // Add to DB
-                        for(int i=0;i<len;i++){
-
+                        // Add name to SharedPreference
+                        pref.edit().putString("name", IDname)
+                            .putString("IDtype", IDtype).commit();
+                        // Add data to DB
+                        for(int i=0;i<course.length;i++){
+                            add(course_CID[i], course[i], course_time[i]);
                         }
 
-                        String IDtype = results[1];
                         switch (IDtype) {
                             case "student":
                                 // Get token
@@ -166,26 +157,19 @@ public class MainActivity extends AppCompatActivity {
                                                 // Toast.makeText(MainActivity.this, "TOKEN = "+msg, Toast.LENGTH_SHORT).show();
                                             }
                                         });
-                                String login_permission = backend.Communication(4, Token[0]);
+                                String login_permission = backend.Communication(4, name.getText().toString(), Token[0]);
                                 //Log.d("LoginPermission", login_permission);
-                                if (login_permission.equals("login failed")) {
+                                if (login_permission.equals("False")) {
                                     Toast.makeText(MainActivity.this, "請過一段時間後再登嘗試登入哦！", Toast.LENGTH_SHORT).show();
                                     break;  // 黑名單ing
                                 }
-                                /*
-                                //initialize progress dialog
-                                progressDialog = new ProgressDialog(MainActivity.this);
-                                //show Dialog
-                                progressDialog.show();
-                                //set content view
-                                progressDialog.setContentView(R.layout.progress_layout);
-                                //set transparent background
-                                progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);*/
 
                                 intent.setClass(MainActivity.this, Student.class);
-                                bundle.putString("name", name.getText().toString());//send student ID to next activity
+                                bundle.putString("id", name.getText().toString());//send student ID to next activity
                                 bundle.putStringArray("s1", course);
                                 bundle.putStringArray("s2", course_time);
+                                bundle.putStringArray("s3", course_CID);
+                                bundle.putString("name", IDname);
                                 intent.putExtras(bundle);
                                 startActivity(intent);
                                 // Save ID and type, turn login_flag to true
@@ -195,9 +179,11 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case "teacher":
                                 intent.setClass(MainActivity.this, teacher.class);
-                                bundle.putString("name", name.getText().toString());//send student ID to next activity
+                                bundle.putString("id", name.getText().toString());//send student ID to next activity
                                 bundle.putStringArray("s1", course);
                                 bundle.putStringArray("s2", course_time);
+                                bundle.putStringArray("s3", course_CID);
+                                bundle.putString("name", IDname);
                                 intent.putExtras(bundle);
                                 startActivity(intent);
                                 // Save ID and type, turn login_flag to true
@@ -206,14 +192,12 @@ public class MainActivity extends AppCompatActivity {
                                         .putString("password", password.getText().toString()).commit();
                                 break;
                         }
-                    }
-                    else{
+                    } else {
                         Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
-
     }
 
     @Override
@@ -267,31 +251,130 @@ public class MainActivity extends AppCompatActivity {
         return onTouchEvent(ev);
     }
 
-    private void getDeviceImei() {
-        mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        try {
-            if (Build.VERSION.SDK_INT >= 26) {
-                mDeviceIMEI = mTelephonyManager.getImei();
-            } else {
-                mDeviceIMEI = mTelephonyManager.getDeviceId();
-            }
-        } catch (SecurityException e) {
-            // expected
-            if (DBG) {
-                Log.d(TAG, "SecurityException e");
-            }
-        }
-    }
-
     // Add data to DB
-    private void add(String CID, String Cname, String Ctime, String Cpos){
+    private void add(String CID, String Cname, String Ctime){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("_id", CID);
         values.put("cname", Cname);
         values.put("ctime", Ctime);
-        values.put("cpos", Cpos);
         db.insert("MyClass", null, values);
+    }
+
+    // Get data from DB
+    private Cursor getCursor(){
+        SQLiteDatabase db=dbHelper.getReadableDatabase();  //透過dbHelper取得讀取資料庫的SQLiteDatabase物件，可用在查詢
+        String[] columns={"_id", "cname", "ctime"};
+        Cursor cursor = db.query("MyClass",columns,null,null,null,null,null);  //查詢所有欄位的資料
+        return cursor;
+    }
+
+    private void backend_split(String result) {
+        String results[] = result.split(";");//切開
+
+        IDname = results[0];
+        IDtype = results[1];
+        int len = (results.length - 2) / 4;//計算課程數
+        course_CID = new String[len];
+        course = new String[len];
+        course_time = new String[len];
+        String course_place[] = new String[len];
+        String course_time_d[];
+        String course_time_h[] = new String[2];
+        String course_time_hh[] = new String[2];
+        for (int i = 2; i < len + 2; i++) {//課程ID
+            course_CID[i - 2] = results[i];
+        }
+        for (int j = len + 2; j < (len * 2) + 2; j++) {//課程名稱
+            course[j - len - 2] = results[j];
+        }
+        for (int k = (len * 2) + 2; k < (len * 3) + 2; k++) {//課程時間
+            course_time[k - len * 2 - 2] = results[k];
+        }
+        for (int l = (len * 3) + 2; l < results.length; l++) {//課程地點
+            course_place[l - len * 3 - 2] = results[l];
+        }
+        for (int i = 0; i < len; i++) {
+            course_time_d = course_time[i].split("d");//course_time_d[0] = 星期幾
+            switch (course_time_d[0]) {
+                case "1":
+                    course_time_d[0] = "一";
+                    break;
+                case "2":
+                    course_time_d[0] = "二";
+                    break;
+                case "3":
+                    course_time_d[0] = "三";
+                    break;
+                case "4":
+                    course_time_d[0] = "四";
+                    break;
+                case "5":
+                    course_time_d[0] = "五";
+                    break;
+            }
+            course_time_h[0] = course_time_d[1].substring(0, 1);
+            course_time_h[1] = course_time_d[1].substring(2, 3);
+            switch (course_time_h[0]) {
+                case "1":
+                    course_time_hh[0] = "08:10";
+                    break;
+                case "2":
+                    course_time_hh[0] = "09:10";
+                    break;
+                case "3":
+                    course_time_hh[0] = "10:10";
+                    break;
+                case "4":
+                    course_time_hh[0] = "11:10";
+                    break;
+                case "5":
+                    course_time_hh[0] = "13:10";
+                    break;
+                case "6":
+                    course_time_hh[0] = "14:10";
+                    break;
+                case "7":
+                    course_time_hh[0] = "15:10";
+                    break;
+                case "8":
+                    course_time_hh[0] = "16:10";
+                    break;
+                case "9":
+                    course_time_hh[0] = "17:10";
+                    break;
+            }
+            switch (course_time_h[1]) {
+                case "1":
+                    course_time_hh[1] = "09:00";
+                    break;
+                case "2":
+                    course_time_hh[1] = "10:00";
+                    break;
+                case "3":
+                    course_time_hh[1] = "11:00";
+                    break;
+                case "4":
+                    course_time_hh[1] = "12:00";
+                    break;
+                case "5":
+                    course_time_hh[1] = "14:00";
+                    break;
+                case "6":
+                    course_time_hh[1] = "15:00";
+                    break;
+                case "7":
+                    course_time_hh[1] = "16:00";
+                    break;
+                case "8":
+                    course_time_hh[1] = "17:00";
+                    break;
+                case "9":
+                    course_time_hh[1] = "18:00";
+                    break;
+            }
+            course_time[i] = "[" + course_time_d[0] + "]" + course_time_hh[0] + "~" + course_time_hh[1] + course_place[i];
+        }
     }
 
     @Override

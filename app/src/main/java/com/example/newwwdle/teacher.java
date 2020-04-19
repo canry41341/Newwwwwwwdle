@@ -33,7 +33,7 @@ import java.util.Map;
 public class teacher extends AppCompatActivity {
 
     private teacher teacher;
-    private String id;
+    private String id, name;
     private RecyclerView recycler_view;
     private Teacher_Adapter adapter;
     private ArrayList<String> mData = new ArrayList<>();
@@ -43,6 +43,7 @@ public class teacher extends AppCompatActivity {
 /******************************data是課程名稱，time就是時間+教室*******************/
     public String[] data;
     public String[] time;
+    public String[] CID;
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -68,10 +69,12 @@ public class teacher extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         data = bundle.getStringArray("s1");
         time = bundle.getStringArray("s2");
-        id = bundle.getString("name");
+        CID = bundle.getStringArray("s3");
+        id = bundle.getString("id");
+        name = bundle.getString("name");
 
 /***************************抓老師資料再把"老師姓名改掉"  ********************************/
-        student.setText("老師姓名"+"\n"+id);
+        student.setText(name+"\n"+id);
 
             // 準備資料，塞50個項目到ArrayList裡
         for (int i = 0; i < data.length; i++) {
@@ -86,7 +89,7 @@ public class teacher extends AppCompatActivity {
             recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
             // 將資料交給adapter
-            adapter = new Teacher_Adapter(this,mData,time);
+            adapter = new Teacher_Adapter(this,mData,time,CID);
             // 設置adapter給recycler_view
             recycler_view.setAdapter(adapter);
             out = findViewById(R.id.out_btn);
