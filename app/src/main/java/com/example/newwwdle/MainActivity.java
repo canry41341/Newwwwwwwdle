@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +24,14 @@ public class MainActivity extends AppCompatActivity {
     private EditText name, password;
     private Button login_btn;
     InputMethodManager imm ;
+    Backend backend = new Backend();
+    private static final boolean DBG = Boolean.parseBoolean(null);
+    private static final String TAG = "";
+    public static String mDeviceIMEI = "0";
+    TelephonyManager mTelephonyManager = null;
+    public String course[];
+    public String course_time[];
+    public String course_place[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +80,33 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     Intent intent = new Intent();
                     Bundle bundle = new Bundle();
+
+                    getDeviceImei();
+                    String IMEI = mDeviceIMEI;//IMEI碼取得
+                    String result = backend.Communication(1,name.getText().toString(),password.getText().toString());//result是取得的整個字串
+                    String results[] = result.split(";");//切開
+
+                    int len = (results.length-2)/3;
+                    course = new String[len];
+                    course_time = new String[len];
+                    for(int i = 2;i < len+2;i++){//課程名稱
+                        course[i-2] = results[i];
+                        Log.d("MSG","hello"+course[i-2]);
+                    }
+                    for(int j = len+2;j < (len*2)+2;j++){//課程時間
+                        course_time[j-len-2] = results[j];
+                        Log.d("MSG","hello"+course_time[j-len-2]);
+                    }
+                    /*for(int k = (len*2)+2;k < results.length;k++){//課程地點
+                        course_place[k-len*2-2] = results[k];
+                    }*/
+
                     switch (password.getText().toString()) {
                         case "s":
                             intent.setClass(MainActivity.this, Student.class);
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
+                            bundle.putStringArray("s1",course);
+                            bundle.putStringArray("s2",course_time);
                             intent.putExtras(bundle);
                             startActivity(intent);
                             // Save ID and type, turn login_flag to true
@@ -83,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
                         case "t":
                             intent.setClass(MainActivity.this, teacher.class);
                             bundle.putString("name", name.getText().toString());//send student ID to next activity
+                            bundle.putStringArray("s1",course);
+                            bundle.putStringArray("s2",course_time);
                             intent.putExtras(bundle);
                             startActivity(intent);
                             // Save ID and type, turn login_flag to true
@@ -144,6 +180,21 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return onTouchEvent(ev);
+    }
+    private void getDeviceImei() {
+        mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        try {
+            if( Build.VERSION.SDK_INT >= 26 ) {
+                mDeviceIMEI = mTelephonyManager.getImei();
+            }else {
+                mDeviceIMEI = mTelephonyManager.getDeviceId();
+            }
+        } catch (SecurityException e) {
+            // expected
+            if (DBG) {
+                Log.d(TAG, "SecurityException e");
+            }
+        }
     }
 
 }

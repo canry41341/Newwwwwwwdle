@@ -72,8 +72,8 @@ public class Student extends AppCompatActivity {
 
         //這裡是看你要從哪去抓 s1[]跟s2[]的資料來源
         /******************課表、教室、時間(把時間跟教室放在s2)**************/
-        s1 = getResources().getStringArray(R.array.class_Name);
-        s2 = getResources().getStringArray(R.array.time);
+        s1 = bundle.getStringArray("s1");//getResources().getStringArray(R.array.class_Name);
+        s2 = bundle.getStringArray("s2");//getResources().getStringArray(R.array.time);
         /*****************************************************************/
         //set log out
         logout_btn = findViewById(R.id.logout_btn);
