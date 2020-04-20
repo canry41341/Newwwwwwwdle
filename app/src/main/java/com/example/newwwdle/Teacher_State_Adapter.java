@@ -17,14 +17,17 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
     String time[]; //用來存時間
     String state[]; //用來存狀態
     String CID;
+    int today, choose;
     Context context;
     Backend backend = new Backend();
 
-    public Teacher_State_Adapter(Context ct, String s1[], String s2[], String class_id) {
+    public Teacher_State_Adapter(Context ct, String s1[], String s2[], String class_id, int a, int b) {
         context = ct;
         time = s1;
         state = s2;
         CID = class_id;
+        today = a;
+        choose = b;
         if(Teacher_class.note == 1){
             Teacher_class.note = 0;
             TeacherCheck.act.finish();
@@ -50,6 +53,11 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
         }else{
             holder.mcheckbox.setChecked(false);
         }
+        if (today != choose){
+            holder.mcheckbox.setEnabled(false);
+        }
+
+
         holder.mcheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

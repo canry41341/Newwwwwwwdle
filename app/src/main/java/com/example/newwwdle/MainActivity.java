@@ -135,28 +135,14 @@ public class MainActivity extends AppCompatActivity {
 
                     // Get token and check if Account is locked
                     // Get token
-                    FirebaseInstanceId.getInstance().getInstanceId()
-                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                                    if (!task.isSuccessful()) {
-                                        Log.w(TAG, "getInstanceId failed", task.getException());
-                                        return;
-                                    }
-
-                                    // Get new Instance ID token
-                                    String token = task.getResult().getToken();
-                                    pref.edit().putString("token", token).commit();
-                                    // Log and toast
-                                    // Toast.makeText(MainActivity.this, "TOKEN = "+token, Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                    gettoken(pref);
                     String login_permission = backend.Communication(4, name.getText().toString(), pref.getString("token", null));
                     if (login_permission.equals("False")) {     // Account is locked
                         Toast.makeText(MainActivity.this, "請過一段時間後再登嘗試登入哦！", Toast.LENGTH_SHORT).show();
                     }
                     else if (login_permission.equals("Error")){
                         Toast.makeText(MainActivity.this, "Error，please connect developer", Toast.LENGTH_SHORT).show();
+                        gettoken(pref);
                     }
                     else{
                         String result = backend.Communication(1, name.getText().toString(), password.getText().toString());//result是取得的整個字串
@@ -278,6 +264,25 @@ public class MainActivity extends AppCompatActivity {
         String[] columns={"_id", "cname", "ctime"};
         Cursor cursor = db.query("MyClass",columns,null,null,null,null,null);  //查詢所有欄位的資料
         return cursor;
+    }
+
+    private void gettoken(final SharedPreferences preferences){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+                        preferences.edit().putString("token", token).commit();
+                        // Log and toast
+                        // Toast.makeText(MainActivity.this, "TOKEN = "+token, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void backend_split(String result) {

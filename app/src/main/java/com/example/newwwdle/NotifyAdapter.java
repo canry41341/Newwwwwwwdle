@@ -17,13 +17,15 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.MyViewHold
     String notify[]; //用來存通知本身的內容
     String date[]; //用來存所發通知的時間
     String MSG[];
+    String CID;
     Context context;
 
-    public NotifyAdapter(Context ct, String[] title/**/, String[] time, String[] msg) {
+    public NotifyAdapter(Context ct, String[] title/**/, String[] time, String[] msg, String class_id) {
         context = ct;
         notify = title;// title
         date = time; // time
         MSG = msg;
+        CID = class_id;
     }
 
     @NonNull
@@ -49,6 +51,7 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.MyViewHold
                 intent.putExtra("title", notify[position]);
                 intent.putExtra("time", date[position]);
                 intent.putExtra("msg", MSG[position]);
+                intent.putExtra("CID",CID);
                 context.startActivity(intent);
             }
         });

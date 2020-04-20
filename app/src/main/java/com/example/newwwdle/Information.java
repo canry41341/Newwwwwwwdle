@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
@@ -63,6 +65,21 @@ public class Information extends AppCompatActivity {
                 String result = backend.Communication(9,CID,TITLE,MSG);
                 Toast.makeText(Information.this,TITLE + "/" + MSG,Toast.LENGTH_LONG).show();
                 /********************************************************/
+                // refresh announce board when add new announce
+                Cursor cursor = getCursor();
+                cursor.moveToFirst();
+                String class_name = cursor.getString(cursor.getColumnIndex("cname"));
+                String class_time = cursor.getString(cursor.getColumnIndex("ctime"));
+                Intent intent1 = new Intent();
+                intent1.setClass(Information.this,Teacher_class.class);
+                Bundle bundle1 = new Bundle();
+                bundle1.putString("data1",class_name);
+                bundle1.putString("data2",class_time);
+                bundle1.putString("data3",CID);
+                intent1.putExtras(bundle1);
+                Teacher_class.reset.finish();
+                startActivity(intent1);
+                //Teacher_class.reset.onCreate(bundle1,null);
                 Information.this.finish();
             }
         });
@@ -122,5 +139,12 @@ public class Information extends AppCompatActivity {
             return true;
         }
         return onTouchEvent(ev);
+    }
+    private Cursor getCursor(){
+        DBHelper dbHelper = new DBHelper(this);
+        SQLiteDatabase db=dbHelper.getReadableDatabase();  //透過dbHelper取得讀取資料庫的SQLiteDatabase物件，可用在查詢
+        String[] columns={"_id", "cname", "ctime"};
+        Cursor cursor = db.query("MyClass",columns,"_id=?",new String[]{CID},null,null,null);  //查詢所有欄位的資料
+        return cursor;
     }
 }

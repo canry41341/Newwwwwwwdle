@@ -60,6 +60,8 @@ public class CheckAdapter extends RecyclerView.Adapter<CheckAdapter.MyViewHolder
                 Intent intent = new Intent();
                 intent.setClass(context, TeacherState.class);
                 Bundle bundle = new Bundle();
+                bundle.putInt("today", date.length);
+                bundle.putInt("choose", position+1);
                 bundle.putString("date1",date[position]);
                 bundle.putStringArray("student",student);
                 check = new String[student.length];

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,6 +43,7 @@ public class SecondActivity extends AppCompatActivity {
     //assign clock
     TextClock mClock;
     public Drawable dd;
+    static Activity reset;
 
 
     private Button atten_btn, state_btn; //分別是 "點名鈕"  "通知鈕"  "顯示點名狀態的按鈕"
@@ -79,6 +81,7 @@ public class SecondActivity extends AppCompatActivity {
         className = findViewById(R.id.className);
         getData(); //接收你從上個activity傳來的參數
         setData(); //顯示你從上個activity傳來的參數
+        reset = this;
 
         //set clock
         mClock = findViewById(R.id.clock);
@@ -112,16 +115,18 @@ public class SecondActivity extends AppCompatActivity {
                     String result = backend.Communication(11,data3);
                     String[] tokens = result.split(",");
                     signin_permission = Boolean.parseBoolean(tokens[0].toLowerCase());
-                    teacher_lat = Double.parseDouble(tokens[1]);
-                    teacher_long = Double.parseDouble(tokens[2]);
+                    teacher_long = Double.parseDouble(tokens[1]);
+                    teacher_lat = Double.parseDouble(tokens[2]);
 
                     //Toast.makeText(SecondActivity.this,String.valueOf(signin_permission) + "/" + String.valueOf(teacher_lat) + "/" + String.valueOf(teacher_long),Toast.LENGTH_LONG).show();
                     if (signin_permission) {
                         if (lastKnownLocation != null) {
                             float[] distance = new float[1];
                             Location.distanceBetween(teacher_lat, teacher_long, lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude(), distance);
+                            System.out.println("distance : " + distance[0]);
+                            Toast.makeText(SecondActivity.this,Float.toString(distance[0]),Toast.LENGTH_LONG).show();
                             Log.d("Location", "long:"+lastKnownLocation.getLongitude()+"\nlat: "+ lastKnownLocation.getLatitude());
-                            if (distance[0] > 200.0) {
+                            if (distance[0] > 10000.0) {
                                 Toast.makeText(SecondActivity.this, "你不在點名範圍裡！ (距離點名範圍" + distance[0] + "公尺)", Toast.LENGTH_LONG).show();
                             } else {
                                 String sign = backend.Communication(8,ID,data3);
@@ -194,7 +199,7 @@ public class SecondActivity extends AppCompatActivity {
         }
 
         //設定adapter
-        NotifyAdapter notifyAdapter = new NotifyAdapter(this, s1, s2, s3);
+        NotifyAdapter notifyAdapter = new NotifyAdapter(this, s1, s2, s3, data3);
         myRecyclerView.setAdapter(notifyAdapter);
         myRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

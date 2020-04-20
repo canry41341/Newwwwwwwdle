@@ -16,6 +16,7 @@ public class TeacherState extends AppCompatActivity {
     private String s2[]; //check
     private String CID;
     String date;
+    int today, choose;
     RecyclerView myTRecyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +37,12 @@ public class TeacherState extends AppCompatActivity {
         s1 = bundle.getStringArray("student");
         s2 = bundle.getStringArray("check");
         CID = bundle.getString("CID");
+        today = bundle.getInt("today");
+        choose = bundle.getInt("choose");
+
         /************************************************************************/
         //設定adapter
-        Teacher_State_Adapter stateAdapter = new Teacher_State_Adapter(this, s1, s2, CID);
+        Teacher_State_Adapter stateAdapter = new Teacher_State_Adapter(this, s1, s2, CID, today, choose);
         myTRecyclerView.setAdapter(stateAdapter);
         myTRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         myTRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));

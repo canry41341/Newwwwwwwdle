@@ -11,6 +11,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -20,6 +21,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +30,7 @@ import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -48,7 +51,9 @@ public class Teacher_class extends AppCompatActivity  {
     String ss1[], ss2[], ss3[];
     String[] date;
     String[][] student;
+    boolean now = false;
     static int note = 0;
+    static Activity reset;
 
     RecyclerView myTRecyclerView;
 
@@ -79,13 +84,12 @@ public class Teacher_class extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_class);
-
+        reset = this;
 
 
         className = findViewById(R.id.className1);
         getData();
         setData();
-
 
         start = false;
         enable = false;
@@ -130,13 +134,58 @@ public class Teacher_class extends AppCompatActivity  {
 
         //Toast.makeText(Teacher_class.this, currentTime, Toast.LENGTH_SHORT).show();
 
-
         noti_btn = findViewById(R.id.status_btn1);//
-
 
         // GPS parameter setting
         final LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         final String locationProvider = LocationManager.GPS_PROVIDER;   // Or use LocationManager.NETWORK_PROVIDER
+
+        final SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+        SimpleDateFormat formatt = new SimpleDateFormat("HHmmss");
+        String curtime = formatt.format(new Date(System.currentTimeMillis()));
+        String targettime = pref.getString("targettime", null);
+        String loginCID = pref.getString("login_CID", null);
+
+        if(targettime != null && loginCID.equals(data3)){
+            if(Integer.valueOf(targettime) > Integer.valueOf(curtime)){
+                Log.d("Targetnotyet", targettime+" : "+curtime);
+                start = true;
+                now = true;
+                mycheckclock.setVisibility(View.INVISIBLE);
+                count_down_time.setVisibility(View.VISIBLE);
+                atttend_btn.setText("結束點名");
+                atttend_btn.setBackgroundColor(Color.parseColor("#ffca28"));
+                int tmin = Integer.valueOf(targettime.substring(2, 4));
+                int tsec = Integer.valueOf(targettime.substring(4, 6));
+                int cmin = Integer.valueOf(curtime.substring(2, 4));
+                int csec = Integer.valueOf(curtime.substring(4, 6));
+                int remain = (tmin*60 + tsec - cmin*60 - csec) * 1000;     // Millisecond
+                Log.d("Targetremain", Integer.toString(remain));
+                cdt = new CountDownTimer(remain, 1000) { // 1Minute
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        minutes = (int) ((millisUntilFinished+1000)/1000/60);
+                        seconds = (int) ((millisUntilFinished+1000)/1000%60);
+                        count_down_time.setText(String.format("%02d", minutes)+":"+String.format("%02d", seconds));
+                    }
+                    @Override
+                    public void onFinish() {
+                        //database 點名停止
+                        now = false;
+                        String result = backend.Communication(10,data3,0,teacher_long,teacher_lat);
+                        Toast.makeText(Teacher_class.this,"cancel", Toast.LENGTH_SHORT).show();
+                        mycheckclock.setVisibility(View.VISIBLE);
+                        count_down_time.setVisibility(View.INVISIBLE);
+                        atttend_btn.setText("開啟點名");
+                        atttend_btn.setBackgroundDrawable(dd);
+                        //Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
+                        start = false;
+                        pref.edit().putString("login_CID", null).commit();
+                    }
+                };
+                cdt.start();
+            }
+        }
 
         atttend_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,19 +227,28 @@ public class Teacher_class extends AppCompatActivity  {
                                     teacher_lat = lastKnownLocation.getLatitude();
                                     Toast.makeText(Teacher_class.this, "經度:" + teacher_long + "\n緯度:" + teacher_lat, Toast.LENGTH_SHORT).show();
                                     Toast.makeText(Teacher_class.this, "點名開始", Toast.LENGTH_SHORT).show();
+                                    final SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);  // DB
+                                    // time
+                                    final SimpleDateFormat formatter = new SimpleDateFormat("HHmmss");
+                                    String date = formatter.format(new Date(System.currentTimeMillis()));
+                                    int min = Integer.valueOf(date.substring(2, 4));
+                                    min = min + numberPicker.getValue()/10;
+                                    date = date.substring(0, 2) + Integer.toString(min) + date.substring(4, 6);
+                                    pref.edit().putString("targettime", date)
+                                            .putString("login_CID", data3).commit();
+                                    Log.d("Targettime", date);
                                     /*************************TIMER**************************/
                                     cdt = new CountDownTimer(numberPicker.getValue()*6000, 1000) { // 1Minute
                                         @Override
                                         public void onTick(long millisUntilFinished) {
-
                                             minutes = (int) ((millisUntilFinished+1000)/1000/60);
                                             seconds = (int) ((millisUntilFinished+1000)/1000%60);
-
                                             count_down_time.setText(String.format("%02d", minutes)+":"+String.format("%02d", seconds));
                                         }
                                         @Override
                                         public void onFinish() {
                                             //database 點名停止
+                                            now = false;
                                             String result = backend.Communication(10,data3,0,teacher_long,teacher_lat);
                                             Toast.makeText(Teacher_class.this,"cancel", Toast.LENGTH_SHORT).show();
                                             mycheckclock.setVisibility(View.VISIBLE);
@@ -199,10 +257,12 @@ public class Teacher_class extends AppCompatActivity  {
                                             atttend_btn.setBackgroundDrawable(dd);
                                             //Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
                                             start = false;
+                                            pref.edit().putString("login_CID", null).commit();
                                         }
                                     };
                                     cdt.start();
                                     //databse 點名開始;
+                                    now = true;
                                     String result = backend.Communication(10,data3,1,teacher_long,teacher_lat);
                                     Toast.makeText(Teacher_class.this, "start sign", Toast.LENGTH_SHORT).show();
                                     count_down_time.setVisibility(View.VISIBLE);
@@ -230,7 +290,13 @@ public class Teacher_class extends AppCompatActivity  {
 
 
                 } else{//中斷點名
+                    now = false;
+                    Log.d("msg: ","12312316516526813198652338965131598615965316");
+                    for(int i =0; i < 75; i++){
+                        Log.d("msg: ",data3);
+                    }
                     String result = backend.Communication(10,data3,0,teacher_long,teacher_lat);
+                    //String result = backend.Communication(2,data3);
                     Toast.makeText(Teacher_class.this, "cancel", Toast.LENGTH_SHORT).show();
                     cdt.cancel();
                     count_down_time.setVisibility(View.INVISIBLE);
@@ -240,6 +306,7 @@ public class Teacher_class extends AppCompatActivity  {
                     atttend_btn.setBackgroundDrawable(dd);
                     Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
                     start = false;
+                    pref.edit().putString("login_CID", null).commit();
                 }
 
             }
@@ -278,6 +345,12 @@ public class Teacher_class extends AppCompatActivity  {
 
                 attend_all_btn = dialogView.findViewById(R.id.attend_all_btn);
                 attend_now_btn = dialogView.findViewById(R.id.attend_curr_btn);
+                if(now){
+                    attend_now_btn.setEnabled(true);
+                }
+                else {
+                    attend_now_btn.setEnabled(false);
+                }
                 /************************沒有點名的話***********/
                 //if(點名 = 0){
                 //attend_now_btn.setEnabled(false);
@@ -339,6 +412,8 @@ public class Teacher_class extends AppCompatActivity  {
                         Intent intt = new Intent();
                         intt.setClass(Teacher_class.this, TeacherState.class);
                         Bundle bundle = new Bundle();
+                        bundle.putInt("today", today);
+                        bundle.putInt("choose", today);
                         bundle.putString("data1",student[today][0]);
                         bundle.putStringArray("student",class_student);
                         bundle.putStringArray("check",check);

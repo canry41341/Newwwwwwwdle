@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -31,6 +32,8 @@ public class Backend {
     private int KEY = -1;
     private int ret_flag = -1;
     private String result = "";
+    static protected OutputStreamWriter outputStreamWriter;
+    static protected InputStreamReader inputStreamReader;
     Backend(){
         thread = new Thread(Connection);
         thread.start();
@@ -48,15 +51,20 @@ public class Backend {
                 int serverPort = 8888;
                 clientSocket = new Socket(serverIp, serverPort);
                 //取得網路輸出串流
-                bw = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+                outputStreamWriter = new OutputStreamWriter(clientSocket.getOutputStream());
+                inputStreamReader = new InputStreamReader(clientSocket.getInputStream());
+                bw = new BufferedWriter(outputStreamWriter);
                 // 取得網路輸入串流
-                br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                br = new BufferedReader(inputStreamReader);
+                Log.d("msg","createla");
                 // 當連線後
                 while (clientSocket.isConnected()) {
                     if(write_flag == 1){
+                        Log.d("msg", send_msg);
                         bw.write(send_msg);
                         bw.flush();
                         tmp = br.readLine();
+                        //Log.d("msg", tmp);
                         switch(KEY){
                             case 1:
                                 if(tmp.equals("No Account")){
@@ -266,6 +274,7 @@ public class Backend {
         if(key == 10) {
             // add : [IMEI, start/stop, ID , CID, announce, GPS]
             // key = 10, input: cid, startSign, GPS and update status of roll_call_sign : function(KEY=10,CID,startSign,GPS1,GPS2)
+            Log.d("msg", "1231456465651");
             sendMessage("add,-1,"+start_stop+",-1,"+cid+",-1,"+gps_1+","+gps_2,key);
             lock();
             initial();

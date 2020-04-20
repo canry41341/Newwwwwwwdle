@@ -71,15 +71,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:backgroundTint="#fff9c4"
+            android:textSize="25sp"
+            android:background="@drawable/button"
             android:text="取消" />
 
         <Button
             android:id="@+id/post_buton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:textSize="25sp"
             android:layout_weight="1"
-            android:backgroundTint="#fff9c4"
             android:text="發佈" />
     </LinearLayout>
 

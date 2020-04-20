@@ -1,6 +1,12 @@
 package com.example.newwwdle;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +22,18 @@ public class StateAdapter extends RecyclerView.Adapter<StateAdapter.MyViewHolder
     //顯示點名狀態的adapter
     String time[]; //用來存時間
     String state[]; //用來存狀態
+    String CID;
     Context context;
 
-    public StateAdapter(Context ct, String s1[], String s2[]) {
+    public StateAdapter(Context ct, String s1[], String s2[], String s3) {
         context = ct;
         time = s1;
         state = s2;
+        CID = s3;
     }
 
     @NonNull
+
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -60,4 +69,5 @@ public class StateAdapter extends RecyclerView.Adapter<StateAdapter.MyViewHolder
             stateLayout = itemView.findViewById(R.id.StateLayout); //狀態欄的layout名稱
         }
     }
+
 }
