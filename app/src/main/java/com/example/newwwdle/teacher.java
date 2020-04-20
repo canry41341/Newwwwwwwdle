@@ -104,6 +104,11 @@ public class teacher extends AppCompatActivity {
                             //Log.d(TAG, "onClick: " + numberPicker.getValue());
                             // Set login flag to false
                             SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+
+                            // Clean the Databases
+                            teacher.this.deleteDatabase("ClassInfo.db");
+                            pref.edit().clear();
+
                             pref.edit().putBoolean("login_flag", false).commit();
                             // Go back to Login Window (MainActivity)
                             Intent intent = new Intent();

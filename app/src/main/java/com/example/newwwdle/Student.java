@@ -7,9 +7,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -90,30 +92,30 @@ public class Student extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //Log.d(TAG, "onClick: " +
                         // Get token
-                        final String[] Token = new String[1];
                         FirebaseInstanceId.getInstance().getInstanceId()
                                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
                                         if (!task.isSuccessful()) {
-                                            //Log.w(TAG, "getInstanceId failed", task.getException());
+                                            Log.w("TokenError", "getInstanceId failed", task.getException());
                                             return;
                                         }
 
                                         // Get new Instance ID token
                                         String token = task.getResult().getToken();
-
-                                        // Log and toast
-                                        String msg = getString(R.string.msg_token_fmt, token);
-                                        Log.d("TokenLogout", msg);
-                                        Token[0] = msg;
+                                        SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+                                        pref.edit().putString("token", token).commit();
                                         // Toast.makeText(MainActivity.this, "TOKEN = "+msg, Toast.LENGTH_SHORT).show();
                                     }
                                 });
                         // 加入黑名單
                         Backend backend = new Backend();
                         SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
-                        backend.Communication(5, pref.getString("ID", ""), Token[0]);
+                        backend.Communication(5, pref.getString("ID", ""), pref.getString("token", null));
+
+                        // Clean the Databases
+                        Student.this.deleteDatabase("ClassInfo.db");
+                        pref.edit().clear();
 
                         // Set login flag to false
                         pref.edit().putBoolean("login_flag", false).commit();

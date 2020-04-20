@@ -10,7 +10,7 @@ from firebase_admin import firestore
 from firebase_admin import db
 from pyfcm import FCMNotification
 
-host = "192.168.208.118"
+host = "192.168.201.40"
 port = 8888
 loop_out = False
 
@@ -34,9 +34,8 @@ def get_database(str_reference):
     return db_ref.get()
 
 def remove_database(str_reference):
-    if(get_database(str_reference) != None):
-        db_ref = db.reference(str_reference)
-        db_ref.delete()
+    db_ref = db.reference(str_reference)
+    db_ref.delete()
     return 0
 
 def parse_data(conn,data):
@@ -49,10 +48,9 @@ def parse_data(conn,data):
         ID = data[3]
         CID = data[4]
         Announce = data[5]
-        if(IMEI != "-1" and ID != "-1"):
+        if(IMEI != "-1"):
             print("add " + str(IMEI) +" into black")
             add_black(IMEI)
-            write_database("/Accounts/"+str(ID)+"/AccountData/","Devicetoken",-1)
             conn.sendall("True\n".encode())
         elif(startSign != "-1"):
             if(startSign == "1" and len(data) == 8):
@@ -93,39 +91,28 @@ def parse_data(conn,data):
         passwd = data[3]
         CID = data[4]
         key = data[5]
-        if(IMEI != "-1" and SID != "-1"):
+        if(IMEI != "-1"):
             print("check if it can login")
-            type = get_database("/Accounts/"+str(SID)+"/AccountData/Type/")
-            print(type)
-            if(type == "student"):
-            	if(check_login(IMEI)):
-                	print("successfully login")
-                	write_database("/Accounts/"+str(SID)+"/AccountData/","Devicetoken",IMEI)
-                	conn.sendall("True\n".encode())
-                	print("True")
-            	else:
-                	print("login failed") 
-                	conn.sendall("False\n".encode()) 
-                	print("False")    
-            elif(type == "teacher"):
-            	conn.sendall("True\n".encode())
+            if(check_login(IMEI)):
+                print("successfully login")
+                conn.sendall("True\n".encode())
+                print("True")
             else:
-            	conn.sendall("Error\n".encode())
+                print("login failed") 
+                conn.sendall("login failed\n".encode()) 
+                print("False")    
         elif (SID != "-1" and passwd != "-1"):
             print("Checking Account")
             able,mode = check_account(SID,passwd)
             if(able):
                 print(True)
                 print("give info")
-                name,type_id,cls_id,cls_name,cls_time,cls_pos = give_info(SID)
+                name,type_id,cls_name,cls_time,cls_pos = give_info(SID)
                 print("name: ",name)
                 print("cls_name: ",cls_name)
                 print("cls_time: ",cls_time)
                 print("cls_pos: ",cls_pos)
                 msg = name+";"+type_id+";"
-                for cs in cls_id:
-                    if(cs != None):
-                        msg += (cs+";")
                 for cs in cls_name:
                     if(cs != None):
                         msg += (cs+";")
@@ -301,9 +288,9 @@ def add_announce(CID,Title,Announce):
     stds = get_database("Courses/"+str(CID)+"/Students")
     for std in stds:
         token = get_database("Accounts/"+str(std)+"/AccountData/Devicetoken/")
-        if(token != None or token != -1):
+        if(token != None):
             register_ids.append(token)
-    push_server.notify_multiple_devices(registration_ids=register_ids,message_title=CID+","+Title,message_body=Announce)
+    push_server.notify_multiple_devices(registration_ids=register_ids,message_title=Title,message_body=Announce)
   
     return True
 
@@ -338,7 +325,7 @@ def give_info(SID):
         id_class_time.append(get_database("/Courses/"+std_cls+"/CourseData/Time"))
         id_class_pos.append(get_database("/Courses/"+std_cls+"/CourseData/Position"))
     
-    return name,type_id,id_class,id_class_name,id_class_time,id_class_pos
+    return name,type_id,id_class_name,id_class_time,id_class_pos
 
 def get_personal_sign(SID,CID):
     if(get_database("Accounts/"+str(SID)+"/") == None):
@@ -390,6 +377,13 @@ if __name__ == "__main__":
     print("Connecting to DataBase ~~~~")
     cred = credentials.Certificate("./key.json")
     firebase_admin.initialize_app(cred, {'databaseURL': 'https://nedle-2cf29.firebaseio.com/' })
+
+   # push_server = FCMNotification(api_key='AAAAkgMVFwk:APA91bGzftIDgzp7nz1MLSODtNjDLRjlBiXGZSOypeVeQVKDtOEaP09sJpsanDuBX09Mqv0s-afCN-PHjC0_fUOdhmZUBfKVV6YS6-Q1Uhcln42WMZ70264A0Jg_JGJm6pEGoW9Yld1y')
+   # registration_ids = ["dbs-y1gJQrukYV8lHo_GL3:APA91bGnFK7yyFZYItlh3olNPlK3OhuCD81U9Pps6zVibAiGxcLKC4arYY9nsR3jPyM7CR0XwvgHkItLfaMXY0lXg0w5anctRT4PReWxc96oMXdVebjvSEBE7DdPsL5YfjZNZzB1IaSF","fe8sVxEmRZqAl4WHczHoNB:APA91bFTos3VwrEuA2x6EKbaIVlhkoBBAPEcUJa9pXqFPsAp2bYhpP0RoWLBq9a6E_XqAWOBMwW9zNOnLjWkQlQnWn6DoAX9-cD7sdRAPnffGM760NNgTXC158WrxhcIBf2mdm_kMezC"]
+        
+   # message_title = "hahahahaha"
+   # message_body = "hahahahahahahahahahayeeee"
+   # result = push_server.notify_multiple_devices(registration_ids=registration_ids, message_title=message_title, message_body=message_body)
 
     print("Connecting to Socket")
     try:

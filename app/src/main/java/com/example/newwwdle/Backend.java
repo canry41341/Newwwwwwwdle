@@ -15,9 +15,9 @@ import java.net.Socket;
 
 public class Backend {
     private Thread thread;                //執行緒
-    protected Socket clientSocket;        //客戶端的socket
-    protected BufferedWriter bw;            //取得網路輸出串流
-    protected BufferedReader br;            //取得網路輸入串流
+    static protected Socket clientSocket;        //客戶端的socket
+    static protected BufferedWriter bw;            //取得網路輸出串流
+    static protected BufferedReader br;            //取得網路輸入串流
     private String tmp;                    //做為接收時的緩存
     private String send_msg = "";
     // Member Data
@@ -44,7 +44,7 @@ public class Backend {
             // TODO Auto-generated method stub
             try{
                 // IP為Server端
-                InetAddress serverIp = InetAddress.getByName("192.168.201.7");
+                InetAddress serverIp = InetAddress.getByName("192.168.208.118");
                 int serverPort = 8888;
                 clientSocket = new Socket(serverIp, serverPort);
                 //取得網路輸出串流

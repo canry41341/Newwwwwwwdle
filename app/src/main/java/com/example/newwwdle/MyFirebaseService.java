@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
@@ -31,8 +32,9 @@ public class MyFirebaseService extends FirebaseMessagingService {
             Log.i("MyFirebaseService", "title"+remoteMessage.getNotification().getTitle());
             Log.i("MyFirebaseService", "body"+remoteMessage.getNotification().getBody());
             String s = remoteMessage.getNotification().getTitle();
-            String CID = s.split(",")[0];
-            String title = s.split(",")[1];
+            String ss[] = s.split(",");
+            String CID = ss[0];
+            String title = ss[1];
             SendNotification(CID, title, remoteMessage.getNotification().getBody());
         }
         // close DB
@@ -43,6 +45,8 @@ public class MyFirebaseService extends FirebaseMessagingService {
     public void onNewToken(String s){
         super.onNewToken(s);
         token = s;
+        SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+        pref.edit().putString("token",s).commit();
         Log.i("MyFirebaseService", "token"+s);
     }
 
@@ -51,14 +55,17 @@ public class MyFirebaseService extends FirebaseMessagingService {
 
         // get class_name and class_time from local DB
         Cursor cursor = getCursor(CID);
-        String class_name = cursor.getString(1);
-        String class_time = cursor.getString(2);
+        Log.e("Cursor", cursorToString(cursor));
+        cursor.moveToFirst();
+        String class_name = cursor.getString(cursor.getColumnIndex("cname"));
+        String class_time = cursor.getString(cursor.getColumnIndex("ctime"));
 
         // Intent
         // open SecondActivity with parameters data1 and data2
         Intent intent = new Intent(this, SecondActivity.class);
         intent.putExtra("data1", class_name);
         intent.putExtra("data2", class_time);
+        intent.putExtra("data3", CID);
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pintent = PendingIntent.getActivity(this, 0, intent, 0);
@@ -101,5 +108,23 @@ public class MyFirebaseService extends FirebaseMessagingService {
         String[] columns={"_id", "cname", "ctime"};
         Cursor cursor = db.query("MyClass",columns,"_id=?", new String[]{CID},null,null,null);  //查詢所有欄位的資料
         return cursor;
+    }
+
+    public String cursorToString(Cursor cursor){
+        String cursorString = "";
+        if (cursor.moveToFirst() ){
+            String[] columnNames = cursor.getColumnNames();
+            for (String name: columnNames)
+                cursorString += String.format("%s ][ ", name);
+            cursorString += "\n";
+            do {
+                for (String name: columnNames) {
+                    cursorString += String.format("%s ][ ",
+                            cursor.getString(cursor.getColumnIndex(name)));
+                }
+                cursorString += "\n";
+            } while (cursor.moveToNext());
+        }
+        return cursorString;
     }
 }

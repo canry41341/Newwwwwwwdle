@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewDebug;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -77,15 +78,25 @@ public class MainActivity extends AppCompatActivity {
             }
             // Already log in as student, jump to student window
             else {
-                int length = getCursor().getCount();
+                Cursor cursor = getCursor();
+                int length = cursor.getCount();
                 String mycourse_ID[] = new String[length];
                 String mycourse_name[] = new String[length];
                 String mycourse_time[] = new String[length];
-                Cursor cursor = getCursor();
-                for(int i=0;i<length;i++){
-                    mycourse_ID[i] = cursor.getString(0);
-                    mycourse_name[i] = cursor.getString(1);
-                    mycourse_time[i] = cursor.getString(2);
+                //cursor.moveToFirst();
+                /*Log.d("cursorstring", cursorToString(cursor));
+                Log.d("courseID", cursor.getString(0));
+                Log.d("courseName", cursor.getString(1));
+                Log.d("courseTime", cursor.getString(2));*/
+                int i=0;
+                while(cursor.moveToNext()){
+                    mycourse_ID[i] = cursor.getString(cursor.getColumnIndex("_id"));
+                    Log.d("cursorid", mycourse_ID[i]);
+                    mycourse_name[i] = cursor.getString(cursor.getColumnIndex("cname"));
+                    Log.d("cursorname", mycourse_name[i]);
+                    mycourse_time[i] = cursor.getString(cursor.getColumnIndex("ctime"));
+                    Log.d("cursortime", mycourse_time[i]);
+                    i++;
                 }
 
 
@@ -122,78 +133,78 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent();
                     Bundle bundle = new Bundle();
 
-                    String result = backend.Communication(1, name.getText().toString(), password.getText().toString());//result是取得的整個字串
-                    if (result.contains(";")) {
-                        backend_split(result);
+                    // Get token and check if Account is locked
+                    // Get token
+                    FirebaseInstanceId.getInstance().getInstanceId()
+                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                    if (!task.isSuccessful()) {
+                                        Log.w(TAG, "getInstanceId failed", task.getException());
+                                        return;
+                                    }
 
-                        // Add name to SharedPreference
-                        pref.edit().putString("name", IDname)
-                            .putString("IDtype", IDtype).commit();
-                        // Add data to DB
-                        for(int i=0;i<course.length;i++){
-                            add(course_CID[i], course[i], course_time[i]);
-                        }
-
-                        switch (IDtype) {
-                            case "student":
-                                // Get token
-                                final String[] Token = new String[1];
-                                FirebaseInstanceId.getInstance().getInstanceId()
-                                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                                                if (!task.isSuccessful()) {
-                                                    Log.w(TAG, "getInstanceId failed", task.getException());
-                                                    return;
-                                                }
-
-                                                // Get new Instance ID token
-                                                String token = task.getResult().getToken();
-
-                                                // Log and toast
-                                                String msg = getString(R.string.msg_token_fmt, token);
-                                                Log.d("TokenLogin", msg);
-                                                Token[0] = msg;
-                                                // Toast.makeText(MainActivity.this, "TOKEN = "+msg, Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                String login_permission = backend.Communication(4, name.getText().toString(), Token[0]);
-                                //Log.d("LoginPermission", login_permission);
-                                if (login_permission.equals("False")) {
-                                    Toast.makeText(MainActivity.this, "請過一段時間後再登嘗試登入哦！", Toast.LENGTH_SHORT).show();
-                                    break;  // 黑名單ing
+                                    // Get new Instance ID token
+                                    String token = task.getResult().getToken();
+                                    pref.edit().putString("token", token).commit();
+                                    // Log and toast
+                                    // Toast.makeText(MainActivity.this, "TOKEN = "+token, Toast.LENGTH_SHORT).show();
                                 }
+                            });
+                    String login_permission = backend.Communication(4, name.getText().toString(), pref.getString("token", null));
+                    if (login_permission.equals("False")) {     // Account is locked
+                        Toast.makeText(MainActivity.this, "請過一段時間後再登嘗試登入哦！", Toast.LENGTH_SHORT).show();
+                    }
+                    else if (login_permission.equals("Error")){
+                        Toast.makeText(MainActivity.this, "Error，please connect developer", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        String result = backend.Communication(1, name.getText().toString(), password.getText().toString());//result是取得的整個字串
+                        if (result.contains(";")) {
+                            backend_split(result);
+                            // Add name to SharedPreference
+                            pref.edit().putString("name", IDname)
+                                    .putString("IDtype", IDtype).commit();
+                            // Add data to DB
+                            for(int i=0;i<course.length;i++){
+                                add(course_CID[i], course[i], course_time[i]);
+                                Cursor cursor = dbHelper.getReadableDatabase().query("MyClass", null, null, null, null, null, null);
+                                Log.d("CursorAdd", cursorToString(cursor));
+                            }
 
-                                intent.setClass(MainActivity.this, Student.class);
-                                bundle.putString("id", name.getText().toString());//send student ID to next activity
-                                bundle.putStringArray("s1", course);
-                                bundle.putStringArray("s2", course_time);
-                                bundle.putStringArray("s3", course_CID);
-                                bundle.putString("name", IDname);
-                                intent.putExtras(bundle);
-                                startActivity(intent);
-                                // Save ID and type, turn login_flag to true
-                                pref.edit().putBoolean("login_flag", true)
-                                        .putString("ID", name.getText().toString())
-                                        .putString("password", password.getText().toString()).commit();
-                                break;
-                            case "teacher":
-                                intent.setClass(MainActivity.this, teacher.class);
-                                bundle.putString("id", name.getText().toString());//send student ID to next activity
-                                bundle.putStringArray("s1", course);
-                                bundle.putStringArray("s2", course_time);
-                                bundle.putStringArray("s3", course_CID);
-                                bundle.putString("name", IDname);
-                                intent.putExtras(bundle);
-                                startActivity(intent);
-                                // Save ID and type, turn login_flag to true
-                                pref.edit().putBoolean("login_flag", true)
-                                        .putString("ID", name.getText().toString())
-                                        .putString("password", password.getText().toString()).commit();
-                                break;
+                            switch (IDtype) {
+                                case "student":
+                                    intent.setClass(MainActivity.this, Student.class);
+                                    bundle.putString("id", name.getText().toString());//send student ID to next activity
+                                    bundle.putStringArray("s1", course);
+                                    bundle.putStringArray("s2", course_time);
+                                    bundle.putStringArray("s3", course_CID);
+                                    bundle.putString("name", IDname);
+                                    intent.putExtras(bundle);
+                                    startActivity(intent);
+                                    // Save ID and type, turn login_flag to true
+                                    pref.edit().putBoolean("login_flag", true)
+                                            .putString("ID", name.getText().toString())
+                                            .putString("password", password.getText().toString()).commit();
+                                    break;
+                                case "teacher":
+                                    intent.setClass(MainActivity.this, teacher.class);
+                                    bundle.putString("id", name.getText().toString());//send student ID to next activity
+                                    bundle.putStringArray("s1", course);
+                                    bundle.putStringArray("s2", course_time);
+                                    bundle.putStringArray("s3", course_CID);
+                                    bundle.putString("name", IDname);
+                                    intent.putExtras(bundle);
+                                    startActivity(intent);
+                                    // Save ID and type, turn login_flag to true
+                                    pref.edit().putBoolean("login_flag", true)
+                                            .putString("ID", name.getText().toString())
+                                            .putString("password", password.getText().toString()).commit();
+                                    break;
+                            }
+                        } else {
+                            Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
                         }
-                    } else {
-                        Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -397,6 +408,24 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         //Dismiss Progress Dialog
         progressDialog.dismiss();
+    }
+
+    public String cursorToString(Cursor cursor){
+        String cursorString = "";
+        if (cursor.moveToFirst() ){
+            String[] columnNames = cursor.getColumnNames();
+            for (String name: columnNames)
+                cursorString += String.format("%s ][ ", name);
+            cursorString += "\n";
+            do {
+                for (String name: columnNames) {
+                    cursorString += String.format("%s ][ ",
+                            cursor.getString(cursor.getColumnIndex(name)));
+                }
+                cursorString += "\n";
+            } while (cursor.moveToNext());
+        }
+        return cursorString;
     }
 
 }

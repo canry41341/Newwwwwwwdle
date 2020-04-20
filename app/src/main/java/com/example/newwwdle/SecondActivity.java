@@ -18,6 +18,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -119,7 +120,8 @@ public class SecondActivity extends AppCompatActivity {
                         if (lastKnownLocation != null) {
                             float[] distance = new float[1];
                             Location.distanceBetween(teacher_lat, teacher_long, lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude(), distance);
-                            if (distance[0] > 50.0) {
+                            Log.d("Location", "long:"+lastKnownLocation.getLongitude()+"\nlat: "+ lastKnownLocation.getLatitude());
+                            if (distance[0] > 200.0) {
                                 Toast.makeText(SecondActivity.this, "你不在點名範圍裡！ (距離點名範圍" + distance[0] + "公尺)", Toast.LENGTH_LONG).show();
                             } else {
                                 String sign = backend.Communication(8,ID,data3);
