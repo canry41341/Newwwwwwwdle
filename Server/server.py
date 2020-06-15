@@ -10,7 +10,7 @@ from firebase_admin import firestore
 from firebase_admin import db
 from pyfcm import FCMNotification
 
-host = "192.168.208.118"
+host = "140.116.130.39"
 port = 8888
 loop_out = False
 

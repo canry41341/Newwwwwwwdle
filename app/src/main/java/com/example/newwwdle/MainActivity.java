@@ -1,6 +1,7 @@
 package com.example.newwwdle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -12,12 +13,14 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.icu.text.IDNA;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewDebug;
@@ -38,21 +41,24 @@ import com.google.firebase.iid.InstanceIdResult;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final boolean DBG = Boolean.parseBoolean(null);
     private static final String TAG = "";
-    public static String mDeviceIMEI = "0";
     InputMethodManager imm;
     Backend backend = new Backend();
-    TelephonyManager mTelephonyManager = null;
-    private ProgressDialog progressDialog;
     private EditText name, password;
     private Button login_btn;
     private DBHelper dbHelper;      // DB
     String IDname;
     String IDtype;
     String course[];
+    boolean login_flag;
     String course_time[];
     String course_CID[];
+    Cursor cursor;
+    String ID, Pass , data;
+    AlertDialog alertDialog;
+    SharedPreferences pref;
+    String login_permission , result;
+    ProgressBar progressbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +69,11 @@ public class MainActivity extends AppCompatActivity {
         name = findViewById(R.id.edit_name); //username(student ID)
         password = findViewById(R.id.edit_id);//password
         login_btn = findViewById(R.id.login_btn);
+        progressbar = findViewById(R.id.p_Bar);
 
         // check if user is already log in
-        final SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
-        boolean login_flag = pref.getBoolean("login_flag", false);
+        pref = getSharedPreferences("userdata", MODE_PRIVATE);
+        login_flag = pref.getBoolean("login_flag", false);
         if (login_flag) {
             String ID = pref.getString("ID", "Unknown");        // ID (Account)
             String PW = pref.getString("password", "Unknown");  // Password
@@ -78,16 +85,11 @@ public class MainActivity extends AppCompatActivity {
             }
             // Already log in as student, jump to student window
             else {
-                Cursor cursor = getCursor();
+                cursor = getCursor();
                 int length = cursor.getCount();
                 String mycourse_ID[] = new String[length];
                 String mycourse_name[] = new String[length];
                 String mycourse_time[] = new String[length];
-                //cursor.moveToFirst();
-                /*Log.d("cursorstring", cursorToString(cursor));
-                Log.d("courseID", cursor.getString(0));
-                Log.d("courseName", cursor.getString(1));
-                Log.d("courseTime", cursor.getString(2));*/
                 int i=0;
                 while(cursor.moveToNext()){
                     mycourse_ID[i] = cursor.getString(cursor.getColumnIndex("_id"));
@@ -124,77 +126,125 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (name.getText().toString().equals("") | password.getText().toString().equals("")) {
                     Toast.makeText(MainActivity.this, "請輸入帳號密碼", Toast.LENGTH_SHORT).show();
                 } else {
-                    Intent intent = new Intent();
-                    Bundle bundle = new Bundle();
+                    ID = name.getText().toString();
+                    Pass = password.getText().toString();
+                    new ListTask().execute();
 
-                    // Get token and check if Account is locked
-                    // Get token
-                    gettoken(pref);
-                    String login_permission = backend.Communication(4, name.getText().toString(), pref.getString("token", null));
-                    if (login_permission.equals("False")) {     // Account is locked
-                        Toast.makeText(MainActivity.this, "請過一段時間後再登嘗試登入哦！", Toast.LENGTH_SHORT).show();
-                    }
-                    else if (login_permission.equals("Error")){
-                        Toast.makeText(MainActivity.this, "Error，please connect developer", Toast.LENGTH_SHORT).show();
-                        gettoken(pref);
-                    }
-                    else{
-                        String result = backend.Communication(1, name.getText().toString(), password.getText().toString());//result是取得的整個字串
-                        if (result.contains(";")) {
-                            backend_split(result);
-                            // Add name to SharedPreference
-                            pref.edit().putString("name", IDname)
-                                    .putString("IDtype", IDtype).commit();
-                            // Add data to DB
-                            for(int i=0;i<course.length;i++){
-                                add(course_CID[i], course[i], course_time[i]);
-                                Cursor cursor = dbHelper.getReadableDatabase().query("MyClass", null, null, null, null, null, null);
-                                Log.d("CursorAdd", cursorToString(cursor));
-                            }
-
-                            switch (IDtype) {
-                                case "student":
-                                    intent.setClass(MainActivity.this, Student.class);
-                                    bundle.putString("id", name.getText().toString());//send student ID to next activity
-                                    bundle.putStringArray("s1", course);
-                                    bundle.putStringArray("s2", course_time);
-                                    bundle.putStringArray("s3", course_CID);
-                                    bundle.putString("name", IDname);
-                                    intent.putExtras(bundle);
-                                    startActivity(intent);
-                                    // Save ID and type, turn login_flag to true
-                                    pref.edit().putBoolean("login_flag", true)
-                                            .putString("ID", name.getText().toString())
-                                            .putString("password", password.getText().toString()).commit();
-                                    break;
-                                case "teacher":
-                                    intent.setClass(MainActivity.this, teacher.class);
-                                    bundle.putString("id", name.getText().toString());//send student ID to next activity
-                                    bundle.putStringArray("s1", course);
-                                    bundle.putStringArray("s2", course_time);
-                                    bundle.putStringArray("s3", course_CID);
-                                    bundle.putString("name", IDname);
-                                    intent.putExtras(bundle);
-                                    startActivity(intent);
-                                    // Save ID and type, turn login_flag to true
-                                    pref.edit().putBoolean("login_flag", true)
-                                            .putString("ID", name.getText().toString())
-                                            .putString("password", password.getText().toString()).commit();
-                                    break;
-                            }
-                        } else {
-                            Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
-                        }
-                    }
                 }
             }
         });
+    }
+
+    private class ListTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            final AlertDialog.Builder attend_chooser = new AlertDialog.Builder(MainActivity.this, R.style.CustomDialog);
+            LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.progress, null);
+            attend_chooser.setView(dialogView);
+            alertDialog = attend_chooser.create();
+            progressbar = dialogView.findViewById(R.id.p_Bar);
+            alertDialog.show();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            login_permission = backend.Communication(4, ID, data);
+            if (login_permission.equals("False") || login_permission.equals("Error") ) {
+            }else{
+                result = backend.Communication(1, ID, Pass);//result是取得的整個字串
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void d){
+            pref = getSharedPreferences("userdata", MODE_PRIVATE);
+            cursor = getCursor();
+            Intent intent = new Intent();
+            Bundle bundle = new Bundle();
+
+            // Get token and check if Account is locked
+            // Get token
+            gettoken(pref);
+            data = pref.getString("token", null);
+            if (login_permission.equals("False")) {     // Account is locked
+                Toast.makeText(MainActivity.this, "請過一段時間後再登嘗試登入哦！", Toast.LENGTH_SHORT).show();
+                if(alertDialog.isShowing()) {
+                    alertDialog.dismiss();
+                }
+            }
+            else if (login_permission.equals("Error")){
+                Toast.makeText(MainActivity.this, "Error，please connect developer", Toast.LENGTH_SHORT).show();
+                gettoken(pref);
+                if(alertDialog.isShowing()) {
+                    alertDialog.dismiss();
+                }
+            }
+            else{
+                if (result.contains(";")) {
+                    backend_split(result);
+                    // Add name to SharedPreference
+                    pref.edit().putString("name", IDname)
+                            .putString("IDtype", IDtype).commit();
+                    // Add data to DB
+                    for(int i=0;i<course.length;i++){
+                        add(course_CID[i], course[i], course_time[i]);
+                        Cursor cursor = dbHelper.getReadableDatabase().query("MyClass", null, null, null, null, null, null);
+                        Log.d("CursorAdd", cursorToString(cursor));
+                    }
+
+                    switch (IDtype) {
+                        case "student":
+                            intent.setClass(MainActivity.this, Student.class);
+                            bundle.putString("id", name.getText().toString());//send student ID to next activity
+                            bundle.putStringArray("s1", course);
+                            bundle.putStringArray("s2", course_time);
+                            bundle.putStringArray("s3", course_CID);
+                            bundle.putString("name", IDname);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                            // Save ID and type, turn login_flag to true
+                            pref.edit().putBoolean("login_flag", true)
+                                    .putString("ID", name.getText().toString())
+                                    .putString("password", password.getText().toString()).commit();
+                            break;
+                        case "teacher":
+                            intent.setClass(MainActivity.this, teacher.class);
+                            bundle.putString("id", name.getText().toString());//send student ID to next activity
+                            bundle.putStringArray("s1", course);
+                            bundle.putStringArray("s2", course_time);
+                            bundle.putStringArray("s3", course_CID);
+                            bundle.putString("name", IDname);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                            // Save ID and type, turn login_flag to true
+                            pref.edit().putBoolean("login_flag", true)
+                                    .putString("ID", name.getText().toString())
+                                    .putString("password", password.getText().toString()).commit();
+                            break;
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
+                    if(alertDialog.isShowing()) {
+                        alertDialog.dismiss();
+                    }
+                }
+            }
+       }
+
+
+
+
     }
 
     @Override
@@ -407,12 +457,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
             Log.e("text", "onDestroy()=" + e.toString());
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        //Dismiss Progress Dialog
-        progressDialog.dismiss();
     }
 
     public String cursorToString(Cursor cursor){
