@@ -1,5 +1,7 @@
 # Newwwwwwwdle
 
+https://hackmd.io/rto3AoelT-e5dbJsg-_qTw
+
 ## 登入方法
 *老師:
 ** 帳號：88888
