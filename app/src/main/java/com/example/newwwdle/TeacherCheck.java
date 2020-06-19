@@ -17,7 +17,6 @@ public class TeacherCheck extends AppCompatActivity {
 
 
     //把從server抓到到的日期放到這裡
-    //private String [] date = {"Apr1","Apr2","Apr3","Apr4","Apr5","Apr6","Apr7","Apr8","Apr9","Apr10"};
     String[] date;
     String[][] student;
     String CID;
@@ -57,7 +56,6 @@ public class TeacherCheck extends AppCompatActivity {
             }
 
         }
-        //System.out.println(date);
 
 
 

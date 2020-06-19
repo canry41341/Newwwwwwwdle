@@ -101,7 +101,6 @@ public class teacher extends AppCompatActivity {
                     approve.setPositiveButton("確定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //Log.d(TAG, "onClick: " + numberPicker.getValue());
                             // Set login flag to false
                             SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
 
@@ -121,7 +120,6 @@ public class teacher extends AppCompatActivity {
                     approve.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //Log.d(TAG, "onClick: " + numberPicker.getValue());
                         }
                     });
                     approve.show();

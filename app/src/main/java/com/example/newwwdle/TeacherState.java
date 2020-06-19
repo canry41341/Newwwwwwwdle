@@ -32,8 +32,6 @@ public class TeacherState extends AppCompatActivity {
 
         //決定s1跟s2的來源
         /*************************抓資料**************************************/
-        //s1 = getResources().getStringArray(R.array.student);
-        //s2 = getResources().getStringArray(R.array.state);
         s1 = bundle.getStringArray("student");
         s2 = bundle.getStringArray("check");
         CID = bundle.getString("CID");

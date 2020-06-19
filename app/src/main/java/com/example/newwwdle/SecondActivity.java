@@ -93,8 +93,6 @@ public class SecondActivity extends AppCompatActivity {
         myRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         //後端自己決定要從哪抓s1[]跟s2[]來源
-        //s1 = getResources().getStringArray(R.array.class_Name);
-        //  s2 = getResources().getStringArray(R.array.time);
 
         // GPS parameter setting
         final LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
