@@ -1,20 +1,25 @@
 package com.example.newwwdle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +33,13 @@ public class Information extends AppCompatActivity {
     EditText title , message;
     //DATE
     TextView DATE_view;
+    String result;
     InputMethodManager imm ;
     String DATE,TITLE,MSG,CID;
     int isPost;
+
+    AlertDialog alertDialog;
+    ProgressBar progressbar;
     Backend backend = new Backend();
 
     @Override
@@ -42,6 +51,7 @@ public class Information extends AppCompatActivity {
         title = findViewById(R.id.info_Title);
         message = findViewById(R.id.info_text);
         message.setMovementMethod(ScrollingMovementMethod.getInstance());
+        progressbar = findViewById(R.id.p_Bar);
 
         //CID
         Intent intent = getIntent();
@@ -62,25 +72,12 @@ public class Information extends AppCompatActivity {
                 /***********************傳到databse*********************/
                 TITLE = title.getText().toString();
                 MSG = message.getText().toString();
-                String result = backend.Communication(9,CID,TITLE,MSG);
+                new ListTask().execute();
+                //result = backend.Communication(9,CID,TITLE,MSG);
                 Toast.makeText(Information.this,TITLE + "/" + MSG,Toast.LENGTH_LONG).show();
                 /********************************************************/
                 // refresh announce board when add new announce
-                Cursor cursor = getCursor();
-                cursor.moveToFirst();
-                String class_name = cursor.getString(cursor.getColumnIndex("cname"));
-                String class_time = cursor.getString(cursor.getColumnIndex("ctime"));
-                Intent intent1 = new Intent();
-                intent1.setClass(Information.this,Teacher_class.class);
-                Bundle bundle1 = new Bundle();
-                bundle1.putString("data1",class_name);
-                bundle1.putString("data2",class_time);
-                bundle1.putString("data3",CID);
-                intent1.putExtras(bundle1);
-                Teacher_class.reset.finish();
-                startActivity(intent1);
-                //Teacher_class.reset.onCreate(bundle1,null);
-                Information.this.finish();
+
             }
         });
 
@@ -92,6 +89,50 @@ public class Information extends AppCompatActivity {
             DATE_view.setText("DATE : " + DATE.substring(5,10));
         }
     }
+
+    private class ListTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            final AlertDialog.Builder attend_chooser = new AlertDialog.Builder(Information.this, R.style.CustomDialog);
+            LayoutInflater inflater = Information.this.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.progress, null);
+            attend_chooser.setView(dialogView);
+            alertDialog = attend_chooser.create();
+            progressbar = dialogView.findViewById(R.id.p_Bar);
+            alertDialog.show();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            result = backend.Communication(9,CID,TITLE,MSG);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void d){
+            Cursor cursor = getCursor();
+            cursor.moveToFirst();
+            String class_name = cursor.getString(cursor.getColumnIndex("cname"));
+            String class_time = cursor.getString(cursor.getColumnIndex("ctime"));
+            Intent intent1 = new Intent();
+            intent1.setClass(Information.this,Teacher_class.class);
+            Bundle bundle1 = new Bundle();
+            bundle1.putString("data1",class_name);
+            bundle1.putString("data2",class_time);
+            bundle1.putString("data3",CID);
+            intent1.putExtras(bundle1);
+            Teacher_class.reset.finish();
+            startActivity(intent1);
+            //Teacher_class.reset.onCreate(bundle1,null);
+            Information.this.finish();
+        }
+
+
+    }
+
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {

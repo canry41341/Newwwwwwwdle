@@ -19,6 +19,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -26,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +44,8 @@ public class Teacher_class extends AppCompatActivity  {
 
     String data1, data2, data3;
     AlertDialog alertDialog , alertDialog_noty;
+    AlertDialog Dialog;
+    ProgressBar progressbar;
     boolean start , enable;
     CountDownTimer cdt;
     TextClock mycheckclock;
@@ -50,10 +54,14 @@ public class Teacher_class extends AppCompatActivity  {
     public Drawable dd;
     String ss1[], ss2[], ss3[];
     String[] date;
+    int temp = 0;
+    int today = 0;
     String[][] student;
     boolean now = false;
     static int note = 0;
+    SharedPreferences pref;
     static Activity reset;
+    String result;
 
     RecyclerView myTRecyclerView;
 
@@ -105,7 +113,7 @@ public class Teacher_class extends AppCompatActivity  {
         count_down_time.setTextColor(Color.RED);
 
         /*************************抓公告**************************************/
-        String result = backend.Communication(2,data3);
+        result = backend.Communication(2,data3);
         System.out.println("aaa: " + result);
         String[] tokens = result.split(";");
         ss1 = new String[tokens.length]; //title
@@ -115,7 +123,6 @@ public class Teacher_class extends AppCompatActivity  {
             String[] announces_split = tokens[i].split("/");
             ss1[i] = announces_split[3];
             String temp = announces_split[2].substring(5);
-            //System.out.println(temp);
             String[] month = temp.split("m");
             ss2[i] = month[0] + "-" + month[1].substring(0,month[1].length()-1);
             ss3[i] = announces_split[1];
@@ -132,15 +139,14 @@ public class Teacher_class extends AppCompatActivity  {
 
         final String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
 
-        //Toast.makeText(Teacher_class.this, currentTime, Toast.LENGTH_SHORT).show();
-
         noti_btn = findViewById(R.id.status_btn1);//
 
         // GPS parameter setting
         final LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         final String locationProvider = LocationManager.GPS_PROVIDER;   // Or use LocationManager.NETWORK_PROVIDER
 
-        final SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+        pref = getSharedPreferences("userdata", MODE_PRIVATE);
+        //final SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
         SimpleDateFormat formatt = new SimpleDateFormat("HHmmss");
         String curtime = formatt.format(new Date(System.currentTimeMillis()));
         String targettime = pref.getString("targettime", null);
@@ -172,15 +178,7 @@ public class Teacher_class extends AppCompatActivity  {
                     public void onFinish() {
                         //database 點名停止
                         now = false;
-                        String result = backend.Communication(10,data3,0,teacher_long,teacher_lat);
-                        Toast.makeText(Teacher_class.this,"cancel", Toast.LENGTH_SHORT).show();
-                        mycheckclock.setVisibility(View.VISIBLE);
-                        count_down_time.setVisibility(View.INVISIBLE);
-                        atttend_btn.setText("開啟點名");
-                        atttend_btn.setBackgroundDrawable(dd);
-                        //Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
-                        start = false;
-                        pref.edit().putString("login_CID", null).commit();
+                        new ListTask().execute("stop");
                     }
                 };
                 cdt.start();
@@ -227,7 +225,7 @@ public class Teacher_class extends AppCompatActivity  {
                                     teacher_lat = lastKnownLocation.getLatitude();
                                     Toast.makeText(Teacher_class.this, "經度:" + teacher_long + "\n緯度:" + teacher_lat, Toast.LENGTH_SHORT).show();
                                     Toast.makeText(Teacher_class.this, "點名開始", Toast.LENGTH_SHORT).show();
-                                    final SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);  // DB
+                                    pref = getSharedPreferences("userdata", MODE_PRIVATE);  // DB
                                     // time
                                     final SimpleDateFormat formatter = new SimpleDateFormat("HHmmss");
                                     String date = formatter.format(new Date(System.currentTimeMillis()));
@@ -249,24 +247,11 @@ public class Teacher_class extends AppCompatActivity  {
                                         public void onFinish() {
                                             //database 點名停止
                                             now = false;
-                                            String result = backend.Communication(10,data3,0,teacher_long,teacher_lat);
-                                            Toast.makeText(Teacher_class.this,"cancel", Toast.LENGTH_SHORT).show();
-                                            mycheckclock.setVisibility(View.VISIBLE);
-                                            count_down_time.setVisibility(View.INVISIBLE);
-                                            atttend_btn.setText("開啟點名");
-                                            atttend_btn.setBackgroundDrawable(dd);
-                                            //Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
-                                            start = false;
-                                            pref.edit().putString("login_CID", null).commit();
+                                            new ListTask().execute("stop");
                                         }
                                     };
-                                    cdt.start();
-                                    //databse 點名開始;
                                     now = true;
-                                    String result = backend.Communication(10,data3,1,teacher_long,teacher_lat);
-                                    Toast.makeText(Teacher_class.this, "start sign", Toast.LENGTH_SHORT).show();
-                                    count_down_time.setVisibility(View.VISIBLE);
-                                    mycheckclock.setVisibility(View.INVISIBLE);
+                                    new ListTask().execute("start");
                                     /****************************TIMER***********************/
                                 } else {
                                     Toast.makeText(Teacher_class.this, "獲取不到位置資訊哦！", Toast.LENGTH_SHORT).show();
@@ -295,18 +280,8 @@ public class Teacher_class extends AppCompatActivity  {
                     for(int i =0; i < 75; i++){
                         Log.d("msg: ",data3);
                     }
-                    String result = backend.Communication(10,data3,0,teacher_long,teacher_lat);
-                    //String result = backend.Communication(2,data3);
-                    Toast.makeText(Teacher_class.this, "cancel", Toast.LENGTH_SHORT).show();
                     cdt.cancel();
-                    count_down_time.setVisibility(View.INVISIBLE);
-                    mycheckclock.setVisibility(View.VISIBLE);
-                    //database 點名停止
-                    atttend_btn.setText("開啟點名");
-                    atttend_btn.setBackgroundDrawable(dd);
-                    Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
-                    start = false;
-                    pref.edit().putString("login_CID", null).commit();
+                    new ListTask().execute("stop");
                 }
 
             }
@@ -319,11 +294,6 @@ public class Teacher_class extends AppCompatActivity  {
         info_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent intent = new Intent();
-                intent.setClass(Teacher_class.this, Information.class);
-                startActivity(intent);
-
-                 */
                 Intent intent = new Intent();
                 Bundle bundle = new Bundle();
                 intent.setClass(Teacher_class.this, Information.class);
@@ -361,14 +331,13 @@ public class Teacher_class extends AppCompatActivity  {
                     @Override
                     public void onClick(View v) {
                         note = 1;
-                        //startActivity(new Intent(Teacher_class.this, TeacherCheck.class));
                         Intent intent = new Intent();
                         Bundle bundle = new Bundle();
                         intent.setClass(Teacher_class.this, TeacherCheck.class);
                         bundle.putString("CID", data3);//send student ID to next activity
                         intent.putExtras(bundle);
                         startActivity(intent);
-                        Toast.makeText(Teacher_class.this, "all click success!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Teacher_class.this, "請稍等，資料獲取中...", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -377,50 +346,7 @@ public class Teacher_class extends AppCompatActivity  {
                     public void onClick(View v) {
                         //
                         note = 0;
-                        int temp = 0;
-                        int today = 0;
-                        String result = backend.Communication(3,data3);
-                        System.out.println("aaa: " + result);
-                        String[] tokens = result.split(";");
-                        for(int i = 0; i < tokens.length; i++){
-                            String[] ID_split = tokens[i].split(":");
-                            String[] day_split = ID_split[1].split(",");
-                            if(temp == 0){
-                                student = new String[day_split.length+1][tokens.length+1];
-                                date = new String[day_split.length];
-                                today = day_split.length;
-                                temp += 1;
-                            }
-                            student[0][i+1] = ID_split[0];
-                            for(int j = 0; j < day_split.length; j++){
-                                System.out.println(day_split[j]);
-                                String[] check_split = day_split[j].split("/");
-                                student[j+1][0] = check_split[0].substring(5);
-                                date[j] = check_split[0].substring(5);
-                                student[j+1][i+1] = check_split[1];
-                            }
-                        }
-                        String[] class_student = new String[tokens.length];
-                        String[] check = new String[tokens.length];
-                        for(int i = 0; i < tokens.length; i++){
-                            class_student[i] = student[0][i+1];
-                            check[i] = student[today][i+1];
-                            System.out.println("cid: " + class_student[i]);
-                            System.out.println("check: " + check[i]);
-                        }
-                        //System.out.println(date);
-                        Intent intt = new Intent();
-                        intt.setClass(Teacher_class.this, TeacherState.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("today", today);
-                        bundle.putInt("choose", today);
-                        bundle.putString("data1",student[today][0]);
-                        bundle.putStringArray("student",class_student);
-                        bundle.putStringArray("check",check);
-                        bundle.putString("CID",data3);
-                        intt.putExtras(bundle);
-                        startActivity(intt);
-                        Toast.makeText(Teacher_class.this, "now click success!", Toast.LENGTH_SHORT).show();
+                        new ListTask().execute("today");
                     }
                 });
 
@@ -434,6 +360,100 @@ public class Teacher_class extends AppCompatActivity  {
 
 
         showNotify();
+
+    }
+
+    private class ListTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            final AlertDialog.Builder attend_chooser = new AlertDialog.Builder(Teacher_class.this, R.style.CustomDialog);
+            LayoutInflater inflater = Teacher_class.this.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.progress, null);
+            attend_chooser.setView(dialogView);
+            Dialog = attend_chooser.create();
+            progressbar = dialogView.findViewById(R.id.p_Bar);
+            Dialog.show();
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            if(params[0].equals("stop")){
+                result = backend.Communication(10,data3,0,teacher_long,teacher_lat);
+            }else if(params[0].equals("start")){
+                result = backend.Communication(10,data3,1,teacher_long,teacher_lat);
+            }else if(params[0].equals("today")){
+                result = backend.Communication(3,data3);
+            }
+            return params[0];
+        }
+
+        @Override
+        protected void onPostExecute(String data){
+            if(data.equals("stop")){
+                Toast.makeText(Teacher_class.this,"cancel", Toast.LENGTH_SHORT).show();
+                mycheckclock.setVisibility(View.VISIBLE);
+                count_down_time.setVisibility(View.INVISIBLE);
+                atttend_btn.setText("開啟點名");
+                atttend_btn.setBackgroundDrawable(dd);
+                //Toast.makeText(Teacher_class.this, "停止點名", Toast.LENGTH_SHORT).show();
+                start = false;
+                pref.edit().putString("login_CID", null).commit();
+                Dialog.dismiss();
+            }else if(data.equals("start")){
+                Dialog.dismiss();
+                cdt.start();
+                Toast.makeText(Teacher_class.this, "start sign", Toast.LENGTH_SHORT).show();
+                count_down_time.setVisibility(View.VISIBLE);
+                mycheckclock.setVisibility(View.INVISIBLE);
+
+            }else if(data.equals("today")){
+                Dialog.dismiss();
+                System.out.println("aaa: " + result);
+                String[] tokens = result.split(";");
+                for(int i = 0; i < tokens.length; i++){
+                    String[] ID_split = tokens[i].split(":");
+                    String[] day_split = ID_split[1].split(",");
+                    if(temp == 0){
+                        student = new String[day_split.length+1][tokens.length+1];
+                        date = new String[day_split.length];
+                        today = day_split.length;
+                        temp += 1;
+                    }
+                    student[0][i+1] = ID_split[0];
+                    for(int j = 0; j < day_split.length; j++){
+                        System.out.println(day_split[j]);
+                        String[] check_split = day_split[j].split("/");
+                        student[j+1][0] = check_split[0].substring(5);
+                        date[j] = check_split[0].substring(5);
+                        student[j+1][i+1] = check_split[1];
+                    }
+                }
+                String[] class_student = new String[tokens.length];
+                String[] check = new String[tokens.length];
+                for(int i = 0; i < tokens.length; i++){
+                    class_student[i] = student[0][i+1];
+                    check[i] = student[today][i+1];
+                    System.out.println("cid: " + class_student[i]);
+                    System.out.println("check: " + check[i]);
+                }
+                //System.out.println(date);
+                Intent intt = new Intent();
+                intt.setClass(Teacher_class.this, TeacherState.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("today", today);
+                bundle.putInt("choose", today);
+                bundle.putString("data1",student[today][0]);
+                bundle.putStringArray("student",class_student);
+                bundle.putStringArray("check",check);
+                bundle.putString("CID",data3);
+                intt.putExtras(bundle);
+                startActivity(intt);
+                Toast.makeText(Teacher_class.this, "now click success!", Toast.LENGTH_SHORT).show();
+            }
+        }
 
     }
 

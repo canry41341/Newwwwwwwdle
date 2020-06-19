@@ -47,7 +47,7 @@ public class Backend {
             // TODO Auto-generated method stub
             try{
                 // IP為Server端
-                InetAddress serverIp = InetAddress.getByName("140.116.130.39");
+                InetAddress serverIp = InetAddress.getByName("192.168.201.33");
                 int serverPort = 8888;
                 clientSocket = new Socket(serverIp, serverPort);
                 //取得網路輸出串流
