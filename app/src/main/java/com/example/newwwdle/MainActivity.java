@@ -61,6 +61,19 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressbar;
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent home = new Intent(Intent.ACTION_MAIN);
+            home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            home.addCategory(Intent.CATEGORY_HOME);
+            startActivity(home);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -72,59 +85,6 @@ public class MainActivity extends AppCompatActivity {
         progressbar = findViewById(R.id.p_Bar);
 
         // check if user is already log in
-        pref = getSharedPreferences("userdata", MODE_PRIVATE);
-        login_flag = pref.getBoolean("login_flag", false);
-        if (login_flag) {
-            String ID = pref.getString("ID", "Unknown");        // ID (Account)
-            String PW = pref.getString("password", "Unknown");  // Password
-            String type = pref.getString("IDtype", "Unknown");  // ID type
-            Intent intent = new Intent();
-            Bundle bundle = new Bundle();
-            if (ID.equals("Unknown") | PW.equals("Unknown") | type.equals("Unknown")) {
-                pref.edit().putBoolean("login_flag", false).commit();   // Login error, set login_flag back to false
-            }
-            // Already log in as student, jump to student window
-            else {
-                cursor = getCursor();
-                int length = cursor.getCount();
-                String mycourse_ID[] = new String[length];
-                String mycourse_name[] = new String[length];
-                String mycourse_time[] = new String[length];
-                int i=0;
-                while(cursor.moveToNext()){
-                    mycourse_ID[i] = cursor.getString(cursor.getColumnIndex("_id"));
-                    Log.d("cursorid", mycourse_ID[i]);
-                    mycourse_name[i] = cursor.getString(cursor.getColumnIndex("cname"));
-                    Log.d("cursorname", mycourse_name[i]);
-                    mycourse_time[i] = cursor.getString(cursor.getColumnIndex("ctime"));
-                    Log.d("cursortime", mycourse_time[i]);
-                    i++;
-                }
-
-
-                if (type.equals("student")) {
-                    intent.setClass(MainActivity.this, Student.class);
-                    bundle.putString("id", ID);//send student ID to next activity
-                    bundle.putString("name", pref.getString("name", "未知的使用者"));
-                    bundle.putStringArray("s1", mycourse_name);
-                    bundle.putStringArray("s2", mycourse_time);
-                    bundle.putStringArray("s3", mycourse_ID);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-                // Already log in as teacher, jump to teacher window
-                else if (type.equals("teacher")) {
-                    intent.setClass(MainActivity.this, teacher.class);
-                    bundle.putString("id", ID);//send student ID to next activity
-                    bundle.putString("name", pref.getString("name", "未知的使用者"));
-                    bundle.putStringArray("s1", mycourse_name);
-                    bundle.putStringArray("s2", mycourse_time);
-                    bundle.putStringArray("s3", mycourse_ID);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            }
-        }
 
 
         login_btn.setOnClickListener(new View.OnClickListener() {
@@ -152,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
             attend_chooser.setView(dialogView);
             alertDialog = attend_chooser.create();
             progressbar = dialogView.findViewById(R.id.p_Bar);
+            progressbar.setClickable(false);
+            alertDialog.setCancelable(false);
             alertDialog.show();
 
         }

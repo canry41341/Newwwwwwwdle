@@ -329,7 +329,7 @@ public class Teacher_class extends AppCompatActivity  {
                         new ListTask().execute("today");
                     }
                 });
-                
+
                 alertDialog_noty.show();
 
             }
@@ -351,6 +351,8 @@ public class Teacher_class extends AppCompatActivity  {
             attend_chooser.setView(dialogView);
             Dialog = attend_chooser.create();
             progressbar = dialogView.findViewById(R.id.p_Bar);
+            progressbar.setClickable(false);
+            Dialog.setCancelable(false);
             Dialog.show();
 
 

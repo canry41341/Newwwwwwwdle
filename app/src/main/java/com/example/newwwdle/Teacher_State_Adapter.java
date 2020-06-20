@@ -93,6 +93,8 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
             attend_chooser.setView(dialogView);
             alertDialog = attend_chooser.create();
             progressbar = dialogView.findViewById(R.id.p_Bar);
+            progressbar.setClickable(false);
+            alertDialog.setCancelable(false);
             alertDialog.show();
 
         }

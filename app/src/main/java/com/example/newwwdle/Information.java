@@ -98,6 +98,8 @@ public class Information extends AppCompatActivity {
             attend_chooser.setView(dialogView);
             alertDialog = attend_chooser.create();
             progressbar = dialogView.findViewById(R.id.p_Bar);
+            progressbar.setClickable(false);
+            alertDialog.setCancelable(false);
             alertDialog.show();
 
         }

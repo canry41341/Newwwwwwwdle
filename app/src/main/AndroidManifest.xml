@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.newwwdle">
+
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <uses-feature android:name="android.interface.camera" />
     <uses-feature android:name="android.hardware.location.gps" />
 
@@ -21,7 +23,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:windowSoftInputMode="stateHidden|adjustResize">
-        <activity android:name=".CheckActivity"></activity>
+        <activity android:name=".FirstScene">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".TeacherCheck" />
         <activity android:name=".TeacherState" />
         <activity android:name=".StudentState" />
@@ -38,13 +45,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Student" />
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-        <service android:name="com.example.newwwdle.MyFirebaseService">
+
+        <service android:name=".MyFirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
