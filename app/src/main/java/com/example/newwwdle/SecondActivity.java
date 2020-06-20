@@ -1,5 +1,6 @@
 package com.example.newwwdle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -18,11 +19,14 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +48,10 @@ public class SecondActivity extends AppCompatActivity {
     TextClock mClock;
     public Drawable dd;
     static Activity reset;
+    String result;
+    AlertDialog alertDialog;
+    ProgressBar progressbar;
+    Location lastKnownLocation;
 
 
     private Button atten_btn, state_btn; //分別是 "點名鈕"  "通知鈕"  "顯示點名狀態的按鈕"
@@ -109,39 +117,12 @@ public class SecondActivity extends AppCompatActivity {
                     return;
                 } else {
                     mLocationManager.requestLocationUpdates(locationProvider, 1000, 10, locationListener);
-                    Location lastKnownLocation = mLocationManager.getLastKnownLocation(locationProvider);
-                    String result = backend.Communication(11,data3);
-                    String[] tokens = result.split(",");
-                    signin_permission = Boolean.parseBoolean(tokens[0].toLowerCase());
-                    teacher_long = Double.parseDouble(tokens[1]);
-                    teacher_lat = Double.parseDouble(tokens[2]);
+                    lastKnownLocation = mLocationManager.getLastKnownLocation(locationProvider);
+                    new ListTask().execute("rollcall");
 
-                    //Toast.makeText(SecondActivity.this,String.valueOf(signin_permission) + "/" + String.valueOf(teacher_lat) + "/" + String.valueOf(teacher_long),Toast.LENGTH_LONG).show();
-                    if (signin_permission) {
-                        if (lastKnownLocation != null) {
-                            float[] distance = new float[1];
-                            Location.distanceBetween(teacher_lat, teacher_long, lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude(), distance);
-                            System.out.println("distance : " + distance[0]);
-                            Toast.makeText(SecondActivity.this,Float.toString(distance[0]),Toast.LENGTH_LONG).show();
-                            Log.d("Location", "long:"+lastKnownLocation.getLongitude()+"\nlat: "+ lastKnownLocation.getLatitude());
-                            if (distance[0] > 10000.0) {
-                                Toast.makeText(SecondActivity.this, "你不在點名範圍裡！ (距離點名範圍" + distance[0] + "公尺)", Toast.LENGTH_LONG).show();
-                            } else {
-                                String sign = backend.Communication(8,ID,data3);
-                                Toast.makeText(SecondActivity.this, "已完成簽到", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Toast.makeText(SecondActivity.this, "獲取不到位置資訊哦！", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(SecondActivity.this, "尚未開放點名喔！", Toast.LENGTH_SHORT).show();
-                    }
                 }
             }
         });
-
-
-
 
 
         //check點名狀態
@@ -150,6 +131,7 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //進到下一個activity來檢視點名情況
+                Toast.makeText(SecondActivity.this, "獲取資料中...", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 Bundle bundle = new Bundle();
                 intent.setClass(SecondActivity.this, StudentState.class);
@@ -160,9 +142,71 @@ public class SecondActivity extends AppCompatActivity {
             }
         });
 
-        String result = backend.Communication(2,data3);
-        showNotify(result);//show notification recyclerview
+        new ListTask().execute("notify");
+        //showNotify(result);//show notification recyclerview
     }
+
+    private class ListTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            if(params[0].equals("rollcall")){
+                result = backend.Communication(11,data3);
+            }else if(params[0].equals("notify")){
+                result = backend.Communication(2,data3);
+            }
+            return params[0];
+        }
+
+        @Override
+        protected void onPreExecute() {
+            final AlertDialog.Builder attend_chooser = new AlertDialog.Builder(SecondActivity.this, R.style.CustomDialog);
+            LayoutInflater inflater = SecondActivity.this.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.progress, null);
+            attend_chooser.setView(dialogView);
+            alertDialog = attend_chooser.create();
+            progressbar = dialogView.findViewById(R.id.p_Bar);
+            alertDialog.show();
+            Toast.makeText(SecondActivity.this, "正在載入公告...", Toast.LENGTH_SHORT).show();
+
+        }
+
+        @Override
+        protected void onPostExecute(String d){
+            if(d.equals("rollcall")){
+                String[] tokens = result.split(",");
+                signin_permission = Boolean.parseBoolean(tokens[0].toLowerCase());
+                teacher_long = Double.parseDouble(tokens[1]);
+                teacher_lat = Double.parseDouble(tokens[2]);
+
+                //Toast.makeText(SecondActivity.this,String.valueOf(signin_permission) + "/" + String.valueOf(teacher_lat) + "/" + String.valueOf(teacher_long),Toast.LENGTH_LONG).show();
+                if (signin_permission) {
+                    if (lastKnownLocation != null) {
+                        float[] distance = new float[1];
+                        Location.distanceBetween(teacher_lat, teacher_long, lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude(), distance);
+                        System.out.println("distance : " + distance[0]);
+                        Toast.makeText(SecondActivity.this,Float.toString(distance[0]),Toast.LENGTH_LONG).show();
+                        Log.d("Location", "long:"+lastKnownLocation.getLongitude()+"\nlat: "+ lastKnownLocation.getLatitude());
+                        if (distance[0] > 10000.0) {
+                            Toast.makeText(SecondActivity.this, "你不在點名範圍裡！ (距離點名範圍" + distance[0] + "公尺)", Toast.LENGTH_LONG).show();
+                        } else {
+                            String sign = backend.Communication(8,ID,data3);
+                            Toast.makeText(SecondActivity.this, "已完成簽到", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(SecondActivity.this, "獲取不到位置資訊哦！", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(SecondActivity.this, "尚未開放點名喔！", Toast.LENGTH_SHORT).show();
+                }
+                alertDialog.dismiss();
+            }else if(d.equals("notify")){
+                showNotify(result);
+                alertDialog.dismiss();
+            }
+        }
+    }
+
 
     private void getData() {
         if (getIntent().hasExtra("data1") && getIntent().hasExtra("data2")) {

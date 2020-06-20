@@ -73,8 +73,6 @@ public class Information extends AppCompatActivity {
                 TITLE = title.getText().toString();
                 MSG = message.getText().toString();
                 new ListTask().execute();
-                //result = backend.Communication(9,CID,TITLE,MSG);
-                Toast.makeText(Information.this,TITLE + "/" + MSG,Toast.LENGTH_LONG).show();
                 /********************************************************/
                 // refresh announce board when add new announce
 
@@ -125,7 +123,6 @@ public class Information extends AppCompatActivity {
             intent1.putExtras(bundle1);
             Teacher_class.reset.finish();
             startActivity(intent1);
-            //Teacher_class.reset.onCreate(bundle1,null);
             Information.this.finish();
         }
 

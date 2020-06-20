@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,7 +51,7 @@ public class Teacher_Adapter extends RecyclerView.Adapter<Teacher_Adapter.ViewHo
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, final int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             // 設置txtItem要顯示的內容
             holder.txtItem.setText(mData.get(position));
             holder.classtime.setText(class_time[position]);
@@ -58,6 +59,7 @@ public class Teacher_Adapter extends RecyclerView.Adapter<Teacher_Adapter.ViewHo
             holder.teacher_layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Toast.makeText(teacher_context, "進入中...", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(teacher_context,Teacher_class.class);
                     intent.putExtra("data1", mData.get(position));
                     intent.putExtra("data2", class_time[position]);

@@ -52,6 +52,7 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.MyViewHold
                 intent.putExtra("time", date[position]);
                 intent.putExtra("msg", MSG[position]);
                 intent.putExtra("CID",CID);
+                intent.putExtra("tag","student");
                 context.startActivity(intent);
             }
         });

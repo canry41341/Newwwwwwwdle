@@ -359,7 +359,7 @@ public class Teacher_class extends AppCompatActivity  {
         });
 
 
-        showNotify();
+        showNotify(result);
 
     }
 
@@ -473,8 +473,10 @@ public class Teacher_class extends AppCompatActivity  {
         className.setText(data1);
     }
 
-    private void showNotify() {
-        TnotifyAdapter notifyAdapter = new TnotifyAdapter(Teacher_class.this, ss1, ss2, ss3);
+    private void showNotify(String result) {
+
+
+        TnotifyAdapter notifyAdapter = new TnotifyAdapter(Teacher_class.this, ss1, ss2, ss3 , data3);
         myTRecyclerView.setAdapter(notifyAdapter);
         myTRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

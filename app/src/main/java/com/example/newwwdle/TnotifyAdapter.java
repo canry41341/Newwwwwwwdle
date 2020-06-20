@@ -16,14 +16,16 @@ public class TnotifyAdapter extends RecyclerView.Adapter<TnotifyAdapter.MyViewHo
     String notify[]; //用來存通知本身的內容
     String date[]; //用來存所發通知的時間
     String MSG[];
+    String CID;
     private Context context;
     int isPost = 1;
 
-    public TnotifyAdapter(Context ct, String title[], String time[], String msg[]) {
+    public TnotifyAdapter(Context ct, String title[], String time[], String msg[] , String class_id) {
         context = ct;
         notify = title;// title
         date = time; // time
         MSG = msg;
+        CID = class_id;
         for(int i=0; i < title.length; i++){
             System.out.println("ss1: " + notify[i]);
             System.out.println("ss2: " + date[i]);
@@ -54,6 +56,8 @@ public class TnotifyAdapter extends RecyclerView.Adapter<TnotifyAdapter.MyViewHo
                 intent.putExtra("title", notify[position]);
                 intent.putExtra("time", date[position]);
                 intent.putExtra("msg", MSG[position]);
+                intent.putExtra("CID",CID);
+                intent.putExtra("tag","teacher");
                 context.startActivity(intent);
             }
         });
