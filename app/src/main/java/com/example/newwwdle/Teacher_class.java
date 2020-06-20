@@ -113,8 +113,8 @@ public class Teacher_class extends AppCompatActivity  {
         count_down_time.setTextColor(Color.RED);
 
         /*************************抓公告**************************************/
-        result = backend.Communication(2,data3);
-        System.out.println("aaa: " + result);
+        //result = backend.Communication(2,data3);
+        /*System.out.println("aaa: " + result);
         String[] tokens = result.split(";");
         ss1 = new String[tokens.length]; //title
         ss2 = new String[tokens.length]; //time
@@ -126,7 +126,7 @@ public class Teacher_class extends AppCompatActivity  {
             String[] month = temp.split("m");
             ss2[i] = month[0] + "-" + month[1].substring(0,month[1].length()-1);
             ss3[i] = announces_split[1];
-        }
+        }*/
 
         /*********************************************************************************/
 
@@ -357,8 +357,8 @@ public class Teacher_class extends AppCompatActivity  {
             }
         });
 
-
-        showNotify(result);
+        new ListTask().execute("notify");
+        //showNotify(result);
 
     }
 
@@ -373,6 +373,7 @@ public class Teacher_class extends AppCompatActivity  {
             Dialog = attend_chooser.create();
             progressbar = dialogView.findViewById(R.id.p_Bar);
             Dialog.show();
+            Toast.makeText(Teacher_class.this, "正在載入公告...", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -385,6 +386,8 @@ public class Teacher_class extends AppCompatActivity  {
                 result = backend.Communication(10,data3,1,teacher_long,teacher_lat);
             }else if(params[0].equals("today")){
                 result = backend.Communication(3,data3);
+            }else if(params[0].equals("notify")){
+                result = backend.Communication(2,data3);
             }
             return params[0];
         }
@@ -450,6 +453,9 @@ public class Teacher_class extends AppCompatActivity  {
                 bundle.putString("CID",data3);
                 intt.putExtras(bundle);
                 startActivity(intt);
+            }else if(data.equals("notify")){
+                Dialog.dismiss();
+                showNotify(result);
             }
         }
 
@@ -471,7 +477,18 @@ public class Teacher_class extends AppCompatActivity  {
     }
 
     private void showNotify(String result) {
-
+        String[] tokens = result.split(";");
+        ss1 = new String[tokens.length]; //title
+        ss2 = new String[tokens.length]; //time
+        ss3 = new String[tokens.length]; //msg
+        for(int i=0; i < tokens.length; i++){
+            String[] announces_split = tokens[i].split("/");
+            ss1[i] = announces_split[3];
+            String temp = announces_split[2].substring(5);
+            String[] month = temp.split("m");
+            ss2[i] = month[0] + "-" + month[1].substring(0,month[1].length()-1);
+            ss3[i] = announces_split[1];
+        }
 
         TnotifyAdapter notifyAdapter = new TnotifyAdapter(Teacher_class.this, ss1, ss2, ss3 , data3);
         myTRecyclerView.setAdapter(notifyAdapter);
