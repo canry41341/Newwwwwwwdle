@@ -165,7 +165,6 @@ public class SecondActivity extends AppCompatActivity {
             alertDialog = attend_chooser.create();
             progressbar = dialogView.findViewById(R.id.p_Bar);
             alertDialog.show();
-            Toast.makeText(SecondActivity.this, "正在載入公告...", Toast.LENGTH_SHORT).show();
 
         }
 

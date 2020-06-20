@@ -23,6 +23,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -50,7 +51,8 @@ public class Teacher_class extends AppCompatActivity  {
     CountDownTimer cdt;
     TextClock mycheckclock;
     int minutes , seconds;
-    Button attend_now_btn , attend_all_btn;
+    Button attend_now_btn ;
+    public static Button attend_all_btn;
     public Drawable dd;
     String ss1[], ss2[], ss3[];
     String[] date;
@@ -111,24 +113,6 @@ public class Teacher_class extends AppCompatActivity  {
         count_down_time.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/digital-7mt.ttf"));
         count_down_time.setVisibility(View.INVISIBLE);
         count_down_time.setTextColor(Color.RED);
-
-        /*************************抓公告**************************************/
-        //result = backend.Communication(2,data3);
-        /*System.out.println("aaa: " + result);
-        String[] tokens = result.split(";");
-        ss1 = new String[tokens.length]; //title
-        ss2 = new String[tokens.length]; //time
-        ss3 = new String[tokens.length]; //msg
-        for(int i=0; i < tokens.length; i++){
-            String[] announces_split = tokens[i].split("/");
-            ss1[i] = announces_split[3];
-            String temp = announces_split[2].substring(5);
-            String[] month = temp.split("m");
-            ss2[i] = month[0] + "-" + month[1].substring(0,month[1].length()-1);
-            ss3[i] = announces_split[1];
-        }*/
-
-        /*********************************************************************************/
 
         myTRecyclerView = findViewById(R.id.teacher_noty);
         myTRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -205,7 +189,6 @@ public class Teacher_class extends AppCompatActivity  {
                         @Override
                         public void onClick(DialogInterface dialogInterface, final int i) {
 
-                            //Log.d(TAG, "onClick: " + numberPicker.getValue());
                             // Get teacher's GPS location
                             // check if Activity has ACCESS_FINE_LOCATION permission
                             if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -306,6 +289,7 @@ public class Teacher_class extends AppCompatActivity  {
         noti_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 final AlertDialog.Builder attend_chooser = new AlertDialog.Builder(Teacher_class.this, R.style.CustomDialog);
                 LayoutInflater inflater = Teacher_class.this.getLayoutInflater();
                 View dialogView = inflater.inflate(R.layout.noti_dialog, null);
@@ -314,24 +298,20 @@ public class Teacher_class extends AppCompatActivity  {
 
                 attend_all_btn = dialogView.findViewById(R.id.attend_all_btn);
                 attend_now_btn = dialogView.findViewById(R.id.attend_curr_btn);
+
                 if(now){
                     attend_now_btn.setEnabled(true);
                 }
                 else {
                     attend_now_btn.setEnabled(false);
                 }
-                /************************沒有點名的話***********/
-                //if(點名 = 0){
-                //attend_now_btn.setEnabled(false);
-                //Toast.makeText(Teacher_class.this, "尚未開啟點名", Toast.LENGTH_SHORT).show();
-                //}
-                /******************************************/
                 attend_all_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         note = 1;
                         Intent intent = new Intent();
                         Bundle bundle = new Bundle();
+                        attend_all_btn.setEnabled(false);
                         intent.setClass(Teacher_class.this, TeacherCheck.class);
                         bundle.putString("CID", data3);//send student ID to next activity
                         intent.putExtras(bundle);
@@ -339,6 +319,7 @@ public class Teacher_class extends AppCompatActivity  {
                         Toast.makeText(Teacher_class.this, "請稍等，資料獲取中...", Toast.LENGTH_SHORT).show();
                     }
                 });
+
 
                 attend_now_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -348,11 +329,8 @@ public class Teacher_class extends AppCompatActivity  {
                         new ListTask().execute("today");
                     }
                 });
-
-
+                
                 alertDialog_noty.show();
-
-
 
             }
         });
@@ -361,6 +339,7 @@ public class Teacher_class extends AppCompatActivity  {
         //showNotify(result);
 
     }
+
 
     private class ListTask extends AsyncTask<String, Void, String> {
 
@@ -373,7 +352,7 @@ public class Teacher_class extends AppCompatActivity  {
             Dialog = attend_chooser.create();
             progressbar = dialogView.findViewById(R.id.p_Bar);
             Dialog.show();
-            Toast.makeText(Teacher_class.this, "正在載入公告...", Toast.LENGTH_SHORT).show();
+
 
         }
 

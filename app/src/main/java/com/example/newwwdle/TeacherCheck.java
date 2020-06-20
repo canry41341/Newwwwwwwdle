@@ -27,7 +27,7 @@ public class TeacherCheck extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_check);
         act = this;
-
+        Teacher_class.attend_all_btn.setEnabled(true);
         //CID
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -63,4 +63,5 @@ public class TeacherCheck extends AppCompatActivity {
         mRecyclerview.setAdapter(checkAdapter);
         mRecyclerview.setLayoutManager(new GridLayoutManager(this, 2));
     }
+
 }
