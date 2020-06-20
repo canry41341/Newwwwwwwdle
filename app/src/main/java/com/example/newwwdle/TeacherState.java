@@ -25,8 +25,6 @@ public class TeacherState extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         date =  bundle.getString("date1");
-        Toast.makeText(TeacherState.this, date, Toast.LENGTH_LONG).show();
-
 
         myTRecyclerView = findViewById(R.id.stateRecyclerView2);
 

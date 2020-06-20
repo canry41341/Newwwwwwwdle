@@ -223,7 +223,6 @@ public class Teacher_class extends AppCompatActivity  {
 
                                     teacher_long = lastKnownLocation.getLongitude();
                                     teacher_lat = lastKnownLocation.getLatitude();
-                                    Toast.makeText(Teacher_class.this, "經度:" + teacher_long + "\n緯度:" + teacher_lat, Toast.LENGTH_SHORT).show();
                                     Toast.makeText(Teacher_class.this, "點名開始", Toast.LENGTH_SHORT).show();
                                     pref = getSharedPreferences("userdata", MODE_PRIVATE);  // DB
                                     // time
@@ -451,7 +450,6 @@ public class Teacher_class extends AppCompatActivity  {
                 bundle.putString("CID",data3);
                 intt.putExtras(bundle);
                 startActivity(intt);
-                Toast.makeText(Teacher_class.this, "now click success!", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -464,7 +462,6 @@ public class Teacher_class extends AppCompatActivity  {
             data2 = getIntent().getStringExtra("data2");
             data3 = getIntent().getStringExtra("data3");
         } else {
-            Toast.makeText(this, "No data!", Toast.LENGTH_SHORT).show();
         }
     }
 

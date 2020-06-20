@@ -138,12 +138,10 @@ public class SecondActivity extends AppCompatActivity {
                 bundle.putString("CID", data3);//send student ID to next activity
                 intent.putExtras(bundle);
                 startActivity(intent);
-                //startActivity(new Intent(SecondActivity.this, StudentState.class));
             }
         });
 
         new ListTask().execute("notify");
-        //showNotify(result);//show notification recyclerview
     }
 
     private class ListTask extends AsyncTask<String, Void, String> {

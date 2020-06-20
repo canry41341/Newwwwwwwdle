@@ -130,7 +130,6 @@ public class Student extends AppCompatActivity {
                 approve.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //Log.d(TAG, "onClick: " + numberPicker.getValue());
                     }
                 });
                 approve.show();

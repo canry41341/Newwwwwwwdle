@@ -57,11 +57,6 @@ public class TeacherCheck extends AppCompatActivity {
 
         }
 
-
-
-
-
-
         mRecyclerview = findViewById(R.id.grid_view);
 
         CheckAdapter checkAdapter = new CheckAdapter(this, date, student, CID);

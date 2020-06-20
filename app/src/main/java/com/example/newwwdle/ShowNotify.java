@@ -40,7 +40,6 @@ public class ShowNotify extends AppCompatActivity {
 
 
             ShowNotify.this.finish();
-            //Teacher_class.reset.onCreate(bundle1,null);
         }
         return false;
     }

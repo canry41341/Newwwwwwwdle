@@ -34,8 +34,6 @@ public class CheckAdapter extends RecyclerView.Adapter<CheckAdapter.MyViewHolder
             System.out.println("aaa: " + s2[0][i+1]);
             student[i] = s2[0][i+1];
         }
-
-
     }
 
 
@@ -44,7 +42,6 @@ public class CheckAdapter extends RecyclerView.Adapter<CheckAdapter.MyViewHolder
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.teacher_check_date_list, parent, false);
-
         return new CheckAdapter.MyViewHolder(view);
     }
 

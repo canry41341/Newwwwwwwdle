@@ -26,7 +26,6 @@ public class MyFirebaseService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage){
         super.onMessageReceived(remoteMessage);
-        //dbHelper = new DBHelper(this);
 // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d("MyFirebaseService", "Message data payload: " + remoteMessage.getData());
@@ -37,18 +36,7 @@ public class MyFirebaseService extends FirebaseMessagingService {
             String body = remoteMessage.getData().get("Announce");
             SendNotification2(CID, cname, ctime, title, body);
         }
-        /*if(remoteMessage != null){
-            Log.i("MyFirebaseService", "title"+remoteMessage.getNotification().getTitle());
-            Log.i("MyFirebaseService", "body"+remoteMessage.getNotification().getBody());
-            String s = remoteMessage.getNotification().getTitle();
-            String ss[] = s.split(",");
-            String CID = ss[0];
-            String title = ss[1];
-            SendNotification(CID, title, remoteMessage.getNotification().getBody());
 
-        }*/
-        // close DB
-        //dbHelper.close();
     }
 
     @Override
@@ -179,6 +167,5 @@ public class MyFirebaseService extends FirebaseMessagingService {
         notificationManager.cancel(0);
         // notify notification with id
         notificationManager.notify(0, notification);
-        //Toast.makeText(this, "notify~~~" + Build.VERSION.SDK_INT, Toast.LENGTH_SHORT).show();
     }
 }
