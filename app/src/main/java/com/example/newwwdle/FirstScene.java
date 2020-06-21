@@ -10,6 +10,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.util.concurrent.TimeUnit;
+
 public class FirstScene extends AppCompatActivity {
     Cursor cursor;
     SharedPreferences pref;
@@ -19,6 +21,7 @@ public class FirstScene extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_scene);
+
         dbHelper = new DBHelper(this);
         new ListTask().execute();
 

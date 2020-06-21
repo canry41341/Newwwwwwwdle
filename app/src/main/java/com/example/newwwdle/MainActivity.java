@@ -38,6 +38,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
+import java.util.concurrent.TimeUnit;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+            try {
+                TimeUnit.MICROSECONDS.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         dbHelper = new DBHelper(this);  // Initialize DB
         name = findViewById(R.id.edit_name); //username(student ID)
