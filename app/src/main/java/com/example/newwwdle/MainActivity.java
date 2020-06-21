@@ -80,13 +80,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-            try {
-                TimeUnit.MICROSECONDS.sleep(1500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
-        dbHelper = new DBHelper(this);  // Initialize DB
+
+            dbHelper = new DBHelper(this);  // Initialize DB
         name = findViewById(R.id.edit_name); //username(student ID)
         password = findViewById(R.id.edit_id);//password
         login_btn = findViewById(R.id.login_btn);

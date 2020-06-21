@@ -34,6 +34,11 @@ public class FirstScene extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             pref = getSharedPreferences("userdata", MODE_PRIVATE);
             login_flag = pref.getBoolean("login_flag", false);
             return null;

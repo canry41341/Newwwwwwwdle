@@ -1,3 +1,4 @@
+# change from 2020/6/21 the newest version
 import socket
 import sys
 import time
@@ -9,10 +10,32 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import db
 from pyfcm import FCMNotification
+from _thread import *
+import threading
 
-host = "140.116.130.39"
-port = 8888
+host = "192.168.43.107"
+
+lock = threading.Lock()
+
+port = 8887
 loop_out = False
+
+def create_thread(conn,addr):
+    while(True):
+        try:
+            if(loop_out):
+                break
+            data = conn.recv(1024)
+            #lock.release()
+            #print(data)
+            if data != b"":
+                print(data)
+                #lock.acquire()
+                parse_data(conn,data.decode())
+                #lock.release()
+                print("finish")
+        except Exception as e:
+            pass
 
 def press_event(x):
     global loop_out
@@ -52,7 +75,7 @@ def parse_data(conn,data):
         if(IMEI != "-1" and ID != "-1"):
             print("add " + str(IMEI) +" into black")
             add_black(IMEI)
-            write_database("/Accounts/"+str(ID)+"/AccountData/","Devicetoken",-1)
+            write_database("/Accounts/"+str(ID)+"/AccountData/","Devicetoken","-1")
             conn.sendall("True\n".encode())
         elif(startSign != "-1"):
             if(startSign == "1" and len(data) == 8):
@@ -77,9 +100,10 @@ def parse_data(conn,data):
                 conn.sendall("True\n".encode())
             else:
                 conn.sendall("No Course\n".encode())
-        elif(ID != "-1" and CID != "-1" ):
+        elif(ID != "-1" and CID != "-1" and data[6] != "-1"):
             print("add rollcall data")
-            msg = add_rollcall(ID,CID)
+            Announce = data[6]
+            msg = add_rollcall(ID,CID,Announce)
             if(msg == "True\n"):
                 conn.sendall("True\n".encode())
             else:
@@ -98,19 +122,22 @@ def parse_data(conn,data):
             type = get_database("/Accounts/"+str(SID)+"/AccountData/Type/")
             print(type)
             if(type == "student"):
-            	if(check_login(IMEI)):
-                	print("successfully login")
-                	write_database("/Accounts/"+str(SID)+"/AccountData/","Devicetoken",IMEI)
-                	conn.sendall("True\n".encode())
-                	print("True")
-            	else:
-                	print("login failed") 
-                	conn.sendall("False\n".encode()) 
-                	print("False")    
+                if(IMEI != "null" and check_login(IMEI)):
+                    print("successfully login")
+                    write_database("/Accounts/"+str(SID)+"/AccountData/","Devicetoken",IMEI)
+                    conn.sendall("True\n".encode())
+                    print("True")
+                elif IMEI != "null" and not check_login(IMEI):
+                    print("login failed") 
+                    conn.sendall("False\n".encode()) 
+                    print("False")  
+                else:
+                    print("No IMEI")
+                    conn.sendall("Error\n".encode())
             elif(type == "teacher"):
-            	conn.sendall("True\n".encode())
+                conn.sendall("True\n".encode())
             else:
-            	conn.sendall("Error\n".encode())
+                conn.sendall("Error\n".encode())
         elif (SID != "-1" and passwd != "-1"):
             print("Checking Account")
             able,mode = check_account(SID,passwd)
@@ -188,7 +215,9 @@ def parse_data(conn,data):
                 i += 1
                 msg += ";"
             msg += "\n"
-            conn.sendall(msg.encode())               
+            if(msg != ""):
+                conn.sendall(msg.encode())  
+                print("msg: ",msg)            
         elif (CID != "-1" and SID == "-1" and key == "3"):
             print("get announce")
             announces = get_database("/Courses/"+str(CID)+"/Announces/")
@@ -228,30 +257,35 @@ def parse_data(conn,data):
 def add_black(IMEI):
     write_database("/Black/",IMEI,time.time())
 
-def add_rollcall(ID,CID):
+def add_rollcall(ID,CID,Status):
     date = time.localtime(time.time())
     year = date.tm_year
     month = date.tm_mon
     day = date.tm_mday
     if(get_database("/Courses/"+str(CID)+"/") == None ):
         print("No Course")
-        return "No Course\n"
+        return "Error\n"
     elif(get_database("/Courses/"+str(CID)+"/CourseData/Sign/") == None):
         print("Not Rollcall Time")
-        return "Not Rollcall Time\n"
+        return "Error\n"
     elif(get_database("Accounts/"+str(ID)+"/") == None):
         print("No Student")
-        return "No Student\n"
+        return "Error\n"
     elif(get_database("Accounts/"+str(ID)+"/Courses/"+str(CID)+"/"+str(year)+"y"+str(month)+"m"+str(day)+"d"+"/") == None):
         print("No Sign")
-        return "No Sign\n"
+        return "Error\n"
     else:
         sign = get_database("Accounts/"+str(ID)+"/Courses/"+str(CID)+"/"+str(year)+"y"+str(month)+"m"+str(day)+"d"+"/")
-        if(sign == 0):
-            write_database("Accounts/"+str(ID)+"/Courses/"+str(CID)+"/",str(year)+"y"+str(month)+"m"+str(day)+"d",1)
+        if(sign == float(Status)):
+            pass
         else:
-            write_database("Accounts/"+str(ID)+"/Courses/"+str(CID)+"/",str(year)+"y"+str(month)+"m"+str(day)+"d",0)
-        return "True\n"
+            write_database("Accounts/"+str(ID)+"/Courses/"+str(CID)+"/",str(year)+"y"+str(month)+"m"+str(day)+"d",int(Status))
+        if(Status == "1"):
+            print("Status: True\n")
+            return "True\n"
+        else:
+            print("Status: False\n")
+            return "False\n"
 
 
 def start_rollcall(CID,GPS_x,GPS_y):
@@ -292,6 +326,10 @@ def add_announce(CID,Title,Announce):
             break
         else:
             AID += 1
+    if len(Title)<1:
+        Title = "Untitle"
+    if len(Announce)<1:
+        Announce = " "
     write_database("Courses/"+str(CID)+"/Announces/"+str(AID)+"/","Date",str(year)+"y"+str(month)+"m"+str(day)+"d")
     write_database("Courses/"+str(CID)+"/Announces/"+str(AID)+"/","Title",Title)
     write_database("Courses/"+str(CID)+"/Announces/"+str(AID)+"/","Announce",Announce)
@@ -301,9 +339,11 @@ def add_announce(CID,Title,Announce):
     stds = get_database("Courses/"+str(CID)+"/Students")
     for std in stds:
         token = get_database("Accounts/"+str(std)+"/AccountData/Devicetoken/")
-        if(token != None or token != -1):
+        if(token != None and token != "-1"):
+            print(token)
+            print(std)
             register_ids.append(token)
-    push_server.notify_multiple_devices(registration_ids=register_ids,message_title=CID+","+Title,message_body=Announce)
+    push_server.notify_multiple_devices(registration_ids=register_ids,message_title=Title,message_body=Announce)
   
     return True
 
@@ -406,14 +446,10 @@ if __name__ == "__main__":
             break
         try:
             conn, addr = s.accept()
+            print("Connection")
             conn.setblocking(False)
+            #lock.acquire()
+            threading.Thread(target=create_thread,args=(conn,addr)).start()
         except Exception as e:
             pass
-        try:
-            data = conn.recv(1024)
-            if data != b"":
-                print(data)
-                parse_data(conn,data.decode())
-                print("finish")
-        except Exception as e:
-            pass
+        

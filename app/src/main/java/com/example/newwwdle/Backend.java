@@ -47,8 +47,8 @@ public class Backend {
             // TODO Auto-generated method stub
             try{
                 // IP為Server端
-                InetAddress serverIp = InetAddress.getByName("192.168.208.130");
-                int serverPort = 8888;
+                InetAddress serverIp = InetAddress.getByName("192.168.43.107");
+                int serverPort = 8887;
                 clientSocket = new Socket(serverIp, serverPort);
                 //取得網路輸出串流
                 outputStreamWriter = new OutputStreamWriter(clientSocket.getOutputStream());
@@ -233,12 +233,6 @@ public class Backend {
                 Log.d("OUTPUTLA","HERE");
                 return result;
 
-            case 8: // key = 8, input: SID,CID and update roll call in database : function(KEY=8,SID,CID)
-                sendMessage("add,-1,-1,"+input1+","+input2+",-1,-1",key);
-                lock();
-                initial();
-                Log.d("OUTPUTLA",result);
-                return result;
 
             case 4: // key = 4, input: SID, token : login by checking token and add token into account
                 sendMessage("catch,"+input2+","+input1+",-1,-1,-1",key);
@@ -260,6 +254,13 @@ public class Backend {
     public String Communication(int key, String cid, String title, String announce) {
         // add : [IMEI, start/stop, ID , CID, announce, GPS]
         // key = 9, input: cid, title, announce and add an announce in database : function(KEY=9,CID,title,announce)
+        if (key == 8) { // key = 8, input: SID,CID, rollcall and update roll call in database : function(KEY=8,SID,CID) return True or False or Error
+            sendMessage("add,-1,-1," + cid + "," + title + ",-1," + announce + ",-1", key);
+            lock();
+            initial();
+            Log.d("OUTPUTLA", result);
+            return result;
+        }
         if (key == 9) {
             sendMessage("add,-1,-1,-1," + cid + "," + title + "," + announce + ",-1",key);
             lock();

@@ -29,6 +29,7 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
     AlertDialog alertDialog;
     ProgressBar progressbar;
     int parsing_integer;
+    int check;
 
     public Teacher_State_Adapter(Context ct, String s1[], String s2[], String class_id, int a, int b) {
         Toast.makeText(ct,"進入中...", Toast.LENGTH_SHORT).show();
@@ -73,13 +74,14 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
                 /***************補簽到 我忘記要幹嘛了*********************/
                 /*********************holder.mcheckbox.isChecked()是拿補簽到的，記得把資料傳回database***************/
                 Log.d("MESSAGE",student[position]+"  "+holder.mcheckbox.isChecked());
-                ///if(holder.mcheckbox.isChecked()){
-                 //   new ListTask().execute("checked");
-                //}
-               // else{
-                    //new ListTask().execute("unchecked");
-                     new ListTask().execute(position);
-               // }
+                if(holder.mcheckbox.isChecked()){
+                    check = 1;
+                    new ListTask().execute(position);
+                }
+                else{
+                    check = 0;
+                    new ListTask().execute(position);
+                }
             }
         });
 
@@ -103,11 +105,11 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
 
         @Override
         protected Void doInBackground(Integer... params) {
-            //if(params[0].equals("checked")){
-                result = backend.Communication(8,student[params[0]],CID);
-            //}else{
-            //    result = backend.Communication(8,student[parsing_integer],CID);
-            //}
+            if(check == 1){
+                result = backend.Communication(8,student[params[0]],CID,"1");
+            }else{
+                result = backend.Communication(8,student[parsing_integer],CID,"0");
+            }
             return null;
         }
 

@@ -95,6 +95,7 @@ public class Teacher_class extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_class);
         reset = this;
+        Teacher_Adapter.alertDialog.dismiss();
 
 
         className = findViewById(R.id.className1);

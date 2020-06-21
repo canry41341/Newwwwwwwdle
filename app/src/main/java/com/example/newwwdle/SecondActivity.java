@@ -52,6 +52,7 @@ public class SecondActivity extends AppCompatActivity {
     AlertDialog alertDialog;
     ProgressBar progressbar;
     Location lastKnownLocation;
+    String sign;
 
 
 
@@ -82,6 +83,7 @@ public class SecondActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
+        MyAdapter.alertDialog.dismiss();
 
         SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
         ID = pref.getString("ID", "Unknown");
@@ -91,6 +93,7 @@ public class SecondActivity extends AppCompatActivity {
         getData(); //接收你從上個activity傳來的參數
         setData(); //顯示你從上個activity傳來的參數
         reset = this;
+
 
         //set clock
         mClock = findViewById(R.id.clock);
@@ -189,8 +192,8 @@ public class SecondActivity extends AppCompatActivity {
                         if (distance[0] > 10000.0) {
                             Toast.makeText(SecondActivity.this, "你不在點名範圍裡！ (距離點名範圍" + distance[0] + "公尺)", Toast.LENGTH_LONG).show();
                         } else {
-                                String sign = backend.Communication(8, ID, data3);
-                                Toast.makeText(SecondActivity.this, "完成簽到", Toast.LENGTH_SHORT).show();
+                                sign = backend.Communication(8, ID, data3, "1");
+                                    Toast.makeText(SecondActivity.this, "完成簽到", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Toast.makeText(SecondActivity.this, "獲取不到位置資訊哦！", Toast.LENGTH_SHORT).show();
