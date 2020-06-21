@@ -26,7 +26,7 @@ public class StudentState extends AppCompatActivity {
     //
     private static Toast toast;
 
-    private static void makeTextAndShow(final Context context, final String text, final int duration) {
+    /*/private static void makeTextAndShow(final Context context, final String text, final int duration) {
         if (toast == null) {
             //如果還沒有用過makeText方法，才使用
             toast = android.widget.Toast.makeText(context, text, duration);
@@ -35,7 +35,7 @@ public class StudentState extends AppCompatActivity {
             toast.setDuration(duration);
         }
         toast.show();
-    }
+    }*/
     Backend backend = new Backend();
     String result,CID;
     //
@@ -78,7 +78,7 @@ public class StudentState extends AppCompatActivity {
 
 
         String[] tokens = result.split(";");
-        makeTextAndShow(StudentState.this,tokens[0],toast.LENGTH_LONG);
+        //makeTextAndShow(StudentState.this,tokens[0],toast.LENGTH_LONG);
         s1 = new String[tokens.length];
         s2 = new String[tokens.length];
         for (int i = 0; i<tokens.length; i++){

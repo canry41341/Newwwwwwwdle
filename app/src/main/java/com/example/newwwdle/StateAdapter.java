@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -46,7 +47,13 @@ public class StateAdapter extends RecyclerView.Adapter<StateAdapter.MyViewHolder
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
         holder.txt1.setText(time[position]);
-        holder.txt2.setText(state[position]);
+        if(Integer.parseInt(state[position]) == 1) {
+            holder.txt2.setText("已簽到");
+            holder.txt2.setTextColor(Color.GREEN);
+        }else{
+            holder.txt2.setText("未簽到");
+            holder.txt2.setTextColor(Color.RED);
+        }
 
 
     }

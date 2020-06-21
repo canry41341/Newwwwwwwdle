@@ -13,48 +13,38 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:background="#e0f2f1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#e0f2f1">
 
             <CheckBox
                 android:id="@+id/checkBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="15dp"
                 android:text="簽到"
+                android:textSize="25sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.384"
-                app:layout_constraintStart_toEndOf="@+id/attend_state"
+                app:layout_constraintHorizontal_bias="0.819"
+                app:layout_constraintStart_toEndOf="@+id/STUDID"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.6" />
+                app:layout_constraintVertical_bias="0.63" />
 
             <TextView
                 android:id="@+id/STUDID"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="13dp"
                 android:text="時間"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/attend_state"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/attend_state"
-                android:layout_width="91dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:text="狀態"
-                android:textSize="28sp"
-                app:layout_constraintBottom_toBottomOf="@+id/STUDID"
-                app:layout_constraintEnd_toStartOf="@+id/checkBox"
-                app:layout_constraintStart_toEndOf="@+id/STUDID"
-                app:layout_constraintTop_toTopOf="@+id/STUDID"
-                app:layout_constraintVertical_bias="0.523" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

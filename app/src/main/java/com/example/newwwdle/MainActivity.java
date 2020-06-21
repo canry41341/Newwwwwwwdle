@@ -120,7 +120,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            pref = getSharedPreferences("userdata", MODE_PRIVATE);
+            // Get token and check if Account is locked
+            // Get token
+            gettoken(pref);
+
+            data = pref.getString("token", null);
             login_permission = backend.Communication(4, ID, data);
+
             if (login_permission.equals("False") || login_permission.equals("Error") ) {
             }else{
                 result = backend.Communication(1, ID, Pass);//result是取得的整個字串
@@ -135,10 +142,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent();
             Bundle bundle = new Bundle();
 
-            // Get token and check if Account is locked
-            // Get token
-            gettoken(pref);
-            data = pref.getString("token", null);
+
             if (login_permission.equals("False")) {     // Account is locked
                 Toast.makeText(MainActivity.this, "請過一段時間後再登嘗試登入哦！", Toast.LENGTH_SHORT).show();
                 if(alertDialog.isShowing()) {

@@ -16,8 +16,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.function.LongToIntFunction;
+
 public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Adapter.MyViewHolder> {
-    String time[]; //用來存時間
+    String student[]; //用來存時間
     String state[]; //用來存狀態
     String CID;
     int today, choose;
@@ -29,8 +31,9 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
     int parsing_integer;
 
     public Teacher_State_Adapter(Context ct, String s1[], String s2[], String class_id, int a, int b) {
+        Toast.makeText(ct,"進入中...", Toast.LENGTH_SHORT).show();
         context = ct;
-        time = s1;
+        student = s1;
         state = s2;
         CID = class_id;
         today = a;
@@ -52,9 +55,7 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {//學生點名狀態
         /*************那個位置的checkbox**************************/
-        holder.txt1.setText(time[position]);
-        holder.txt2.setText(state[position]);
-        parsing_integer = position;
+        holder.txt1.setText(student[position]);
         /***********************************************************/
         if(state[position].compareTo("1") == 0) {
             holder.mcheckbox.setChecked(true);
@@ -71,19 +72,20 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
             public void onClick(View v) {
                 /***************補簽到 我忘記要幹嘛了*********************/
                 /*********************holder.mcheckbox.isChecked()是拿補簽到的，記得把資料傳回database***************/
-                Log.d("MESSAGE",time[position]+"  "+holder.mcheckbox.isChecked());
-                if(holder.mcheckbox.isChecked()){
-                    new ListTask().execute("checked");
-                }
-                else{
-                    new ListTask().execute("unchecked");
-                }
+                Log.d("MESSAGE",student[position]+"  "+holder.mcheckbox.isChecked());
+                ///if(holder.mcheckbox.isChecked()){
+                 //   new ListTask().execute("checked");
+                //}
+               // else{
+                    //new ListTask().execute("unchecked");
+                     new ListTask().execute(position);
+               // }
             }
         });
 
     }
 
-    private class ListTask extends AsyncTask<String, Void, Void> {
+    private class ListTask extends AsyncTask<Integer, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -100,12 +102,12 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
         }
 
         @Override
-        protected Void doInBackground(String... params) {
-            if(params[0].equals("checked")){
-                result = backend.Communication(8,time[parsing_integer],CID);
-            }else{
-                result = backend.Communication(8,time[parsing_integer],CID);
-            }
+        protected Void doInBackground(Integer... params) {
+            //if(params[0].equals("checked")){
+                result = backend.Communication(8,student[params[0]],CID);
+            //}else{
+            //    result = backend.Communication(8,student[parsing_integer],CID);
+            //}
             return null;
         }
 
@@ -117,12 +119,12 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
 
     @Override
     public int getItemCount() {
-        return time.length;
+        return student.length;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txt1, txt2;
+        TextView txt1;
         ConstraintLayout stateLayout;
         CheckBox mcheckbox;
 
@@ -130,7 +132,6 @@ public class Teacher_State_Adapter extends RecyclerView.Adapter<Teacher_State_Ad
             super(itemView);
 
             txt1 = itemView.findViewById(R.id.STUDID); //點名時間
-            txt2 = itemView.findViewById(R.id.attend_state); //點名的狀態
             stateLayout = itemView.findViewById(R.id.StateLayout2); //狀態欄的layout名稱
             mcheckbox = itemView.findViewById(R.id.checkBox);
         }

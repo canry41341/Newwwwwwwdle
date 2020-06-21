@@ -15,8 +15,6 @@ public class FirstScene extends AppCompatActivity {
     SharedPreferences pref;
     private DBHelper dbHelper;
     boolean login_flag;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

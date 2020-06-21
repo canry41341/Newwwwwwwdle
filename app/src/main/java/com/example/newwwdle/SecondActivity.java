@@ -54,6 +54,7 @@ public class SecondActivity extends AppCompatActivity {
     Location lastKnownLocation;
 
 
+
     private Button atten_btn, state_btn; //分別是 "點名鈕"  "通知鈕"  "顯示點名狀態的按鈕"
     double teacher_long = 999;    // teacher's longitude (get from server, default 999)經度
     double teacher_lat = 999;     // teacher's latitude (get from server, default 999)緯度
@@ -184,13 +185,12 @@ public class SecondActivity extends AppCompatActivity {
                         float[] distance = new float[1];
                         Location.distanceBetween(teacher_lat, teacher_long, lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude(), distance);
                         System.out.println("distance : " + distance[0]);
-                        Toast.makeText(SecondActivity.this,Float.toString(distance[0]),Toast.LENGTH_LONG).show();
                         Log.d("Location", "long:"+lastKnownLocation.getLongitude()+"\nlat: "+ lastKnownLocation.getLatitude());
                         if (distance[0] > 10000.0) {
                             Toast.makeText(SecondActivity.this, "你不在點名範圍裡！ (距離點名範圍" + distance[0] + "公尺)", Toast.LENGTH_LONG).show();
                         } else {
-                            String sign = backend.Communication(8,ID,data3);
-                            Toast.makeText(SecondActivity.this, "已完成簽到", Toast.LENGTH_SHORT).show();
+                                String sign = backend.Communication(8, ID, data3);
+                                Toast.makeText(SecondActivity.this, "完成簽到", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Toast.makeText(SecondActivity.this, "獲取不到位置資訊哦！", Toast.LENGTH_SHORT).show();
